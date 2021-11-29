@@ -105,7 +105,7 @@
       * [C2 Docker Containers](customizing/c2-related-development/c2-profile-code/server-side-coding/c2-docker-containers.md)
       * [C2 Configuration Files](customizing/c2-related-development/c2-profile-code/server-side-coding/c2-configuration-files.md)
 
-## Common Questions and Answers <a href="common-qa" id="common-qa"></a>
+## Common Questions and Answers <a href="#common-qa" id="common-qa"></a>
 
 * [FAQ / Troubleshooting Tips](common-qa/faq-troubleshooting-tips.md)
 * [Change Log](common-qa/change-log.md)
@@ -116,3 +116,5 @@
 * [Mythic 2.1 -> 2.2 Updates](updating/mythic-2.1-greater-than-2.2-updates/README.md)
   * [Agents 2.1.\* -> 2.2.8](updating/mythic-2.1-greater-than-2.2-updates/agents-2.1.-greater-than-2.2.2/README.md)
     * [MythicRPC](updating/mythic-2.1-greater-than-2.2-updates/agents-2.1.-greater-than-2.2.2/mythicrpc.md)
+* [Mythic 2.2 -> 2.3 Updates](updating/mythic-2.2-greater-than-2.3-updates/README.md)
+  * [Agents 2.2 -> 2.3](updating/mythic-2.2-greater-than-2.3-updates/agents-2.2-greater-than-2.3.md)
