@@ -8,16 +8,16 @@ Command information is tracked in your Payload Type's container within the `myth
 * TaskArguments
 * CommandOPSEC
 
-**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_tasking` ([Create\_Tasking](create\_tasking.md)) and `process_response` ([Process Response](process-response.md)) functions.&#x20;
+**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_tasking` ([Create\_Tasking](create\_tasking.md)) and `process_response` ([Process Response](process-response.md)) functions.
 
-****[**TaskArguments**](commands.md#taskarguments) does two things:
+\*\*\*\*[**TaskArguments**](commands.md#taskarguments) does two things:
 
 1. defines the parameters that the command needs
 2. verifies / parses out the user supplied arguments into their proper components
-   * this includes taking user supplied free-form input (like arguments to a sleep command - `10 4`) and parsing it into well-defined JSON that's easier for the agent to handle (like `{"interval": 10, "jitter": 4}`)
+   * this includes taking user supplied free-form input (like arguments to a sleep command - `10 4`) and parsing it into well-defined JSON that's easier for the agent to handle (like `{"interval": 10, "jitter": 4}`). This can also take user-supplied dictionary input and parse it out into the rightful CommandParameter objects.
    * This also includes verifying all the necessary pieces are present. Maybe your command requires a source and destination, but the user only supplied a source. This is where that would be determined and error out for the user. This prevents you from requiring your agent to do that sort of parsing in the agent.
 
-**CommandOPSEC (**[**OPSEC Checking**](opsec-checking.md)**) **defines how your command behaves from an OPSEC perspective and allows scripting points (`opsec_pre` and `opsec_post`) to perform dynamic checks and blocks for users.
+**CommandOPSEC (**[**OPSEC Checking**](opsec-checking.md)\*\*) \*\*defines how your command behaves from an OPSEC perspective and allows scripting points (`opsec_pre` and `opsec_post`) to perform dynamic checks and blocks for users.
 
 ## CommandBase
 
@@ -41,7 +41,6 @@ class ScreenshotCommand(CommandBase):
         builtin=False,
         load_only=False,
         suggested_command=False,
-        
     )
     script_only = False
     
@@ -61,63 +60,86 @@ Creating your own command requires extending this CommandBase class (i.e. `class
 * `description` - this is the description of the command. This is also presented to the user when they type help.
 * `suported_ui_features` - This is an array of values that indicates where this command might be used within the UI. For example, from the active callbacks page, you see a table of all the callbacks. As part of this, there's a dropdown you can use to automatically issue an `exit` task to the callback. How does Mythic know which command to actually send? It's this array that dictates that. The following are used by the callback table, file browser, and process listing, but you're able to add in any that you want and leverage them via browser scripts for additional tasking:
   * supported\_ui\_features = \["callback\_table:exit"]
-  * supported\_ui\_features = \["file\_browser:list"]&#x20;
+  * supported\_ui\_features = \["file\_browser:list"]
   * supported\_ui\_features = \["process\_browser:list"]
-  * supported\_ui\_features = \["file\_browser:download"]&#x20;
-  * supported\_ui\_features = \["file\_browser:remove"]&#x20;
+  * supported\_ui\_features = \["file\_browser:download"]
+  * supported\_ui\_features = \["file\_browser:remove"]
   * supported\_ui\_features = \["file\_browser:upload"]
 * `version` - this is the version of the command you're creating/editing. This allows a helpful way to make sure your commands are up to date and tracking changes
 * `argument_class` - this correlates this command to a specific `TaskArguments` class for processing/validating arguments
 * `attackmapping` - this is a list of strings to indicate MITRE ATT\&CK mappings. These are in "T1113" format.
 * `agent_code_path` is automatically populated for you like in building the payload. This allows you to access code files from within commands in case you need to access files, functions, or create new pieces of payloads. This is really useful for a `load` command so that you can find and read the functions you're wanting to load in.
-* You can optionally add in the `attributes` variable. This is a new class called `CommandAttributes` where you can set whether or not your command supports being injected into a new process (some commands like `cd` or `exit` don't make sense for example). You can also provide a list of supported operating systems. This is helpful when you have a payload type that might compile into multiple different operating system types, but not all the commands work for all the possible operating systems. Instead of having to write "not implemented" or "not supported" function stubs, this will allow you to completely filter this capability out of the UI so users don't even see it as an option.&#x20;
+* You can optionally add in the `attributes` variable. This is a new class called `CommandAttributes` where you can set whether or not your command supports being injected into a new process (some commands like `cd` or `exit` don't make sense for example). You can also provide a list of supported operating systems. This is helpful when you have a payload type that might compile into multiple different operating system types, but not all the commands work for all the possible operating systems. Instead of having to write "not implemented" or "not supported" function stubs, this will allow you to completely filter this capability out of the UI so users don't even see it as an option.
   * Available options are:
     * `supported_os` an array of SupportedOS fields (ex: `[SupportedOS.MacOS]`)
     * `spawn_and_injectable` is a boolean to indicate if the command can be injected into another process
     * `builtin` is a boolean to indicate if the command should be always included in the build process and can't be unselected
     * `load_only` is a boolean to indicate if the command can't be built in at the time of payload creation, but can be loaded in later
     * `suggested_command` is a boolean to indicate if the command should be pre-selected for users when building a payload
-    * `filter_by_build_parameter` is a dictionary of `parameter_name:value` for what's required of the agent's build parameters. This is useful for when some commands are only available depending on certain values when building your agent (such as agent version).&#x20;
+    * `filter_by_build_parameter` is a dictionary of `parameter_name:value` for what's required of the agent's build parameters. This is useful for when some commands are only available depending on certain values when building your agent (such as agent version).
   * This ties into the CommandParameter fields `choice_filter_by_command_attributes`, `choices_are_all_commands`, and `choices_are_loaded_commands`.
 * The `create_tasking` function is very broad and covered in [Create\_Tasking](create\_tasking.md#create\_tasking)
 * The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processes and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](process-response.md)).
-* The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](create\_tasking.md)  scenario (complete with subtasks and full RPC functionality) and then go into a completed state.&#x20;
+* The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](create\_tasking.md) scenario (complete with subtasks and full RPC functionality) and then go into a completed state.
 
 ## TaskArguments
 
-The TaskArguments class defines the arguments for a command and defines how to parse the user supplied string so that we can verify that all required arguments are supplied.
+The TaskArguments class defines the arguments for a command and defines how to parse the user supplied string so that we can verify that all required arguments are supplied. Mythic now tracks _where_ tasking came from and can automatically handle certain instances for you. Mythic now tracks a `tasking_location` field which has the following values:
 
-Task arguments always take in a string `command_line` from the UI and either keep it as-is or parse it into `CommandParameter` classes. This is **ALWAYS** a string for `command_line`, so even if you use the popup UI and supply your parameters that way, that JSON will get turned into a JSON string that's then passed here. Below is an example of passing arguments to the `ls` command for the `apfell` payload.&#x20;
+* `command_line` - this means that the input you're getting is just a raw string, like before. It could be something like `x86 13983 200` with a series of positional parameters for a command, it could be `{"command": "whoami"}` as a JSON string version of a dictionary of arguments, or anything else. In this case, Mythic really doesn't know enough about the source of the tasking or the contents of the tasking to provide more context.
+* `parsed_cli` - this means that the input you're getting is a dictionary that was parsed by the new web interface's CLI parser. This is what happens when you type something on the command line for a command that has arguments (ex: `shell whoami` or `shell -command whoami`). Mythic can successfully parse out the parameters you've given into a single parameter\_group and gives you a `dictionary` of data.
+* `modal` - this means that the input you're getting is a dictionary that came from the tasking modal. Nothing crazy here, but it does at least mean that there shouldn't be any silly shenanigans with potential parsing issues.&#x20;
+* `browserscript` - if you click a tasking button from a browserscript table and that tasking button provides a dictionary to Mythic, then Mythic can forward that down as a dictionary. If the tasking button from a browserscript table submits a `String` instead, then that gets treated as `command_line` in terms of parsing.
 
-In `self.args` we define a dictionary of our arguments and what they should be along with default values if none were provided.&#x20;
+With this ability to track where tasking is coming from and what form it's in, an agent's command file can choose to parse this data differently. By default, all commands must supply a `parse_arguments` function in their associated `TaskArguments` subclass. If you do nothing else, then _all_ of these various forms will get passed to that function as strings (if it's a dictionary it'll get converted into a JSON string). However, you can provide another function, `parse_dictionary` that can handle specifically the cases of parsing a given dictionary into the right CommandParameter objects as shown below:
 
-In `parse_arguments` we parse the user supplied `self.command_line` into the appropriate arguments. If the user did everything through the UI popup menu, then it should be as easy as `self.load_args_from_json_string(self.command_line)`, the harder part comes when you allow the user to type arguments free-form and then must parse them out into the appropriate pieces.
+```python
+async def parse_arguments(self):
+    if len(self.command_line) == 0:
+        raise ValueError("Must supply arguments")
+    raise ValueError("Must supply named arguments or use the modal")
+
+async def parse_dictionary(self, dictionary_arguments):
+    self.load_args_from_dictionary(dictionary_arguments)
+```
+
+In `self.args` we define an array of our arguments and what they should be along with default values if none were provided.
+
+In `parse_arguments` we parse the user supplied `self.command_line` into the appropriate arguments. The hard part comes when you allow the user to type arguments free-form and then must parse them out into the appropriate pieces.
 
 ```python
 class LsArguments(TaskArguments):
-    def __init__(self, command_line):
-        super().__init__(command_line)
-        self.args = {
-            "path": CommandParameter(name="path", type=ParameterType.String, default_value=".")
-        }
+    def __init__(self, command_line, **kwargs):
+        super().__init__(command_line, **kwargs)
+        self.args = [
+            CommandParameter(
+                name="path",
+                type=ParameterType.String,
+                default_value=".",
+                description="Path of file or folder on the current system to list",
+                parameter_group_info=[ParameterGroupInfo(
+                    required=False
+                )]
+            )
+        ]
 
     async def parse_arguments(self):
-        if len(self.command_line) > 0:
-            if self.command_line[0] == '{':
-                self.load_args_from_json_string(self.command_line)
-            else:
-                self.add_arg("path", self.command_line)
-```
+        self.add_arg("path", self.command_line)
 
-{% hint style="info" %}
-You might look at the above code snippet and see things like "path" twice. That's not a hard requirement. The "key" in the `self.args` dictionary is how you look up the command parameters when you're creating your tasking. the "name" in `name="path"` is what's displayed to the user as they're filling out these parameters. So, you could have a key of "path" but a name of "Remote Path".
-{% endhint %}
+    async def parse_dictionary(self, dictionary):
+        if "host" in dictionary:
+            # then this came from the file browser
+            self.add_arg("path", dictionary["path"] + "/" + dictionary["file"])
+            self.add_arg("file_browser", type=ParameterType.Boolean, value=True)
+        else:
+            self.load_args_from_dictionary(dictionary)
+```
 
 The main purpose of the TaskArguments class is to manage arguments for a command. It handles parsing the `command_line` string into `CommandParameters`, defining the `CommandParameters`, and providing an easy interface into updating/accessing/adding/removing arguments as needed.
 
-The class **must** implement the `parse_arguments` method and define the `args` dictionary. This `parse_arguments` method is the one that allows users to supply "short hand" tasking and still parse out the parameters into the required JSON structured input.&#x20;
+The class **must** implement the `parse_arguments` method and define the `args` array (it can be empty). This `parse_arguments` method is the one that allows users to supply "short hand" tasking and still parse out the parameters into the required JSON structured input. If you have defined command parameters though, the user can supply the required parameters on the command line (via `-commandParameterName` or via the popup tasking modal via `shift+enter`).
 
-When syncing the command with the UI, Mythic goes through each class that extends the CommandBase, looks at the associated `argument_class`, and parses that class's `args` dictionary of `CommandParameters` to create the pop-up in the UI. While the TaskArgument's `parse_arguments` method simply parses the user supplied input into JSON, it's the CommandParameter's class that actually verifies that every required parameter has a value, that all the values are appropriate, and that default values are supplied if necessary.
+When syncing the command with the UI, Mythic goes through each class that extends the CommandBase, looks at the associated `argument_class`, and parses that class's `args` array of `CommandParameters` to create the pop-up in the UI. While the TaskArgument's `parse_arguments` method simply parses the user supplied input into JSON, it's the CommandParameter's class that actually verifies that every required parameter has a value, that all the values are appropriate, and that default values are supplied if necessary.
 
 ### CommandParameters
 
@@ -125,40 +147,44 @@ CommandParameters, similar to BuildParameters, provide information for the user 
 
 ```python
 class CommandParameter:
-    name: str  # name of the parameter
-    type: ParameterType  # type of the parameter
-    description: str  # description of the parameter
-    choices: [any]  # choices if the type is ParameterType.ChooseOne or ParameterType.ChooseMultiple
-    required: bool  # if the parameter is required or not
-    validation_func: callable  # a function to validate if the supplied value is good
-    value: any  # the user supplied value
-    default_value: any  # a default value to use if the user didn't supply anything
-
-    def __init__(self, name: str,
-                 type: ParameterType,
-                 description: str = "",
-                 choices: [any] = None,
-                 required: bool = True,
-                 default_value: any = None,
-                 validation_func: callable = None,
-                 value: any = None,
-                 supported_agents: [str] = None,
-                 supported_agent_build_parameters: dict = None,
-                 choice_filter_by_command_attributes: dict = None,
-                 choices_are_all_commands: bool = False,
-                 choices_are_loaded_commands: bool = False
-                 dynamic_query_function: callable = None):
+    def __init__(
+        self,
+        name: str,
+        type: ParameterType,
+        display_name: str = None,
+        cli_name: str = None,
+        description: str = "",
+        choices: [any] = None,
+        default_value: any = None,
+        validation_func: callable = None,
+        value: any = None,
+        supported_agents: [str] = None,
+        supported_agent_build_parameters: dict = None,
+        choice_filter_by_command_attributes: dict = None,
+        choices_are_all_commands: bool = False,
+        choices_are_loaded_commands: bool = False,
+        dynamic_query_function: callable = None,
+        parameter_group_info: [ParameterGroupInfo] = None
+    ):
         self.name = name
+        if display_name is None:
+            self.display_name = name
+        else:
+            self.display_name = display_name
+        if cli_name is None:
+            self.cli_name = name 
+        else:
+            self.cli_name = cli_name
         self.type = type
+        self.user_supplied = False # keep track of if this is using the default value or not
         self.description = description
         if choices is None:
             self.choices = []
         else:
             self.choices = choices
-        self.required = required
         self.validation_func = validation_func
         if value is None:
-            self.value = default_value
+            self._value = default_value
         else:
             self.value = value
         self.default_value = default_value
@@ -167,16 +193,22 @@ class CommandParameter:
         self.choice_filter_by_command_attributes = choice_filter_by_command_attributes if choice_filter_by_command_attributes is not None else {}
         self.choices_are_all_commands = choices_are_all_commands
         self.choices_are_loaded_commands = choices_are_loaded_commands
+        self.dynamic_query_function = dynamic_query_function
+        if not callable(dynamic_query_function) and dynamic_query_function is not None:
+            raise Exception("dynamic_query_function is not callable")
+        self.parameter_group_info = parameter_group_info
+        if self.parameter_group_info is None:
+            self.parameter_group_info = [ParameterGroupInfo()]
 ```
 
-* `name` - the name of the parameter. This should match the name in the args dictionary
+* `name` - the name of the parameter that your agent will use. `cli_name` is an optional variation that you want user's to type when typing out commands on the command line, and `display_name` is yet another optional name to use when displaying the parameter in a popup tasking modal.
 * `type`- this is the parameter type. The valid types are:
-  * String&#x20;
-  * Boolean&#x20;
+  * String
+  * Boolean
   * File
   * Array
   * ChooseOne
-  * ChooseMultiple&#x20;
+  * ChooseMultiple
   * Credential\_JSON
     * Get a JSON representation of all data for a credential
   * Credential\_Account
@@ -187,17 +219,17 @@ class CommandParameter:
     * Get just the credential type (i.e. hash, plaintext, key, ticket, etc)
   * Credential\_Value
     * Get just the actual credential value itself
-  * Number&#x20;
-  * Payload&#x20;
+  * Number
+  * Payload
     * Select a payload that's already been generated and get the UUID for it. This is helpful for using that payload as a template to automatically generate another version of it to use as part of lateral movement or spawning new agents.
   * ConnectionInfo
-    * Select the Host, Payload/Callback, and P2P profile for an agent or callback that you want to link to via a P2P mechanism. This allows you to generate random parameters for payloads (such as named-pipe names) and not require you to remember them when linking. You can simply select them and get all of that data passed to the agent.&#x20;
-    * When this is up in the UI, you can also track new payloads on hosts in case Mythic isn't aware of them (maybe you moved and executed payloads in a method outside of Mythic). This allows Mythic to track that payload X is now on host Y and you can use the same selection process as the first bullet to filter down and select it for linking.&#x20;
+    * Select the Host, Payload/Callback, and P2P profile for an agent or callback that you want to link to via a P2P mechanism. This allows you to generate random parameters for payloads (such as named-pipe names) and not require you to remember them when linking. You can simply select them and get all of that data passed to the agent.
+    * When this is up in the UI, you can also track new payloads on hosts in case Mythic isn't aware of them (maybe you moved and executed payloads in a method outside of Mythic). This allows Mythic to track that payload X is now on host Y and you can use the same selection process as the first bullet to filter down and select it for linking.
   * LinkInfo
     * Get a list of all active/dead P2P connections for a given agent. Selecting one of these links gives you all the same information that you'd get from the `ConnectionInfo` parameter. The goal here is to allow you to easily select to "unlink" from an agent or to re-link to a very specific agent on a host that you were previously connected to.
 * `description` - this is the description of the parameter that's presented to the user when the modal pops up for tasking
 * `choices` - this is an array of choices if the type is `ChooseOne` or `ChooseMultiple`
-  * If your command needs you to pick from the set of commands (rather than a static set of values), then there are a few other components that come into play. If you want the user to be able to select any command for this payload type, then set `choices_are_all_commands` to `True`.  Alternatively, you could specify that you only want the user to choose from commands that are already loaded into the callback, then you'd set `choices_are_loaded_commands` to `True`. As a modifier to either of these, you can set `choice_filter_by_command_attributes` to filter down the options presented to the user even more based on the parameters of the Command's `attributes` parameter. This would allow you to limit the user's list down to commands that are loaded into the current callback that support MacOS for example. An example of this would be:
+  * If your command needs you to pick from the set of commands (rather than a static set of values), then there are a few other components that come into play. If you want the user to be able to select any command for this payload type, then set `choices_are_all_commands` to `True`. Alternatively, you could specify that you only want the user to choose from commands that are already loaded into the callback, then you'd set `choices_are_loaded_commands` to `True`. As a modifier to either of these, you can set `choice_filter_by_command_attributes` to filter down the options presented to the user even more based on the parameters of the Command's `attributes` parameter. This would allow you to limit the user's list down to commands that are loaded into the current callback that support MacOS for example. An example of this would be:
 
 ```python
 CommandParameter(name="test name", 
@@ -207,7 +239,6 @@ CommandParameter(name="test name",
                  choice_filter_by_command_attributes={"supported_os": [SupportedOS.MacOS]}),
 ```
 
-* `required` - this indicates if this is a required parameter or not. If the parameter is required and there's no default value or the user doesn't supply a value, an exception will be thrown
 * `validation_func` - this is an additional function you can supply to do additional checks on values to make sure they're valid for the command. If a value isn't valid, an exception should be raised
 * `value` - this is the final value for the parameter; it'll either be the default\_value or the value supplied by the user
 * `default_value` - this is a value that'll be set if the user doesn't supply a value
@@ -215,38 +246,87 @@ CommandParameter(name="test name",
 * `supported_agent_build_parameters` - allows you to get a bit more granular in specifying which agents you want to show up when you select the `Payload` parameter type. It might be the case that a command doesn't _just_ need instance of the `atlas` payload type, but maybe it only works with the `Atlas` payload type when it's compiled into .NET 3.5. This parameter value could then be `supported_agent_build_parameters={"atlas": {"version":"3.5"}}` . This value is a dictionary where the key is the name of the payload type and the value is a dictionary of what you want the build parameters to be.
 * `dynamic_query_function` - More information can be found [here](dynamic-parameter-values.md), but you can provide a function here for ONLY parameters of type ChooseOne or ChooseMultiple where you dynamically generate the array of choices you want to provide the user when they try to issue a task of this type.
 
-Most command parameters are pretty straight forward - the one that's a bit unique is the File type (where a user is uploading a file as part of the tasking). When you're doing your tasking, this `value` will be the base64 string of the file uploaded.&#x20;
+Most command parameters are pretty straight forward - the one that's a bit unique is the File type (where a user is uploading a file as part of the tasking). When you're doing your tasking, this `value` will be the base64 string of the file uploaded.
 
-![Viewing Command Information](<../../.gitbook/assets/Screen Shot 2020-07-14 at 3.47.37 PM.png>)
+#### parameter\_group\_info
 
-![Modal popup example in the UI when tasking](<../../.gitbook/assets/Screen Shot 2020-07-14 at 3.48.15 PM.png>)
+To help with conditional parameters, Mythic 2.3 is introducing parameter groups. Every parameter must belong to at least one parameter group (if one isn't specified by you, then Mythic will add it to the `Default` group and make the parameter `required`.
 
-## Example
+You can specify this information via the `parameter_group_info` attribute on `CommandParameter` class. This attribute takes an array of `ParameterGroupInfo` objects. Each one of these objects has three attributes: `group_name` (string), `required`(boolean) `ui_position` (integer). These things together allow you to provide conditional parameter groups to a command.&#x20;
 
-Below is an example of a basic command and tasking for a `Cat` command. This command allows the user to go through the UI and supply a "path" or to do a short-hand and simply type `cat /path/to/file` on the tasking line. You can see this reflected in the `parse_arguments` function - checking to see if there's JSON supplied and if so, auto parse that json into the arguments, otherwise take what the user typed and set the path value to that.
+Let's look at an example - the new `apfell` agent's `upload` command now leverages conditional parameters. This command allows you to either:
+
+* specify a `remote_path` and a `filename` - Mythic then looks up the filename to see if it's already been uploaded to Mythic before. If it has, Mythic can simply use the same file identifier and pass that along to the agent.
+* specify a `remote_path` and a `file` - This is uploading a new file, registering it within Mythic, and then passing along that new file identifier
+
+Notice how both options require the `remote_path` parameter, but the `file` and `filename` parameters are mutually exclusive.
 
 ```python
-from mythic_payloadtype_container.MythicCommandBase import *
-import json
-
-
-class LsCommand(CommandBase):
-    cmd = "ls"
-    needs_admin = False
-    help_cmd = "ls [directory]"
-    description = "List directory."
-    version = 1
-    supported_ui_features = ["file_browser:list"]
-    author = "@xorrior"
-    argument_class = LsArguments
-    attackmapping = ["T1083"]
-    browser_script = BrowserScript(script_name="ls", author="@its_a_feature_")
-
-    async def create_tasking(self, task: MythicTask) -> MythicTask:
-        return task
-
-    async def process_response(self, response: AgentResponse):
-        pass
+class UploadArguments(TaskArguments):
+    def __init__(self, command_line, **kwargs):
+        super().__init__(command_line, **kwargs)
+        self.args = [
+            CommandParameter(
+                name="file", cli_name="new-file", display_name="File to upload", type=ParameterType.File, description="Select new file to upload",
+                parameter_group_info=[
+                    ParameterGroupInfo(
+                        required=True,
+                        group_name="Default"
+                    )
+                ]
+            ),
+            CommandParameter(
+                name="filename", cli_name="registered-filename", display_name="Filename within Mythic", description="Supply existing filename in Mythic to upload",
+                type=ParameterType.ChooseOne,
+                dynamic_query_function=self.get_files,
+                parameter_group_info=[
+                    ParameterGroupInfo(
+                        required=True,
+                        group_name="specify already uploaded file by name"
+                    )
+                ]
+            ),
+            CommandParameter(
+                name="remote_path",
+                cli_name="remote_path",
+                display_name="Upload path (with filename)",
+                type=ParameterType.String,
+                description="Provide the path where the file will go (include new filename as well)",
+                parameter_group_info=[
+                    ParameterGroupInfo(
+                        required=True,
+                        group_name="Default",
+                        ui_position=1
+                    ),
+                    ParameterGroupInfo(
+                        required=True,
+                        group_name="specify already uploaded file by name",
+                        ui_position=1
+                    )
+                ]
+            ),
+        ]
 ```
 
-We'll talk about the `create_tasking` function next
+So, the `file` parameter has one `ParameterGroupInfo` that calls out the parameter as required. The `filename` parameter also has one `ParameterGroupInfo` that calls out the parameter as required. It also has a `dynamic_query_function` that allows the task modal to run a function to populate the selection box. Lastly, the `remote_path` parameter has TWO `ParameterGroupInfo` objects in its array - one for each group. This is because the `remote_path` parameter applies to both groups. You can also see that we have a `ui_position` specified for these which means that regardless of which option you're viewing in the tasking modal, the parameter `remote_path` will be the first parameter shown. This helps make things a bit more consistent for the user.
+
+If you're curious, the function used to get the list of files for the user to select is here:
+
+```python
+async def get_files(self, callback: dict) -> [str]:
+        file_resp = await MythicRPC().execute("get_file", callback_id=callback["id"],
+                                              limit_by_callback=False,
+                                              get_contents=False,
+                                              filename="",
+                                              max_results=-1)
+        if file_resp.status == MythicRPCStatus.Success:
+            file_names = []
+            for f in file_resp.response:
+                if f["filename"] not in file_names:
+                    file_names.append(f["filename"])
+            return file_names
+        else:
+            return []
+```
+
+In the above code block, we're searching for files, not getting their contents, not limiting ourselves to just what's been uploaded to the callback we're tasking, and looking for all files (really it's all files that have "" in the name, which would be all of them). We then go through to de-dupe the filenames and return that list to the user.

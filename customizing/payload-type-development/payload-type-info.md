@@ -40,7 +40,6 @@ class Atlas(PayloadType):  # class name can be anything
         ...
         return resp
 
-
 ```
 
 There are a couple key pieces of information here:
@@ -52,13 +51,13 @@ There are a couple key pieces of information here:
   * supported\_os is an array of supported OS versions
   * supports\_dynamic\_loading indicates if the agent allows you to select only a subset of commands when creating an agent or not
   * build\_parameters is a dictionary describing all build parameters when creating an agent
-    * the "key" here and the "name" in the BuildParameter() class must match.&#x20;
+    * the "key" here and the "name" in the BuildParameter() class must match.
   * c2\_profiles is an array of c2 profile names that the agent supports
   * support\_browser\_scripts is a list of browser script names and authors that are callable from all other scripts in your payload type
     * if the script is called "create\_table", then in this payload type's browser\_scripts folder, there needs to be a `create_table.js` file with the code for that browser script. This script and information will then be available in the UI.
-    * These support scripts are not called directly by Mythic. Instead, your command-specific browser scripts will leverage these for shared functionality. A common example is to have a support script for creating something like a table. Your command-specific script gets executed when you get a response for a task based on that command, processes the data, calls your support script to turn that task-specific data into a table, and then returns it.&#x20;
+    * These support scripts are not called directly by Mythic. Instead, your command-specific browser scripts will leverage these for shared functionality. A common example is to have a support script for creating something like a table. Your command-specific script gets executed when you get a response for a task based on that command, processes the data, calls your support script to turn that task-specific data into a table, and then returns it.
 * Line 26 defines the name of a "translation container" which we will talk about in another section, but this allows you to support your own, non-mythic message format, custom crypto, etc.
-* The last piece is the function that's called to **build** the agent based on all of the information the user provides from the web UI.&#x20;
+* The last piece is the function that's called to **build** the agent based on all of the information the user provides from the web UI.
 
 The `PayloadType` base class is in the `PayloadBuilder.py` file. This is an abstract class, so your instance needs to provide values for all these fields.
 
@@ -154,12 +153,12 @@ for cmd in self.commands.get_commands():
 
 * `self.agent_code_path` - a `pathlib.Path` object pointing to the path of the `agent_code` directory that holds all the code for your payload. To be more explicit, this is the path `/Mythic/agent_code` in the normal docker containers.
   * To access "test.js" in that "agent\_code" folder, simply do:\
-    `f = open(self.agent_code_path / "test.js", 'r')`.&#x20;
+    `f = open(self.agent_code_path / "test.js", 'r')`.
   * With `pathlib.Path` objects, the `/` operator allows you to concatenate paths in an OS agnostic manner. This is the recommended way to access files so that your code can work anywhere.
 * `self.get_parameter("parameter name here")`
   * The build parameters that are validated from the user. If you have a build\_parameter with a name of "version", you can access the user supplied or default value with `self.get_parameter("version")`
-* `self.selected_os ` - This is the OS that was selected on the first step of creating a payload
-* `self.c2info` - this holds a list of dictionaries of the c2 parameters and c2 class information supplied by the user. This is a list because the user can select multiple c2 profiles (maybe they want HTTP and SMB in the payload for example). For each element in self.c2info, you can access the information about the c2 profile with `get_c2profile()` and access to the parameters via `get_parameters_dict()`. Both of these return a dictionary of key-value pairs.&#x20;
+* `self.selected_os` - This is the OS that was selected on the first step of creating a payload
+* `self.c2info` - this holds a list of dictionaries of the c2 parameters and c2 class information supplied by the user. This is a list because the user can select multiple c2 profiles (maybe they want HTTP and SMB in the payload for example). For each element in self.c2info, you can access the information about the c2 profile with `get_c2profile()` and access to the parameters via `get_parameters_dict()`. Both of these return a dictionary of key-value pairs.
 *
   * the dictionary returned by `self.c2info[0].get_c2profile()` contains the following:
     * `name` - name of the c2 profile
@@ -172,7 +171,7 @@ for cmd in self.commands.get_commands():
     * If the C2 parameter has a value of `crypto_type=True`, then the "value" here will be a bit more than just a string that the user supplied. Instead, it'll be a dictionary with three pieces of information: `value` - the value that the user supplied, `enc_key` - a base64 string (or None) of the encryption key to be used, `dec_key` - a base64 string (or None) of the decryption key to be used. This gives you more flexibility in automatically generating encryption/decryption keys and supporting crypto types/schemas that Mythic isn't aware of. In the HTTP profile, the key `AESPSK` has this type set to True, so you'd expect that dictionary.
     * If the C2 parameter has a type of "Dictionary", then things are a little different. The dictionary is represented by an array of entries, which allows you to have multiple values mapped to the single dictionary value without worrying about complex UI elements to support dynamic key/value generation. What does this mean for you, the dev though?
       * Let's take the "headers" parameter in the `http` profile for example. This allows you to set header values for your `http` traffic such as User-Agent, Host, and more. When you get this value on the agent side, you get an array of values that look like the following:\
-        `[ {"name": "User-Agent"}, "key": "User-Agent", "value": "the user agent the user supplied", "custom": false}, {"name": "*", "key": "MyCustomHeader", "value": "my custom value", "custom":  true} ]`. So, what are we looking at? When you define a "Dictionary" type C2 Profile parameter you can specify default values, the maximum number of times a key can appear, and even allow user "write-ins" that you didn't explicitly specify as options. That's what we're seeing here: the "User-Agent" key wasn't custom created, but a "myCustomHeader" key that was custom. The "name" key is what's presented to the user by default - a value of "\*" means that the user can write anything in for that "key".
+        `[ {"name": "User-Agent"}, "key": "User-Agent", "value": "the user agent the user supplied", "custom": false}, {"name": "*", "key": "MyCustomHeader", "value": "my custom value", "custom": true} ]`. So, what are we looking at? When you define a "Dictionary" type C2 Profile parameter you can specify default values, the maximum number of times a key can appear, and even allow user "write-ins" that you didn't explicitly specify as options. That's what we're seeing here: the "User-Agent" key wasn't custom created, but a "myCustomHeader" key that was custom. The "name" key is what's presented to the user by default - a value of "\*" means that the user can write anything in for that "key".
   * One way to leverage this could be:
 
 ```python
@@ -198,7 +197,7 @@ for c2 in self.c2info:
     all_c2_code += c2_code
 ```
 
-Finally, when building a payload, it can often be helpful to have both stdout and stderr information captured, especially if you're compiling code. Because of this, you can set the `build_essage` ,`build_stderr` , and `build_stdout `fields of the `BuildResponse` to have this data. For example:
+Finally, when building a payload, it can often be helpful to have both stdout and stderr information captured, especially if you're compiling code. Because of this, you can set the `build_essage` ,`build_stderr` , and `build_stdout` fields of the `BuildResponse` to have this data. For example:
 
 ```python
 async def build(self) -> BuildResponse:

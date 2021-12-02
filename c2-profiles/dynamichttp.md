@@ -114,15 +114,15 @@ Now let's talk about the `AgentMessage` parameter. This is where you define all 
 
 In the `AgentMessage` section for the "GET"s and "POST"s, you can have 1 or more instances of the above `AgentMessage` format (the above is an example of one instance). When the agent goes to make a GET or POST request, it randomly picks one of the formats listed and uses it. Let's look into what's actually being described in this `AgentMessage`:
 
-* `urls`  - this is a list of URLs. One of these is randomly selected each time this overall `AgentMessage` is selected. This allows you to supply fallback mechanisms in case one IP or domain gets blocked.
+* `urls` - this is a list of URLs. One of these is randomly selected each time this overall `AgentMessage` is selected. This allows you to supply fallback mechanisms in case one IP or domain gets blocked.
 * `uri` - This is the URI to be used at the end of each of the URLs specified. This can be a static value, like `/downloads.php`, or can be one that's changed for each request. For example, in the above scenario we supply `/<test:string>`. The meaning behind that format is explained in the [HTTP](dynamichttp.md#uri-formatting) for the server side configuration, but the point here to look at is the next piece - `urlFunctions`
-* `urlFunctions` - This describes transforms for modifying the URI of the request. In the above example, we replace the `<test:string>` with a random selection from `["jquery-3.3.1.min.js", "jquery-3.3.1.map"]`.&#x20;
+* `urlFunctions` - This describes transforms for modifying the URI of the request. In the above example, we replace the `<test:string>` with a random selection from `["jquery-3.3.1.min.js", "jquery-3.3.1.map"]`.
 * `AgentHeaders` - This defines the different headers that the agent will set when making requests
   * Note: if you're doing domain fronting, this is where you'd set that value
 * `QueryParameters` - This defines the query parameters (if any) that will be sent with the request. When doing transforms and dynamic modifications, there is a standard format that's described in the next section.
 
 {% hint style="warning" %}
-When doing query parameters, if you're going to do anything base64 encoded, make sure it's URL safe encoding. Specifically, `/`, `+`, `=`, and `\n` characters need to be URL encoded (i.e. with their %hexhex equivalents)&#x20;
+When doing query parameters, if you're going to do anything base64 encoded, make sure it's URL safe encoding. Specifically, `/`, `+`, `=`, and  characters need to be URL encoded (i.e. with their %hexhex equivalents)
 {% endhint %}
 
 * `Cookies` - This defines any cookies that are sent with the agent messages
@@ -153,9 +153,9 @@ The defining feature of the HTTP profile is being able to do transforms on the v
 
 These transforms have a few specific parts:
 
-* `name` - this is the parameter name supplied in the request. For query parameters, this is the name in front of the `=` sign (ex:`/test.php?q=abc123`). For cookie parameters, this is the name of the cookie (ex: `q=abc123;id=abc1`).&#x20;
+* `name` - this is the parameter name supplied in the request. For query parameters, this is the name in front of the `=` sign (ex:`/test.php?q=abc123`). For cookie parameters, this is the name of the cookie (ex: `q=abc123;id=abc1`).
 * `value` - this is the starting value before the transforms take place. You can set this to whatever you want, but if you set it to `message`, then the starting value for the transforms will be the message that the agent is trying to send to Apfell.
-* `transforms` - this is a list of transforms that are executed. The value starts off as indicated in the `value` field, then each resulting value is passed on to the next parameter. In this case, the value starts as `""`, then gets 30 random alphabet letters, then those letters are base64 encoded.&#x20;
+* `transforms` - this is a list of transforms that are executed. The value starts off as indicated in the `value` field, then each resulting value is passed on to the next parameter. In this case, the value starts as `""`, then gets 30 random alphabet letters, then those letters are base64 encoded.
   * Transforms have 2 parameters: the name of the function to execute and an array of parameters to pass in to it.
   * The initial set of supported functions are:
     * base64
@@ -328,7 +328,7 @@ A final example of an agent configuration can be seen below:
 
 Like with all C2 profiles, the HTTP profile has its own docker container that handles connections. The purpose of this container is to accept connections from HTTP agents, undo all of the special configurations you specified for your agent to get the real message back out, then forward that message to the actual Mythic server. Upon getting a response from Mythic, the container performs more transforms on the message and sends it back to the Agent.
 
-The docker container just abstracts all of the C2 features out from the actual Mythic server so that you're free to customize and configure the C2 as much as you want without having to actually adjust anything in the main server.&#x20;
+The docker container just abstracts all of the C2 features out from the actual Mythic server so that you're free to customize and configure the C2 as much as you want without having to actually adjust anything in the main server.
 
 There is only _ONE_ HTTP docker container per Mythic instance though, not one per operation. Because of this, the HTTP profile's server-side configuration will have to do that multiplexing for you. Below is an example of the setup:
 
@@ -382,7 +382,7 @@ There are a couple key things to notice here:
 * `key_path` - the path locally to where the key file is located for an SSL connection. If you upload the file through the web UI then the path here should simply be the name of the file.
 * `cert_path` - the path locally to where the cert file is located for an SSL connection.If you upload the file through the web UI, then the path here should simply be the name of the file. Both this and the `key_path` must be specified and have valid files for the connection to the container to be SSL.
 * `debug` - set this to true to allow debug messages to be printed. There can be a lot though, so once you have everything working, be sure to set this to `false` to speed things up a bit.
-* `GET` and `POST` - simply take the `GET` and `POST` sections from your `agent configuration` mentioned above and paste those here. No changes necessary.&#x20;
+* `GET` and `POST` - simply take the `GET` and `POST` sections from your `agent configuration` mentioned above and paste those here. No changes necessary.
 
 ### URI formatting
 
@@ -463,5 +463,4 @@ its-a-feature@ubuntu:~/Desktop/Mythic/C2_Profiles/dynamicHTTP/c2_code$ ./config_
 [*] Found matching URLs and URI, checking rest of AgentMessage
 [*] Checking for matching Body messages
 [+] FOUND MATCH
-
 ```

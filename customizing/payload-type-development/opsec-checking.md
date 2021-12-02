@@ -51,12 +51,6 @@ class ShellCommand(CommandBase):
     description = """This runs {command} in a terminal by leveraging JXA's Application.doShellScript({command}).
 WARNING! THIS IS SINGLE THREADED, IF YOUR COMMAND HANGS, THE AGENT HANGS!"""
     version = 1
-    is_exit = False
-    is_file_browse = False
-    is_process_list = False
-    is_download_file = False
-    is_remove_file = False
-    is_upload_file = False
     author = "@its_a_feature_"
     attackmapping = ["T1059"]
     argument_class = ShellArguments
@@ -89,4 +83,4 @@ By tracking this information as part of this OPSEC class, we can start making br
 
 ## OPSEC Scripting
 
-From the `opsec_pre` and `opsec_post` functions, you have access to the entire task/callback information like you do in [Create\_Tasking](create\_tasking.md#available-context). Additionally, you have access to the entire RPC suite just like in [Create\_Tasking](create\_tasking.md#rpc-functionality).&#x20;
+From the `opsec_pre` and `opsec_post` functions, you have access to the entire task/callback information like you do in [Create\_Tasking](create\_tasking.md#available-context). Additionally, you have access to the entire RPC suite just like in [Create\_Tasking](create\_tasking.md#rpc-functionality).

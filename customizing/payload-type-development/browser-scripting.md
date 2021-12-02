@@ -37,6 +37,10 @@ function(task, responses){
 
 This function reduces the Array called `responses` and aggregates all of the responses into one string called `combined` then asks Mythic to render it via: `{'plaintext': combined}`.
 
+Plaintext is also used when you don't have a browserscript set for a command in general or when you toggle it off. This uses the react-ace text editor to present the data. This view will also try to parse the output as JSON and, if it can, will re-render the output in pretty print format.
+
+![](<../../.gitbook/assets/Screen Shot 2021-12-02 at 11.16.40 AM.png>)
+
 ### Screenshots
 
 A slightly more complex example is to render a button for Mythic to display a screenshot.
@@ -256,7 +260,7 @@ let headers = [
         ];
 ```
 
-Headers is an array of Dictionaries with three values each - `plaintext`, `type`, and optionally `width`. As you might expect, `plaintext` is the value that we'll actually use for the title of the column. `type` is controlling what kind of data will be displayed in that column's cells. There are a few options here: `string` (just displays a standard string), `size` (takes a size in bytes and converts it into something human readable - i.e. 1024 -> 1KB), `date` (process date values and display them and sort them properly), `number` (display numbers and sort them properly), and finally `button` (display a button of some form that does something). The last value here is `width` - this is a percentage of how much width you want the column to take up by default. If you don't specify anything here, then all columns take up an equal amount of width. In the above example, the first four columns will be equal in size, then `posix` will start out at 8%, `xattr` at 10%, etc.&#x20;
+Headers is an array of Dictionaries with three values each - `plaintext`, `type`, and optionally `width`. As you might expect, `plaintext` is the value that we'll actually use for the title of the column. `type` is controlling what kind of data will be displayed in that column's cells. There are a few options here: `string` (just displays a standard string), `size` (takes a size in bytes and converts it into something human readable - i.e. 1024 -> 1KB), `date` (process date values and display them and sort them properly), `number` (display numbers and sort them properly), and finally `button` (display a button of some form that does something). The last value here is `width` - this is a percentage of how much width you want the column to take up by default. If you don't specify anything here, then all columns take up an equal amount of width. In the above example, the first four columns will be equal in size, then `posix` will start out at 8%, `xattr` at 10%, etc.
 
 Now let's look at the actual rows to display:
 
@@ -310,7 +314,7 @@ If we're displaying anything other than a button for a column, then we need to i
 
 #### dictionary button
 
-The first kind of button we can do is just a popup to display additional information that doesn't fit within the table. In this example, we're displaying all of Apple's extended attributes via an additional popup.&#x20;
+The first kind of button we can do is just a popup to display additional information that doesn't fit within the table. In this example, we're displaying all of Apple's extended attributes via an additional popup.
 
 ```javascript
 {"button": {
@@ -323,11 +327,11 @@ The first kind of button we can do is just a popup to display additional informa
             }}
 ```
 
-The button field takes a few values, but nothing crazy. `name` is the name of the button you want to display to the user. the `type` field is what kind of button we're going to display - in this case we use `dictionary` to indicate that we're going to display a dictionary of information to the user. The other type is `task` that we'll cover next. The `value` here should be a Dictionary value that we want to display. We'll display the dictionary as a table where the first column is the key and the second column is the value, so we can provide the column titles we want to use. We can optionally make this button disabled by providing a `disabled` field with a value of `true`.  Lastly, we provide a `title` field for what we want to title the overall popup for the user.
+The button field takes a few values, but nothing crazy. `name` is the name of the button you want to display to the user. the `type` field is what kind of button we're going to display - in this case we use `dictionary` to indicate that we're going to display a dictionary of information to the user. The other type is `task` that we'll cover next. The `value` here should be a Dictionary value that we want to display. We'll display the dictionary as a table where the first column is the key and the second column is the value, so we can provide the column titles we want to use. We can optionally make this button disabled by providing a `disabled` field with a value of `true`. Lastly, we provide a `title` field for what we want to title the overall popup for the user.
 
 #### task button
 
-This button type allows you to issue additional tasking.&#x20;
+This button type allows you to issue additional tasking.
 
 ```javascript
 {"button": {
