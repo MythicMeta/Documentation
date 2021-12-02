@@ -2,7 +2,7 @@
 
 ## What is it?
 
-MITRE ATT\&CK ([https://attack.mitre.org/](https://attack.mitre.org)) is an amazing knowledge base of adversary techniques.&#x20;
+MITRE ATT\&CK ([https://attack.mitre.org/](https://attack.mitre.org)) is an amazing knowledge base of adversary techniques.
 
 > MITRE ATT\&CK® is a globally-accessible knowledge base of adversary tactics and techniques based on real-world observations. The ATT\&CK knowledge base is used as a foundation for the development of specific threat models and methodologies in the private sector, in government, and in the cybersecurity product and service community.
 >
@@ -10,11 +10,7 @@ MITRE ATT\&CK ([https://attack.mitre.org/](https://attack.mitre.org)) is an amaz
 
 ## Where is it?
 
-"Reporting" -> "ATT\&CK Mappings" will allow you to see the MITRE ATT\&CK Matrix (Before the new sub techniques).&#x20;
-
-## How Do I use it?
-
-You can click on "Command by ATT\&CK" to see a highlighted area of all the _possible_ commands that Mythic knows about and how they map to ATT\&CK. You can also click on "Tasks by ATT\&CK" and see information on all the commands that have been executed in the current operation that map to MITRE ATT\&CK. This shows the difference between the realm of what's "possible" for you to cover and what all you have already covered.
+This is in development to bring into the new user interface. This is still tracked by the back-end and available via reporting, but the ATT\&CK matrix itself still needs to be ported over to the new React interface.
 
 ## How does this Task mapping happen?
 
@@ -31,12 +27,6 @@ class DownloadCommand(CommandBase):
     help_cmd = "download {path to remote file}"
     description = "Download a file from the victim machine to the Mythic server in chunks (no need for quotes in the path)."
     version = 1
-    is_exit = False
-    is_file_browse = False
-    is_process_list = False
-    is_download_file = True
-    is_remove_file = False
-    is_upload_file = False
     author = "@its_a_feature_"
     parameters = []
     attackmapping = ["T1020", "T1030", "T1041"]
@@ -48,7 +38,7 @@ When this command syncs to the Mythic server, those T numbers are stored and use
 
 ## How do I update this to add/remove mappings?
 
-As long as you're keeping with the _old_ MITRE ATT\&CK mappings, simply add your T# to the list like shown above, then run `sudo ./start_payload_types.sh [agent name]`. That'll restart the agent's container and trigger a re-sync of information.
+As long as you're keeping with the _old_ MITRE ATT\&CK mappings, simply add your T# to the list like shown above, then run `sudo ./mythic-cli payload start [agent name]`. That'll restart the agent's container and trigger a re-sync of information.
 
 ## MITRE Added Sub-Techniques, where are they?
 
