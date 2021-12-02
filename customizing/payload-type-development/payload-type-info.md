@@ -20,15 +20,37 @@ class Atlas(PayloadType):  # class name can be anything
     wrapped_payloads = ["service_wrapper"]
     note = """This payload uses C# to target Windows hosts with the .NET framework installed. For more information and a more detailed README, check out: https://github.com/airzero24/Atlas"""
     supports_dynamic_loading = False
-    build_parameters = {
-        "version": BuildParameter(name="version", parameter_type=BuildParameterType.ChooseOne, description="Choose a target .NET Framework", choices=["3.5", "4.0"]),
-        "arch": BuildParameter(name="arch", parameter_type=BuildParameterType.ChooseOne, choices=["x64", "x86"], default_value="x64", description="Target architecture"),
+    build_parameters = [
+        BuildParameter(
+            name="version",
+            parameter_type=BuildParameterType.ChooseOne,
+            description="Choose a target .NET Framework",
+            choices=["4.0", "3.5"],
+        ),
+        BuildParameter(
+            name="arch",
+            parameter_type=BuildParameterType.ChooseOne,
+            choices=["x64", "x86"],
+            default_value="x64",
+            description="Target architecture",
+        ),
+        BuildParameter(
+            name="chunk_size",
+            parameter_type=BuildParameterType.String,
+            default_value="512000",
+            description="Provide a chunk size for large files",
+            required=True,
+        ),
+        BuildParameter(
+            name="cert_pinning",
+            parameter_type=BuildParameterType.Boolean,
+            default_value=False,
+            required=False,
+            description="Require Certificate Pinning",
+        ),
         ...
-}
-    c2_profiles = ["http"]
-    support_browser_scripts = [
-        BrowserScript(script_name="create_table", author="@its_a_feature_")
     ]
+    c2_profiles = ["http"]
     translation_container = None
     
     async def build(self) -> BuildResponse:
@@ -46,17 +68,14 @@ There are a couple key pieces of information here:
 
 * Line 1-2 imports all of basic classes needed for creating an agent
 * line 5 defines the new class (our agent). This can be called whatever you want, but the important piece is that it extends the `PayloadType` class as shown with the `()`.
-* Lines 6-25 defines the parameters for the payload type that you'd see throughout the UI.
+* Lines 6-48 defines the parameters for the payload type that you'd see throughout the UI.
   * the name is the name of the payload type
   * supported\_os is an array of supported OS versions
   * supports\_dynamic\_loading indicates if the agent allows you to select only a subset of commands when creating an agent or not
   * build\_parameters is a dictionary describing all build parameters when creating an agent
     * the "key" here and the "name" in the BuildParameter() class must match.
   * c2\_profiles is an array of c2 profile names that the agent supports
-  * support\_browser\_scripts is a list of browser script names and authors that are callable from all other scripts in your payload type
-    * if the script is called "create\_table", then in this payload type's browser\_scripts folder, there needs to be a `create_table.js` file with the code for that browser script. This script and information will then be available in the UI.
-    * These support scripts are not called directly by Mythic. Instead, your command-specific browser scripts will leverage these for shared functionality. A common example is to have a support script for creating something like a table. Your command-specific script gets executed when you get a response for a task based on that command, processes the data, calls your support script to turn that task-specific data into a table, and then returns it.
-* Line 26 defines the name of a "translation container" which we will talk about in another section, but this allows you to support your own, non-mythic message format, custom crypto, etc.
+* Line 49 defines the name of a "translation container" which we will talk about in another section, but this allows you to support your own, non-mythic message format, custom crypto, etc.
 * The last piece is the function that's called to **build** the agent based on all of the information the user provides from the web UI.
 
 The `PayloadType` base class is in the `PayloadBuilder.py` file. This is an abstract class, so your instance needs to provide values for all these fields.
@@ -65,7 +84,7 @@ The `PayloadType` base class is in the `PayloadBuilder.py` file. This is an abst
 
 Build parameters define the components shown to the user when creating a payload.
 
-![Build Parameter layout](<../../.gitbook/assets/Screen Shot 2020-07-14 at 12.14.21 PM.png>)
+![](<../../.gitbook/assets/Screen Shot 2021-12-02 at 11.38.16 AM.png>)
 
 The `BuildParameter` class has a couple of pieces of information that you can use to customize and validate the parameters supplied to your build:
 
@@ -109,11 +128,36 @@ class BuildParameter:
 As a recap, where does this come into play? In the first section, we showed a section like:
 
 ```python
-    build_parameters = {
-        "version": BuildParameter(name="version", parameter_type=BuildParameterType.ChooseOne, description="Choose a target .NET Framework", choices=["3.5", "4.0"]),
-        "arch": BuildParameter(name="arch", parameter_type=BuildParameterType.ChooseOne, choices=["x64", "x86"], default_value="x64", description="Target architecture"),
-        ...
-}
+build_parameters = [
+    BuildParameter(
+        name="version",
+        parameter_type=BuildParameterType.ChooseOne,
+        description="Choose a target .NET Framework",
+        choices=["4.0", "3.5"],
+    ),
+    BuildParameter(
+        name="arch",
+        parameter_type=BuildParameterType.ChooseOne,
+        choices=["x64", "x86"],
+        default_value="x64",
+        description="Target architecture",
+    ),
+    BuildParameter(
+        name="chunk_size",
+        parameter_type=BuildParameterType.String,
+        default_value="512000",
+        description="Provide a chunk size for large files",
+        required=True,
+    ),
+    BuildParameter(
+        name="cert_pinning",
+        parameter_type=BuildParameterType.Boolean,
+        default_value=False,
+        required=False,
+        description="Require Certificate Pinning",
+    ),
+    ...
+]
 ```
 
 ## Building
@@ -260,7 +304,7 @@ copy_tree(self.agent_code_path, agent_build_path.name)
 
 ## Execution flow
 
-So, what's the actual, end-to-end execution flow that goes on?
+So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../message-flow.md#what-happens-for-building-payloads "mention").
 
 1. PayloadType container is started, it connects to Mythic and sends over its data (by parsing all these python files)
 2. An operator wants to create a payload from it, so they go to "Create Components" -> "Create Payload"

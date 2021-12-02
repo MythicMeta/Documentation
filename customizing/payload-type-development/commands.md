@@ -19,6 +19,8 @@ Command information is tracked in your Payload Type's container within the `myth
 
 **CommandOPSEC (**[**OPSEC Checking**](opsec-checking.md)\*\*) \*\*defines how your command behaves from an OPSEC perspective and allows scripting points (`opsec_pre` and `opsec_post`) to perform dynamic checks and blocks for users.
 
+If you're curious how this all plays out in a diagram, you can find one here: [#operator-submits-tasking](../../message-flow.md#operator-submits-tasking "mention").
+
 ## CommandBase
 
 ```python

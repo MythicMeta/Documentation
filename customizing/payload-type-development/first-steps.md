@@ -36,10 +36,10 @@ class MyAgent(PayloadType):
     wrapped_payloads = [] # ex: "service_wrapper"
     note = "Any note you want to show up about your payload type in the UI"
     supports_dynamic_loading = False  # setting this to True allows users to only select a subset of commands when generating a payload
-    build_parameters = {
+    build_parameters = [
         #  these are all the build parameters that will be presented to the user when creating your payload
         # we'll leave this blank for now
-    }
+    ]
     #  the names of the c2 profiles that your agent supports
     c2_profiles = ["http"]
     # after your class has been instantiated by the mythic_service in this docker container and all required build parameters have values
@@ -56,4 +56,4 @@ More information on each component in the file can be found in [Payload Type Inf
 Congratulations! You now have a payload type that Mythic recognizes!
 {% endhint %}
 
-Now you'll want to actually configure your [Docker Container](./#payload-type-docker-information), look into [building your agent](payload-type-info.md), how to declare [new commands](commands.md#commandbase), how to [process tasking](create\_tasking.md) to these commands, and finally [hooking your agent](../hooking-features/) into all the cool features of Mythic.&#x20;
+Now you'll want to actually configure your [Docker Container](./#payload-type-docker-information), look into [building your agent](payload-type-info.md), how to declare [new commands](commands.md#commandbase), how to [process tasking](create\_tasking.md) to these commands, and finally [hooking your agent](../hooking-features/) into all the cool features of Mythic.
