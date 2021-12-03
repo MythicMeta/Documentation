@@ -8,6 +8,8 @@ The main page to see and interactive with active callbacks can be found from the
 
 The top table has a list of current callbacks with a bunch of identifying information. All of the table headers can be clicked to sort the information in ascending or descending order.
 
+![](<../.gitbook/assets/Screen Shot 2021-12-02 at 5.05.27 PM.png>)
+
 * Callback - The identifying callback number. The blue or red button will bring the bottom section into focus, load the previously issued tasks for that callback, and populate the bottom section with the appropriate information (discussed in the next section).
   * If the `integrity_level` of the callback is <= 2, then the callback button will be blue. Otherwise it'll be red (indicating high integrity) and there will be an `*` next to the username. It's up to the agent to report back its own integrity level
 * Host - The hostname for the machine the callback is from
