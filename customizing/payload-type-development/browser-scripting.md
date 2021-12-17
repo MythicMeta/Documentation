@@ -58,7 +58,8 @@ function(task, responses){
             return {"screenshot":[{
                 "agent_file_id": data["agent_file_id"],
                 "variant": "contained",
-                "name": "View Screenshot"
+                "name": "View Screenshot",
+                "hoverText": "View screenshot in modal"
             }]};
         }else{
             return {"plaintext": "No data to display..."}
@@ -69,9 +70,10 @@ function(task, responses){
         if(responses.length > 0){
             let data = JSON.parse(responses[0]);
             return {"screenshot":[{
-                "agent_file_id": data["agent_file_id"],
-                "variant": "contained",
-                "name": "View Partial Screenshot"
+                    "agent_file_id": data["agent_file_id"],
+                    "variant": "contained",
+                    "name": "View Partial Screenshot",
+                    "hoverText": "View partial screenshot in modal"
             }]};
         }
         return {"plaintext": "No data yet..."}
@@ -88,6 +90,130 @@ This function does a few things:
 2. If the task is completed and isn't an error, then we can verify that we have our responses that we expect. In this case, we simply expect a single response with some of our data in it. The one piece of information that the browser script needs to render a screenshot is the `agent_file_id` or `file_id` of the screenshot you're trying to render. If you want to return this information from the agent, then this will be the same `file_id` that Mythic returns to you for transferring the file. If you display this information via `process_response` output from your agent, then you're likely to pull the file data via an RPC call, and in that case, you're looking for the `agent_file_id` value.
 3. To actually create a screenshot, we return a dictionary with a key called `screenshot` that has an array of Dictionaries. We do this so that you can actually render multiple screenshots at once (such as if you fetched information for multiple monitors at a time). For each screenshot, you just need three pieces of information: the `agent_file_id`, the `name` of the button you want to render, and the `variant` is how you want the button presented (`contained` is a solid button and `outlined` is just an outline for the button).
 4. If we didn't error and we're not done, then the status will be `processed`. In that case, if we have data we want to also display the partial screenshot, but if we have no responses yet, then we want to just inform the user that we don't have anything yet.
+
+### Downloads
+
+When downloading files from a target computer, the agent will go through a series of steps to register a file id with Mythic and then start chunking and transferring data. At the end of this though, it's super nice if the user is able to click a button in-line with the tasking to download the resulting file(s) instead of then having to go to another page to download it. This is where the download browser script functionality comes into play.&#x20;
+
+With this script, you're able to specify some plaintext along with a button that links to the file you just downloaded. However, remember that browser scripts run in the browser and are based on the data that's sent to the user to view. So, if the agent doesn't send back the new `agent_file_id` for the file, then you won't be able to link to it in the UI. Let's take an example and look at what this means:
+
+```javascript
+function(task, responses){
+    if(task.status.includes("error")){
+        const combined = responses.reduce( (prev, cur) => {
+            return prev + cur;
+        }, "");
+        return {'plaintext': combined};
+    }else if(task.completed){
+        if(responses.length > 0){
+            try{
+                let data = JSON.parse(responses[0]);
+                return {"download":[{
+                        "agent_file_id": data["file_id"],
+                        "variant": "contained",
+                        "name": "Download",
+                        "plaintext": "Download the file here: ",
+                        "hoverText": "download the file"
+                }]};
+            }catch(error){
+                const combined = responses.reduce( (prev, cur) => {
+                    return prev + cur;
+                }, "");
+                return {'plaintext': combined};
+            }
+
+        }else{
+            return {"plaintext": "No data to display..."}
+        }
+
+    }else if(task.status === "processed"){
+        if(responses.length > 0){
+            const task_data = JSON.parse(responses[0]);
+            return {"plaintext": "Downloading a file with " + task_data["total_chunks"] + " total chunks..."};
+        }
+        return {"plaintext": "No data yet..."}
+    }else{
+        // this means we shouldn't have any output
+        return {"plaintext": "Not response yet from agent..."}
+    }
+}
+```
+
+So, from above we can see a few things going on:
+
+* Like many other browser scripts, we're going to modify what we display to the user based on the status of the task as well as if the agent has returned anything for us to view or not. That's why there's checks based on the `task.status` and `task.completed` fields.
+* Assuming the agent returned something back and we completed successfully, we're going to parse what the agent sent back as JSON and look for the `file_id` field.
+* We can then make the download button with a few fields:&#x20;
+  * `agent_file_id` is the file UUID of the file we're going to download through the UI
+  * `variant` allows you to control if the button is a solid or just outlined button (`contained` or `outlined`)
+  * `name` is the text inside the button
+  * `plaintext` is any leading text data you want to dispaly to the user instead of just a single download button
+
+So, let's look at what the agent actually sent for this message as well as what this looks like visually:
+
+![](<../../.gitbook/assets/Screen Shot 2021-12-16 at 7.25.16 PM.png>)
+
+Notice here in what the agent sends back that there are two main important pieces: `file_id` which we use to pass in as `agent_file_id` for the browser script, and `total_chunks`. `total_chunks` isn't strictly necessary for anything, but if you look back at the script, you'll see that we display that as plaintext to the user while we're waiting for the download to finish so that the user has some sort of idea how long it'll take (is it 1 chunk, 5, 50, etc).
+
+![](<../../.gitbook/assets/Screen Shot 2021-12-16 at 7.24.46 PM.png>)
+
+And here you can see that we have our plaintext leading up to our button. You'll also notice how the `download` key is an array. So yes, if you're downloading multiple files, as long as you can keep track of the responses you're getting back from your agent, you can render and show multiple download buttons.
+
+### Search Links
+
+Sometimes you'll want to link back to the "search" page (tasks, files, screenshots, tokens, credentials, etc) with specific pieces of information so that the user can see a list of information more cleanly. For example, maybe you run a command that generated a lot of credentials (like mimikatz) and rather than registering them all with Mythic _and_ displaying them in the task output, you'd rather register them with Mythic and then link the user over to them. Thats where the search links come into play. They're formatted very similar to the download button, but with a slight tweak.
+
+```javascript
+function(task, responses){
+    if(task.status.includes("error")){
+        const combined = responses.reduce( (prev, cur) => {
+            return prev + cur;
+        }, "");
+        return {'plaintext': combined};
+    }else if(task.completed){
+        if(responses.length > 0){
+            try{
+                let data = JSON.parse(responses[0]);
+                return {"search": [{
+                        "plaintext": "View on the search page here: ",
+                        "hoverText": "opens a new search page",
+                        "search": "tab=files&searchField=Filename&search=" + task.display_params,
+                        "name": "Click Me!"
+                    }]};
+            }catch(error){
+                const combined = responses.reduce( (prev, cur) => {
+                    return prev + cur;
+                }, "");
+                return {'plaintext': combined};
+            }
+
+        }else{
+            return {"plaintext": "No data to display..."}
+        }
+
+    }else if(task.status === "processed"){
+        if(responses.length > 0){
+            const task_data = JSON.parse(responses[0]);
+            return {"plaintext": "Downloading a file with " + task_data["total_chunks"] + " total chunks..."};
+        }
+        return {"plaintext": "No data yet..."}
+    }else{
+        // this means we shouldn't have any output
+        return {"plaintext": "Not response yet from agent..."}
+    }
+}
+```
+
+This is almost exactly the same as the `download` example, but the actual dictionary we're returning is a little different. Specifically, we have:
+
+* `plaintext` as a string we want to display before our actual link to the search page
+* `hoverText` as a string for what to display as a tooltip when you hover over the link to the search page
+* `search` is the actual query parameters for the search we want to do. In this case, we're showing that we want to be on the `files` tab, with the `searchField` of `Filename`, and we want the actual `search` parameter to be what is shown to the user in the display parameters (`display_params`). If you're ever curious about what you should include here for your specific search, whenever you're clicking around on the search page, the URL will update to reflect what's being shown. So, you can navigate to what you'd want, then copy and paste it here.
+* `name` is the text represented that is the link to the search page.
+
+Just like with the download button, you can have multiple of these `search` responses.
+
+![](<../../.gitbook/assets/Screen Shot 2021-12-16 at 7.35.38 PM.png>)
 
 ### Tables
 
@@ -138,7 +264,12 @@ function(task, responses){
         ];
         let rows = [{
             "rowStyle": data["is_file"] ? file : folder,
-            "name": {"plaintext": data["name"]},
+            "name": {
+                "plaintext": data["name"],
+                "copyIcon": true,
+                "startIcon": data["is_file"] ? "file":"openFolder",
+                "startIconHoverText": data["name",
+                },
             "size": {"plaintext": data["size"]},
             "owner": {"plaintext": data["permissions"]["owner"]},
             "group": {"plaintext": data["permissions"]["group"]},
@@ -149,7 +280,8 @@ function(task, responses){
                 "value": data["permissions"],
                 "leftColumnTitle": "XATTR",
                 "rightColumnTitle": "Values",
-                "title": "Viewing XATTRs"
+                "title": "Viewing XATTRs",
+                "hoverText": "View more attributes"
             }},
             "DL": {"button": {
               "name": "DL",
@@ -267,7 +399,12 @@ Now let's look at the actual rows to display:
 ```javascript
         let rows = [{
             "rowStyle": data["is_file"] ? file : folder,
-            "name": {"plaintext": data["name"]},
+            "name": {
+                "plaintext": data["name"],
+                "copyIcon": true,
+                "startIcon": data["is_file"] ? "file":"openFolder",
+                "startIconHoverText": data["name",
+            },
             "size": {"plaintext": data["size"]},
             "owner": {"plaintext": data["permissions"]["owner"]},
             "group": {"plaintext": data["permissions"]["group"]},
@@ -278,7 +415,8 @@ Now let's look at the actual rows to display:
                 "value": data["permissions"],
                 "leftColumnTitle": "XATTR",
                 "rightColumnTitle": "Values",
-                "title": "Viewing XATTRs"
+                "title": "Viewing XATTRs",
+                "hoverText": "View more attributes"
             }},
             "DL": {"button": {
               "name": "DL",
@@ -312,6 +450,17 @@ As you might expect, you can use this key to specify custom styles for the row o
 
 If we're displaying anything other than a button for a column, then we need to include the `plaintext` key with the value we're going to use. You'll notice that aside from `rowStyle`, each of these other keys match up with the `plaintext` header values so that we know which values go in which columns.
 
+In addition to just specifying the `plaintext` value that is going to be displayed, there are a few other properties we can specify:
+
+* `startIcon` - specify the name of an icon to use at the beginning of the `plaintext` value. The available `startIcon` values are:
+  * folder/openFolder, closedFolder, archive/zip, diskimage, executable, word, excel, powerpoint, pdf/adobe, database, key, code/source, download, upload, png/jpg/image
+  * ^ the above values also apply to the `endIcon` attribute
+* `startIconHoverText` - this is text you want to appear when the user hovers over the icon
+* `endIcon` this is the same as the `startIcon` except it's at the end of the text
+* `endIconHoverText` this is the text you want to appear when the user hovers over the icon
+* `plaintextHoverText` this is the text you want to appear when the user hovers over the plaintext value
+* `copyIcon` - use this to indicate true/false if you want a `copy` icon to appear at the front of the text. If this is present, this will allow the user to copy all of the text in `plaintext` to the clipboard. This is handy if you're displaying exceptionally long pieces of information.
+
 #### dictionary button
 
 The first kind of button we can do is just a popup to display additional information that doesn't fit within the table. In this example, we're displaying all of Apple's extended attributes via an additional popup.
@@ -323,7 +472,8 @@ The first kind of button we can do is just a popup to display additional informa
                 "value": data["permissions"],
                 "leftColumnTitle": "XATTR",
                 "rightColumnTitle": "Values",
-                "title": "Viewing XATTRs"
+                "title": "Viewing XATTRs",
+                "hoverText": "View additional attributes"
             }}
 ```
 
@@ -339,7 +489,8 @@ This button type allows you to issue additional tasking.
               "type": "task",
               "disabled": !data["is_file"],
               "ui_feature": "file_browser:download",
-              "parameters": ls_path
+              "parameters": ls_path,
+              "hoverText": "List information about the file/folder"
             }}
 ```
 
