@@ -453,13 +453,15 @@ If we're displaying anything other than a button for a column, then we need to i
 In addition to just specifying the `plaintext` value that is going to be displayed, there are a few other properties we can specify:
 
 * `startIcon` - specify the name of an icon to use at the beginning of the `plaintext` value. The available `startIcon` values are:
-  * folder/openFolder, closedFolder, archive/zip, diskimage, executable, word, excel, powerpoint, pdf/adobe, database, key, code/source, download, upload, png/jpg/image
+  * folder/openFolder, closedFolder, archive/zip, diskimage, executable, word, excel, powerpoint, pdf/adobe, database, key, code/source, download, upload, png/jpg/image, kill, inject, camera, list, delete
   * ^ the above values also apply to the `endIcon` attribute
 * `startIconHoverText` - this is text you want to appear when the user hovers over the icon
 * `endIcon` this is the same as the `startIcon` except it's at the end of the text
 * `endIconHoverText` this is the text you want to appear when the user hovers over the icon
 * `plaintextHoverText` this is the text you want to appear when the user hovers over the plaintext value
 * `copyIcon` - use this to indicate true/false if you want a `copy` icon to appear at the front of the text. If this is present, this will allow the user to copy all of the text in `plaintext` to the clipboard. This is handy if you're displaying exceptionally long pieces of information.
+* `startIconColor` - You can specify the color for your start icon. You can either do a color name, like `"gold"` or you can do an rgb value like `"rgb(25,142,117)"`.&#x20;
+* `endIconColor` - this is the same as the `startIconColor` but applies to any icon you want to have at the end of your text
 
 #### dictionary button
 
@@ -477,7 +479,7 @@ The first kind of button we can do is just a popup to display additional informa
             }}
 ```
 
-The button field takes a few values, but nothing crazy. `name` is the name of the button you want to display to the user. the `type` field is what kind of button we're going to display - in this case we use `dictionary` to indicate that we're going to display a dictionary of information to the user. The other type is `task` that we'll cover next. The `value` here should be a Dictionary value that we want to display. We'll display the dictionary as a table where the first column is the key and the second column is the value, so we can provide the column titles we want to use. We can optionally make this button disabled by providing a `disabled` field with a value of `true`. Lastly, we provide a `title` field for what we want to title the overall popup for the user.
+The button field takes a few values, but nothing crazy. `name` is the name of the button you want to display to the user. the `type` field is what kind of button we're going to display - in this case we use `dictionary` to indicate that we're going to display a dictionary of information to the user. The other type is `task` that we'll cover next. The `value` here should be a Dictionary value that we want to display. We'll display the dictionary as a table where the first column is the key and the second column is the value, so we can provide the column titles we want to use. We can optionally make this button disabled by providing a `disabled` field with a value of `true`. Just like with the normal `plaintext` section, we can also specify `startIcon`, `startIconColor.`Lastly, we provide a `title` field for what we want to title the overall popup for the user.
 
 #### task button
 
@@ -494,7 +496,7 @@ This button type allows you to issue additional tasking.
             }}
 ```
 
-This button has the same `name` and `type` fields as the dictionary button. Just like with the dictionary button we can make the button disabled or not with the `disabled` field. You might be wondering which task we'll invoke with the button. This works the same way we identify which command to issue via the file browser or the process browser - `ui_feature`. These can be anything you want, just make sure you have the corresponding feature listed somewhere in your commands or you'll never be able to task it.
+This button has the same `name` and `type` fields as the dictionary button. Just like with the dictionary button we can make the button disabled or not with the `disabled` field. You might be wondering which task we'll invoke with the button. This works the same way we identify which command to issue via the file browser or the process browser - `ui_feature`. These can be anything you want, just make sure you have the corresponding feature listed somewhere in your commands or you'll never be able to task it. Just like with the dictionary button, we can specify `startIcon` and `startIconColor`.&#x20;
 
 The last thing here is the `parameters`. If you provide parameters, then Mythic will automatically use them when tasking. In this example, we're pre-creating the full path for the files in question and passing that along as the parameters to the `download` function. If you don't provide any parameters and the task you're trying to issue takes parameters, then you will get a popup to provide the parameters, just like if you tasked it from the command line.
 
