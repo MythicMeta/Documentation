@@ -86,7 +86,6 @@ get_file(task_id: int = None, callback_id: int = None, filename: str = None, lim
     resp.response[0]["filename"] <-- the filename of that first result
     resp.response[0]["contents"] <--- the base64 representation of that file
     All of the possible dictionary keys are available at https://github.com/its-a-feature/Mythic/blob/master/mythic-docker/app/database_models/model.py for the FileMeta class
-
 ```
 
 ```python
@@ -153,6 +152,15 @@ get_commands(callback_id: int = None, loaded_only: bool = False,
     :param os: Specify the OS that's associated with the payload_type_name so that commands can be filtered
     :return: an array of dictionaries representing all of the requested commands for that payload type.
     When returning all possible commands for this callback, commands are still filtered by their supported_os attributes
+```
+
+```python
+add_commands_to_payload(payload_uuid: str, commands: [str]):
+    Register additional commands that are in the payload. This is useful if a user selects command X to include in a payload, but command X needs command Y.
+    A common example would be if command X is a script_only command or will end up delegating additional commands.
+    :param payload_uuid: The UUID of the payload that you're adding commands to.
+    :param commands: An array of command names that should be added to this payload.
+    :return: Success or Error
 ```
 
 ```
@@ -426,7 +434,6 @@ search_database(table: str, task_id: int = None, callback_id: int = None, **kwar
     :param table: The name of the table you want to query. Currently only options are: process, token, file_browser. To search files (uploads/downloads/hosted), use `get_file`
     :param kwargs: These are the key=value pairs for how you're going to search the table specified. For example, searching processes where the name of "bob" and host that starts with "spooky" would have kwargs of: name="bob", host="spooky*"
     :return: an array of dictionaries that represent your search. If your search had no results, you'll get back an empty array
-
 ```
 
 ```
