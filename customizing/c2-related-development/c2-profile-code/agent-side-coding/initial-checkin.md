@@ -14,13 +14,10 @@ All messages go to the `/api/v1.4/agent_message` endpoint. These messages can be
   * message content in body
   * message content in FIRST header value
   * message content in FIRST cookie value
-*   GET request
-
-    * message content in FIRST header value
-    * message content in FIRST cookie value
-    * message content in FIRST query parameter
-
-
+* GET request
+  * message content in FIRST header value
+  * message content in FIRST cookie value
+  * message content in FIRST query parameter
 
 ### A note about UUIDs
 
@@ -34,7 +31,7 @@ In general, the UUID concatenated with the encrypted message provides a way to g
 
 * **payloadUUID** as the outer UUID tells Mythic to look up that payload UUID, then look up the C2 profile associated with it, find a parameter called `AESPSK`, and use that as the key to decrypt the message
 * **tempUUID** as the outer UUID tells Mythic that this is a staging process. So, look up the UUID in the staging database to see information about the blob, such as if it's an RSA encrypted blob or is part of a Diffie-Hellman key exchange
-* **callbackUUID** as the outerUUID tells Mythic that this is a full callback with an established encryption key or in plaintext.&#x20;
+* **callbackUUID** as the outerUUID tells Mythic that this is a full callback with an established encryption key or in plaintext.
 
 However, when your payload first executes, it doesn't have a callbackUUID, it's just a payloadUUID. This is why you'll see clarifiers as to which UUID we're referring to when doing specific messages. The whole goal of the `checkin` process is to go from a payload (and thus payloadUUID) to a full callback (and thus callbackUUID), so at the end of staging and everything you'll end up with a new UUID that you'll use as the outer UUID.
 
@@ -66,7 +63,7 @@ Base64( PayloadUUID + JSON({
 )
 ```
 
-* The JSON section is not encrypted in any way, it's all plaintext.&#x20;
+* The JSON section is not encrypted in any way, it's all plaintext.
 
 The checkin has the following response:
 
@@ -125,7 +122,7 @@ Base64( PayloadUUID + AES256(
 From here on, the agent messages use the new UUID instead of the payload UUID.
 
 {% hint style="info" %}
-This first message from Agent -> Mythic has the Payload UUID as the outer UUID _and_ the Payload UUID inside the checkin JSON message. Once the agent gets the reply with a callbackUUID, all future messages will have this callbackUUID as the outer UUID.&#x20;
+This first message from Agent -> Mythic has the Payload UUID as the outer UUID _and_ the Payload UUID inside the checkin JSON message. Once the agent gets the reply with a callbackUUID, all future messages will have this callbackUUID as the outer UUID.
 {% endhint %}
 
 #### AES256 Encryption Details
@@ -231,88 +228,55 @@ From here on, the agent messages use the new UUID instead of the payload UUID or
   * This is specifically OAEP with SHA1
 * 4096Bits in size
 
-### EKE by using Diffie-Hellman
+### Your Own Custom EKE
 
-The agent starts running and generates a new Diffie-Hellman key-pair. The agent then sends the following message to Mythic:
-
-```
-Base64( PayloadUUID + AES256(
-    JSON({
-        "action": "staging_dh",
-        "pub_key": "public value for DH",
-        "session_id": "20char string", // unique session ID for this callback
-        })
-    )
-)
-```
-
-where the AES key initially used is defined as the AESPSK value when generating the payload. Similar to the [Initial Checkin](initial-checkin.md#static-encryption-checkin) with a static key, this value will be pre-populated based on the Operation's AESPSK value, but can be swapped out when creating the payload to be any AES256 key.
-
-This message causes the following response:
+This section requires you to have a [#translation-containers](../../../payload-type-development/translation-containers.md#translation-containers "mention") associated with your payload type. The agent sends your own custom message to Mythic:
 
 ```
-Base64( PayloadUUID + AES256(
-    JSON({
-        "action": "staging_dh",
-        "uuid": "UUID", // new UUID for the next message
-        "session_key": Base64( DHPubKey( new aes session key ) ),
-        "session_id": "same 20 char string back"
-        })
-    )
-)
+Base64( payloadUUID + customMessage )
 ```
 
-The response is encrypted with the same AESPSK as used initially, but there's a session\_key value that is encrypted with the public Diffie-Hellman negotiated public key that was in the initial message. The response also includes a new staging UUID for the agent to use. This is _not_ the final UUID for the new callback, this is a temporary UUID to indicate that the next message will be encrypted with the new AES key.
-
-The next message from the agent to Mythic is as follows:
+Mythic looks up the information for the payloadUUID and calls your translation container's `translate_from_c2_format` function. That function gets a dictionary of information like the following:
 
 ```
-Base64( tempUUID + AES256(
-    JSON({
-        "action": "checkin", // required
-        "ip": "127.0.0.1", // internal ip address - required
-        "os": "macOS 10.15", // os version - required
-        "user": "its-a-feature", // username of current user - required
-        "host": "spooky.local", // hostname of the computer - required
-        "pid": 4444, // pid of the current process - required
-        "uuid": "payload uuid", //uuid of the payload - required
-        
-        "architecture": "x64", // platform arch - optional
-        "domain": "test", // domain of the host - optional
-        "integrity_level": 3, // integrity level of the process - optional
-        "external_ip": "8.8.8.8", // external ip if known - optional
-        "encryption_key": "base64 of key", // encryption key - optional
-        "decryption_key": "base64 of key", // decryption key - optional
-        })
-    )
-)
+# { "action": "translate_from_c2_format",
+#   "enc_key": None or base64 of key if Mythic knows of one,
+#   "dec_key": None or base64 of key if Mythic knows of one,
+#   "uuid": uuid of the message,
+#   "profile": name of the c2 profile,
+#   "mythic_encrypts": True or False if Mythic thinks Mythic does the encryption or not,
+#   "type": None or a keyword for the type of encryption. currently only option besides None is "AES256"
+#   "message": base64 of the message that's currently in c2 specific format
+# }
 ```
 
-This checkin data is the same as all the other methods of checking in, the key things here are that the tempUUID is the temp UUID specified in the other message, the inner uuid is the payload uuid, and the AES key used is the negotiated one. It's with this information that Mythic is able to track the new messages as belonging to the same staging sequence and confirm that all of the information was transmitted properly. The final response is as follows:
+To get the `enc_key`, `dec_key`, and `type`, Mythic uses the payloadUUID to then look up information about the payload. It uses the `profile` associated with the message to look up the C2 Profile parameters and look for any parameter with a `crypto_type` set to `true`. Mythic pulls this information and forwards it all to your `translate_from_c2_format` function.
+
+Ok, so that message gets your payloadUUID/crypto information and forwards it to your translation container, but then what?&#x20;
+
+Normally, when the `translate_to_c2_format` function is called, you just translate from your own custom format to the standard JSON dictionary format that Mythic uses. No big deal. However, we're doing EKE here, so we need to do something a little different. Instead of sending back an action of `checkin`, `get_tasking`, `post_response`, etc, we're going to generate an action of `staging_translation`.
+
+Mythic is able to do staging and EKE because it can save temporary pieces of information between agent messages. Mythic allows you to do this too if generate a response like the following:
 
 ```
-Base64( tempUUID + AES256(
-    JSON({
-        "action": "checkin",
-        "id": "UUID", // new UUID for the agent to use
-        "status": "success"
-        })
-    )
-)
+{
+    "action": "staging_translation",
+    "session_id": "some string session id you want to save",
+    "enc_key": the bytes of an encryption key for the next message,
+    "dec_key": the bytes of a decryption key for the next message,
+    "crypto_type": "what type of crypto you're doing",
+    "next_uuid": "the next UUID that'll be in front of the message",
+    "message": "the raw bytes of the message that'll go back to your agent"
+}
 ```
 
-From here on, the agent messages use the new UUID instead of the payload UUID or temp UUID and continues to use the new negotiated AES key.
+Let's break down these pieces a bit:
 
-#### AES256 Encryption Details
+* `action` - this must be "staging\_translation". This is what indicates to Mythic once the message comes back from the `translate_from_c2_format` function that this message is part of staging.
+* `session_id` - this is some random character string you generate so that we can differentiate between multiple instances of the same payload trying to go through the EKE process at the same time.
+* `enc_key` / `dec_key` - this is the raw bytes of the encryption/decryption keys you want for the next message. The next time you get the `translate_from_c2_format` message for this instance of the payload going through staging, THESE are the keys you'll be provided.
+* `crypto_type` - this is more for you than anything, but gives you insight into what the `enc_key` and `dec_key` are. For example, with the `http` profile and the `staging_rsa`, the crypto type is set to `aes256_hmac` so that I know exactly what it is. If you're handling multiple kinds of encryption or staging, this is a helpful way to make sure you're able to keep track of everything.
+* `next_uuid` - this is the next UUID that appears in front of your message (instead of the payloadUUID). This is how Mythic will be able to look up this staging information and provide it to you as part of the next `translate_from_c2_format` function call.
+* `message` - this is the actual raw bytes of the message you want to send back to your agent.
 
-* Padding: PKCS7, block size of 16
-* Mode: CBC
-* IV is 16 random bytes
-* Final message: IV + Ciphertext + HMAC
-  * where HMAC is SHA256 with the same AES key over (IV + Ciphertext)
-
-#### Diffie-Hellman Encryption Details
-
-* key length: 540
-* Generator: 2
-* Group: 17
+This process just repeats as many times as you want until you finally return from `translate_from_c2_format` an actual `checkin` message.
