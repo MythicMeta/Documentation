@@ -252,15 +252,15 @@ function(task, responses){
             ls_path = data["parent_path"] + "/" + data["name"];
         }
         let headers = [
-            {"plaintext": "name", "type": "string"},
-            {"plaintext": "size", "type": "size"},
-            {"plaintext": "owner", "type": "string"},
-            {"plaintext": "group", "type": "string"},
-            {"plaintext": "posix", "type": "string", "width": 8},
-            {"plaintext": "xattr", "type": "button", "width": 10},
-            {"plaintext": "DL", "type": "button", "width": 6},
-            {"plaintext": "LS", "type": "button", "width": 6},
-            {"plaintext": "CS", "type": "button", "width": 6}
+            {"plaintext": "name", "type": "string", "fillWidth": true},
+            {"plaintext": "size", "type": "size", "width": 200,},
+            {"plaintext": "owner", "type": "string", "width": 400},
+            {"plaintext": "group", "type": "string", "width": 400},
+            {"plaintext": "posix", "type": "string", "width": 100},
+            {"plaintext": "xattr", "type": "button", "width": 100, "disableSort": true},
+            {"plaintext": "DL", "type": "button", "width": 100, "disableSort": true},
+            {"plaintext": "LS", "type": "button", "width": 100, "disableSort": true},
+            {"plaintext": "CS", "type": "button", "width": 100, "disableSort": true}
         ];
         let rows = [{
             "rowStyle": data["is_file"] ? file : folder,
@@ -269,6 +269,7 @@ function(task, responses){
                 "copyIcon": true,
                 "startIcon": data["is_file"] ? "file":"openFolder",
                 "startIconHoverText": data["name",
+                "startIconColor": "gold",
                 },
             "size": {"plaintext": data["size"]},
             "owner": {"plaintext": data["permissions"]["owner"]},
@@ -379,16 +380,16 @@ return {"table":[{
 In the end, we're returning a dictionary with the key `table` which has an array of Dictionaries. This means that you can have multiple tables if you want. For each one, we need three things: information about headers, the rows, and the title of the table itself. Not too bad right? Let's dive into the headers:
 
 ```javascript
-let headers = [
-            {"plaintext": "name", "type": "string"},
-            {"plaintext": "size", "type": "size"},
-            {"plaintext": "owner", "type": "string"},
-            {"plaintext": "group", "type": "string"},
-            {"plaintext": "posix", "type": "string", "width": 8},
-            {"plaintext": "xattr", "type": "button", "width": 10},
-            {"plaintext": "DL", "type": "button", "width": 6},
-            {"plaintext": "LS", "type": "button", "width": 6},
-            {"plaintext": "CS", "type": "button", "width": 6}
+let headers =[
+            {"plaintext": "name", "type": "string", "fillWidth": true},
+            {"plaintext": "size", "type": "size", "width": 200,},
+            {"plaintext": "owner", "type": "string", "width": 400},
+            {"plaintext": "group", "type": "string", "width": 400},
+            {"plaintext": "posix", "type": "string", "width": 100},
+            {"plaintext": "xattr", "type": "button", "width": 100, "disableSort": true},
+            {"plaintext": "DL", "type": "button", "width": 100, "disableSort": true},
+            {"plaintext": "LS", "type": "button", "width": 100, "disableSort": true},
+            {"plaintext": "CS", "type": "button", "width": 100, "disableSort": true}
         ];
 ```
 
@@ -404,6 +405,7 @@ Now let's look at the actual rows to display:
                 "copyIcon": true,
                 "startIcon": data["is_file"] ? "file":"openFolder",
                 "startIconHoverText": data["name",
+                "startIconColor": "gold",
             },
             "size": {"plaintext": data["size"]},
             "owner": {"plaintext": data["permissions"]["owner"]},
@@ -543,3 +545,5 @@ Tasking and extra data display button is nice and all, but if you have a lot of 
 Notice how we have the exact same information for the `task` and `dictionary` buttons as before, but they're just in an array format now. It's as easy as that. You can even keep your logic for disabling entries or conditionally not even add them. This allows us to create a dropdown menu like the following screenshot:
 
 ![](<../../.gitbook/assets/Screen Shot 2021-11-04 at 3.03.58 PM.png>)
+
+These menu items also support the `startIcon` , `startIconColor` , and `hoverText`, properties.
