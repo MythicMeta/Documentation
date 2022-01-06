@@ -124,11 +124,12 @@ get_payload(payload_uuid: str, get_contents: bool = True) -> dict
 ```
 
 ```
-search_payloads(payload_types: [str] = None, include_auto_generated: bool = False, description: str = "",
+search_payloads(callback_id: int, payload_types: [str] = None, include_auto_generated: bool = False, description: str = "",
                           filename: str = "", build_parameters: dict = None) -> dict:
     """
     Search payloads based on payload type, if it was auto generated, the description, the filename, or build parameter values.
     Note: This does not search payloads that have been deleted.
+    :param callback_id: The ID of the callback this search is for, this is what's used to limit your search to the right operation.
     :param payload_types: The names of the associated payload type if you want to restrict results
     :param include_auto_generated: Boolean if you want to include payloads that were automatically generated as part of tasking
     :param description: If you want to search for payloads with certain information in their description, this functions like an igrep search
