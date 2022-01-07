@@ -408,6 +408,31 @@ delete_token(TokenId: int, host: str) -> dict
 ```
 
 ```
+create_agentstorage(unique_id: str, data: bytes):
+    Allow Payload Types and Translation containers to store arbitrary data within the database that doesn't fit
+        somewhere else in Mythic's current schema
+    :param unique_id: A unique string identifier
+    :param data:
+    :return: {"unique_id": "unique id here", "data": "base64 of data here"}
+```
+
+```
+get_agentstorage(unique_id: str):
+    Allow Payload Types and Translation containers to fetch arbitrary data within the database that doesn't fit
+        somewhere else in Mythic's current schema
+    :param unique_id: A unique string identifier
+    :return: {"unique_id": "unique id here", "data": "base64 of data here"}
+```
+
+```
+delete_agentstorage(unique_id: str):
+    Allow Payload Types and Translation containers to delete arbitrary data within the database that doesn't fit
+        somewhere else in Mythic's current schema
+    :param unique_id: A unique string identifier
+    :return: Success or Error
+```
+
+```
 delete_file_browser(task_id: int, file_path: str, host: str = None) -> dict
     Mark a file in the file browser as deleted (typically as part of a manual removal via a task)
     :param task_id: The ID number of the task performing this action (task.id)
