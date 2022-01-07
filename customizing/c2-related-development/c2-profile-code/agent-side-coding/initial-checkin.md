@@ -239,15 +239,15 @@ Base64( payloadUUID + customMessage )
 Mythic looks up the information for the payloadUUID and calls your translation container's `translate_from_c2_format` function. That function gets a dictionary of information like the following:
 
 ```
-# { "action": "translate_from_c2_format",
-#   "enc_key": None or base64 of key if Mythic knows of one,
-#   "dec_key": None or base64 of key if Mythic knows of one,
-#   "uuid": uuid of the message,
-#   "profile": name of the c2 profile,
-#   "mythic_encrypts": True or False if Mythic thinks Mythic does the encryption or not,
-#   "type": None or a keyword for the type of encryption. currently only option besides None is "AES256"
-#   "message": base64 of the message that's currently in c2 specific format
-# }
+{
+    "enc_key": None or base64 of key if Mythic knows of one,
+    "dec_key": None or base64 of key if Mythic knows of one,
+    "uuid": uuid of the message,
+    "profile": name of the c2 profile,
+    "mythic_encrypts": True or False if Mythic thinks Mythic does the encryption or not,
+    "type": None or a keyword for the type of encryption. currently only option besides None is "AES256"
+    "message": base64 of the message that's currently in c2 specific format
+}
 ```
 
 To get the `enc_key`, `dec_key`, and `type`, Mythic uses the payloadUUID to then look up information about the payload. It uses the `profile` associated with the message to look up the C2 Profile parameters and look for any parameter with a `crypto_type` set to `true`. Mythic pulls this information and forwards it all to your `translate_from_c2_format` function.
