@@ -256,7 +256,7 @@ Ok, so that message gets your payloadUUID/crypto information and forwards it to 
 
 Normally, when the `translate_to_c2_format` function is called, you just translate from your own custom format to the standard JSON dictionary format that Mythic uses. No big deal. However, we're doing EKE here, so we need to do something a little different. Instead of sending back an action of `checkin`, `get_tasking`, `post_response`, etc, we're going to generate an action of `staging_translation`.
 
-Mythic is able to do staging and EKE because it can save temporary pieces of information between agent messages. Mythic allows you to do this too if generate a response like the following:
+Mythic is able to do staging and EKE because it can save temporary pieces of information between agent messages. Mythic allows you to do this too if you generate a response like the following:
 
 ```
 {
@@ -280,3 +280,12 @@ Let's break down these pieces a bit:
 * `message` - this is the actual raw bytes of the message you want to send back to your agent.
 
 This process just repeats as many times as you want until you finally return from `translate_from_c2_format` an actual `checkin` message.
+
+What if there's other information you need/want to store though? There are three RPC endpoints you can hit that allow you to store arbitrary data as part of your build process, translation process, or custom c2 process:\
+
+
+* `create_agentstorage` - this take a unique\_id string value and the raw bytes data value. The `unique_id` is something that you need to generate, but since you're in control of it, you can make sure it's what you need. This returns a dictionary:
+  * {"unique\_id": "your unique id", "data": "base64 of the data you supplied"}
+* `get_agentstorage` - this takes the unique\_id string value and returns a dictionary of the stored item:&#x20;
+  * {"unique\_id": "your unique id", "data": "base64 of the data you supplied"}
+* `delete_agentstorage` - this takes the unique\_id string value and removes the entry from the database
