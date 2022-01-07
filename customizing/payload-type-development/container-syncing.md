@@ -45,3 +45,10 @@ Syncing happens at a few different times and there are some situations that can 
     * itsafeaturemythic/csharp\_payload:0.0.12
     * itsafeaturemythic/leviathan\_payload:0.0.5
     * itsafeaturemythic/xgolang\_payload:0.0.10
+
+## Current Translation Container Versions
+
+* 4 (Mythic 2.3.1)
+  * `mythic_translator_container==0.0.15`
+  * itsafeaturemythic DockerHub Images:
+    * itsafeaturemythic/`python38_translator_container`:0.0.4
