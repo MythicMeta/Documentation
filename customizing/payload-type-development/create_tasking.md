@@ -213,21 +213,19 @@ class UploadCommand(CommandBase):
         try:
             groupName = task.args.get_parameter_group_name()
             if groupName == "Default":
-                original_file_name = json.loads(task.original_params)["file"]
-                if len(task.args.get_arg("remote_path")) == 0:
-                    task.args.add_arg("remote_path", original_file_name)
-                elif task.args.get_arg("remote_path")[-1] == "/":
-                    task.args.add_arg("remote_path", task.args.get_arg("remote_path") + original_file_name)
-                file_resp = await MythicRPC().execute("create_file", task_id=task.id,
-                    file=base64.b64encode(task.args.get_arg("file")).decode(),
-                    saved_file_name=original_file_name,
-                    delete_after_fetch=False,
-                )
+                file_resp = await MythicRPC().execute("get_file",
+                                                    file_id=task.args.get_arg("file"),
+                                                    task_id=task.id,
+                                                    get_contents=False)
                 if file_resp.status == MythicRPCStatus.Success:
-                    task.args.add_arg("file", file_resp.response["agent_file_id"])
+                    original_file_name = file_resp.response[0]["filename"]
+                    if len(task.args.get_arg("remote_path")) == 0:
+                        task.args.add_arg("remote_path", original_file_name)
+                    elif task.args.get_arg("remote_path")[-1] == "/":
+                        task.args.add_arg("remote_path", task.args.get_arg("remote_path") + original_file_name)
                     task.display_params = f"{original_file_name} to {task.args.get_arg('remote_path')}"
                 else:
-                    raise Exception("Error from Mythic trying to register file: " + str(file_resp.error))
+                    raise Exception("Error from Mythic trying to get file: " + str(file_resp.error))
             elif groupName == "specify already uploaded file by name":
                 # we're trying to find an already existing file and use that
                 file_resp = await MythicRPC().execute("get_file", task_id=task.id,
@@ -254,11 +252,9 @@ class UploadCommand(CommandBase):
 
 The above example takes in a file from the operator and wants to upload it to a specific remote path on the target.
 
-When it comes to the `create_tasking` function, we want to register this file in the Mythic database so we can track that the file exists and is being uploaded to a specific remote target. Taking this exact case an example, when you upload files, 2 things happen:
+When it comes to the `create_tasking` function, there are a few potential things we could do. When a user supplies a file as part of tasking, the file is uploaded to Mythic ahead of your `create_tasking` function being executed. As part of that, you'll notice that when you specify `File` type parameters, what you'll actually get is a UUID instead of file contents. This makes it easier to work with files within Mythic instead of having to shuttle files unnecessarily between docker containers. We can still register new files with Mythic via the `create_file` RPC call, or we can update files via the `update_file` RPC call, or we can register new files with Mythic via the `create_file` RPC call. Taking this exact case an example, when you upload files, 2 things happen:
 
-1. the `task.original_params` (this is what the user sees initially), we'll have the file swapped out with the name of the file they uploaded. So, if we uploaded a file called "bug.jpg", then an example of the `task.original_params` would be: `{"file": "bug.jpg", "remote_path": "/blah/evil.jpg"}`.
-2. The actual parameters that get sent to this function have the raw file contents though, so if you look at `task.args.get_arg("file")`, you'll get the raw bytes of the `bug.jpg` file. This is meant simply as a way to capture the name of the file as well as preventing files from cluttering up the UI for operators. When we send information down to Mythic to track the file, we need to send the base64 encoded contents of the file.
+1. the `task.original_params` (this is what the user sees initially), we'll have the file swapped out with the UUID of the file they uploaded. So, if we uploaded a file called "bug.jpg", then an example of the `task.original_params` would be: `{"file": "UUID HERE", "remote_path": "/blah/evil.jpg"}`.
+2. We want to present something meaningful to the user though when they look back at their tasking. They want to see that they uploaded `bug.jpg` to `/blah/evil.jpg`, not that they uploaded `random uuid here` to `/blah/evil.jpg`. So, we do an RPC call to get the information about the file that was uploaded and grab the `filename` attribute.
 
-When we register the file, we want to track the original name of the file as well, this is why we load the original parameters and get the "file" value (which is the name of the file).
-
-Once the file registration is done, we want the agent to be able to pull this down in chunks, so we swap out the raw contents of the file with a file UUID instead (remember, if you do `task.args.add_arg` for an argument that already exists, it just replaces the value).
+Once the file registration is done, we want the agent to be able to pull this down in chunks, so we keep the file UUID value (remember, if you do `task.args.add_arg` for an argument that already exists, it just replaces the value). Now, if you didn't want to chunk the contents of the file down to the agent and you just wanted the entire contents of the file as part of the parameters, you could swap out the `file` attribute with that value by doing something like `task.args.add_arg("file", file_resp.response[0]["contents"])` - assuming that when you did the original fetch for the file information that you set `get_contents=True`.
