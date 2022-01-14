@@ -81,7 +81,7 @@ The `CommandParameter` class has a few slight adjustments. In addition to the `n
 
 If you don't supply a `cli_name` then the `name` parameter will be used in its place. Similarly, if you don't supply a `display_name`, then `name` will be used. If `name` or `cli_name` have spaces, then the resulting `cli_name` will replace those spaces with `-` to make it more cli friendly.
 
-The `required` and `ui_position` attributes have been removed! They are no longer part of the `CommadnParameter` class. They are now part of the `ParameterGroupInfo` class.
+The `required` and `ui_position` attributes have been removed! They are no longer part of the `CommandParameter` class. They are now part of the `ParameterGroupInfo` class.
 
 #### parameter\_group\_info
 
