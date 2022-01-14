@@ -89,6 +89,18 @@ get_file(task_id: int = None, callback_id: int = None, filename: str = None, lim
 ```
 
 ```python
+update_file(file_id: str, comment: str = None, delete_after_fetch: bool = None,
+                      contents: bytes = None, filename: str = None) -> dict:
+    Given a file identifier, update certain attributes of the file.
+    :param file_id: This is the string UUID identifier for the file
+    :param comment: If you want to update the comment on the file, supply the text here
+    :param delete_after_fetch: If you want this file to be deleted after an agent fetches it, set this to True. It's false by default.
+    :param contents: Supply the raw bytes of the file if you want to update the contents.
+    :param filename: Supply a new filename for the file
+    :return: Success or error code
+```
+
+```python
 get_payload(payload_uuid: str, get_contents: bool = True) -> dict
     Get information about a payload and its contents
     :param payload_uuid: The UUID for the payload you're interested in
