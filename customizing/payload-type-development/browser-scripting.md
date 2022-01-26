@@ -470,37 +470,85 @@ In addition to just specifying the `plaintext` value that is going to be display
 The first kind of button we can do is just a popup to display additional information that doesn't fit within the table. In this example, we're displaying all of Apple's extended attributes via an additional popup.
 
 ```javascript
-{"button": {
-                "name": "View XATTRs",
-                "type": "dictionary",
-                "value": data["permissions"],
-                "leftColumnTitle": "XATTR",
-                "rightColumnTitle": "Values",
-                "title": "Viewing XATTRs",
-                "hoverText": "View additional attributes"
-            }}
+{
+    "button": 
+    {
+        "name": "View XATTRs",
+        "type": "dictionary",
+        "value": data["permissions"],
+        "leftColumnTitle": "XATTR",
+        "rightColumnTitle": "Values",
+        "title": "Viewing XATTRs",
+        "hoverText": "View additional attributes"
+    }
+}
 ```
 
 The button field takes a few values, but nothing crazy. `name` is the name of the button you want to display to the user. the `type` field is what kind of button we're going to display - in this case we use `dictionary` to indicate that we're going to display a dictionary of information to the user. The other type is `task` that we'll cover next. The `value` here should be a Dictionary value that we want to display. We'll display the dictionary as a table where the first column is the key and the second column is the value, so we can provide the column titles we want to use. We can optionally make this button disabled by providing a `disabled` field with a value of `true`. Just like with the normal `plaintext` section, we can also specify `startIcon`, `startIconColor.`Lastly, we provide a `title` field for what we want to title the overall popup for the user.
+
+#### string button
+
+If the data you want to display to the user isn't structured (not a dictionary, not an array), then you probably just want to display it as a string. This is pretty common if you have long file paths or other data you want to display but don't fit nicely in a table form.&#x20;
+
+```json
+{
+    "button": 
+    {
+        "name": "View Strings",
+        "type": "string",
+        "value": "my data string\nwith newlines as well",
+        "title": "Viewing XATTRs",
+        "hoverText": "View additional attributes"
+    }
+}
+```
+
+Just like with the other button types, we can use `startIcon`, `startIconColor`, and `hoverText` for this button as well.
 
 #### task button
 
 This button type allows you to issue additional tasking.
 
 ```javascript
-{"button": {
+{
+    "button": 
+    {
               "name": "DL",
               "type": "task",
               "disabled": !data["is_file"],
               "ui_feature": "file_browser:download",
               "parameters": ls_path,
               "hoverText": "List information about the file/folder"
-            }}
+      }
+  }
 ```
 
 This button has the same `name` and `type` fields as the dictionary button. Just like with the dictionary button we can make the button disabled or not with the `disabled` field. You might be wondering which task we'll invoke with the button. This works the same way we identify which command to issue via the file browser or the process browser - `ui_feature`. These can be anything you want, just make sure you have the corresponding feature listed somewhere in your commands or you'll never be able to task it. Just like with the dictionary button, we can specify `startIcon` and `startIconColor`.&#x20;
 
 The last thing here is the `parameters`. If you provide parameters, then Mythic will automatically use them when tasking. In this example, we're pre-creating the full path for the files in question and passing that along as the parameters to the `download` function. If you don't provide any parameters and the task you're trying to issue takes parameters, then you will get a popup to provide the parameters, just like if you tasked it from the command line.
+
+#### table button
+
+Sometimes the data you want to display is an array rather than a dictionary or big string blob. In this case, you can use the `table` button type and provide all of the same data you did when creating this table to create a new table (yes, you can even have menu buttons on that table).
+
+```json
+{
+    "button":
+    {
+        "name": "view table",
+        "type": "table",
+        "title": "my custom new table",
+        "value": {
+            "headers": [
+                {"plaintext": "test1", "width": 100, "type": "string"}, {"plaintext": "Test2", "type": "string"}
+            ],
+            "rows": [
+                {"test1": {"plaintext": "row1 col 1"}, "Test2": {"plaintext": "row 1 col 2"}}
+            ]
+        }
+    }
+}
+```
 
 #### menu button
 
