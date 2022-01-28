@@ -17,6 +17,13 @@ Syncing happens at a few different times and there are some situations that can 
 
 ## Current PayloadType Versions
 
+* 12 (Mythic 2.3.6)
+  * `mythic_payloadtype_container==0.1.4`
+  * itsafeaturemythic DockerHub Images:
+    * itsafeaturemythic/python38\_payload==0.1.0
+    * itsafeaturemythic/leviathan\_payload==0.1.0
+    * itsafeaturemythic/csharp\_payload==0.1.0
+    * itsafeaturemythic/xgolang\_payload==0.1.0
 * 11 (Mythic 2.3.6)
   * `mythic_payloadtype_container==0.1.1`
   * itsafeaturemythic DockerHub Images:
