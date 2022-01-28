@@ -79,6 +79,7 @@ Creating your own command requires extending this CommandBase class (i.e. `class
     * `load_only` is a boolean to indicate if the command can't be built in at the time of payload creation, but can be loaded in later
     * `suggested_command` is a boolean to indicate if the command should be pre-selected for users when building a payload
     * `filter_by_build_parameter` is a dictionary of `parameter_name:value` for what's required of the agent's build parameters. This is useful for when some commands are only available depending on certain values when building your agent (such as agent version).
+    * You can also add in any other values you want for your own processing. These are simply `key=value` pairs of data that are stored. Some people use this to identify if a command has a dependency on another command. This data can be fetched via RPC calls for things like a `load` command to see what additional commands might need to be included.
   * This ties into the CommandParameter fields `choice_filter_by_command_attributes`, `choices_are_all_commands`, and `choices_are_loaded_commands`.
 * The `create_tasking` function is very broad and covered in [Create\_Tasking](create\_tasking.md#create\_tasking)
 * The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processes and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](process-response.md)).
@@ -138,6 +139,14 @@ class LsArguments(TaskArguments):
 ```
 
 The main purpose of the TaskArguments class is to manage arguments for a command. It handles parsing the `command_line` string into `CommandParameters`, defining the `CommandParameters`, and providing an easy interface into updating/accessing/adding/removing arguments as needed.
+
+As part of the `TaskArguments` subclass, you have access to the following pieces of information:
+
+* `self.command_line` - the parameters sent down for you to parse
+* `self.raw_command_line` - the original parameters that the user typed out. This is useful in case you have additional pieces of information to process or don't want information processed into the standard JSON/Dictionary format that Mythic uses.
+* `self.tasking_location` - this indicates where the tasking came from
+* `self.task_dictionary` - this is a dictionary representation of the task you're parsing the arguments for. You can see things like the initial `parameter_group_name` that Mythic parsed for this task, the user that issued the task, and more.
+* `self.parameter_group_name` - this allows you to manually specify what the parameter group name should be. Maybe you don't want Mythic to do automatic parsing to determine the parameter group name, maybe you have additional pieces of data you're using to determine the group, or maybe you plan on adjusting it alter on. Whatever the case might be, if you set `self.parameter_group_name = "value"`, then Mythic won't continue trying to identify the parameter group based on the current parameters with values.
 
 The class **must** implement the `parse_arguments` method and define the `args` array (it can be empty). This `parse_arguments` method is the one that allows users to supply "short hand" tasking and still parse out the parameters into the required JSON structured input. If you have defined command parameters though, the user can supply the required parameters on the command line (via `-commandParameterName` or via the popup tasking modal via `shift+enter`).
 
@@ -252,7 +261,7 @@ Most command parameters are pretty straight forward - the one that's a bit uniqu
 
 #### parameter\_group\_info
 
-To help with conditional parameters, Mythic 2.3 is introducing parameter groups. Every parameter must belong to at least one parameter group (if one isn't specified by you, then Mythic will add it to the `Default` group and make the parameter `required`.
+To help with conditional parameters, Mythic 2.3 is introducing parameter groups. Every parameter must belong to at least one parameter group (if one isn't specified by you, then Mythic will add it to the `Default` group and make the parameter `required`).
 
 You can specify this information via the `parameter_group_info` attribute on `CommandParameter` class. This attribute takes an array of `ParameterGroupInfo` objects. Each one of these objects has three attributes: `group_name` (string), `required`(boolean) `ui_position` (integer). These things together allow you to provide conditional parameter groups to a command.&#x20;
 
@@ -332,3 +341,7 @@ async def get_files(self, callback: dict) -> [str]:
 ```
 
 In the above code block, we're searching for files, not getting their contents, not limiting ourselves to just what's been uploaded to the callback we're tasking, and looking for all files (really it's all files that have "" in the name, which would be all of them). We then go through to de-dupe the filenames and return that list to the user.
+
+### Processing Order
+
+So, with all that's going on, it's helpful to know what gets called, when, and what you can do about it.
