@@ -56,7 +56,7 @@ function(task, responses){
         if(responses.length > 0){
             let data = JSON.parse(responses[0]);
             return {"screenshot":[{
-                "agent_file_id": data["agent_file_id"],
+                "agent_file_id": [data["agent_file_id"]],
                 "variant": "contained",
                 "name": "View Screenshot",
                 "hoverText": "View screenshot in modal"
@@ -70,7 +70,7 @@ function(task, responses){
         if(responses.length > 0){
             let data = JSON.parse(responses[0]);
             return {"screenshot":[{
-                    "agent_file_id": data["agent_file_id"],
+                    "agent_file_id": [data["agent_file_id"]],
                     "variant": "contained",
                     "name": "View Partial Screenshot",
                     "hoverText": "View partial screenshot in modal"
@@ -87,7 +87,7 @@ function(task, responses){
 This function does a few things:
 
 1. If the task status includes the word "error", then we don't want to process the response like our standard structured output because we returned some sort of error instead. In this case, we'll do the same thing we did in the first step and simply return all of the output as `plaintext`.
-2. If the task is completed and isn't an error, then we can verify that we have our responses that we expect. In this case, we simply expect a single response with some of our data in it. The one piece of information that the browser script needs to render a screenshot is the `agent_file_id` or `file_id` of the screenshot you're trying to render. If you want to return this information from the agent, then this will be the same `file_id` that Mythic returns to you for transferring the file. If you display this information via `process_response` output from your agent, then you're likely to pull the file data via an RPC call, and in that case, you're looking for the `agent_file_id` value.
+2. If the task is completed and isn't an error, then we can verify that we have our responses that we expect. In this case, we simply expect a single response with some of our data in it. The one piece of information that the browser script needs to render a screenshot is the `agent_file_id` or `file_id` of the screenshot you're trying to render. If you want to return this information from the agent, then this will be the same `file_id` that Mythic returns to you for transferring the file. If you display this information via `process_response` output from your agent, then you're likely to pull the file data via an RPC call, and in that case, you're looking for the `agent_file_id` value. You'll notice that this is an _array_ of identifiers. This allows you to supply multiple at once (for example: you took 5 screenshots over a few minutes or you took screenshots of multiple monitors) and Mythic will create a modal where you can easily click through all of them.
 3. To actually create a screenshot, we return a dictionary with a key called `screenshot` that has an array of Dictionaries. We do this so that you can actually render multiple screenshots at once (such as if you fetched information for multiple monitors at a time). For each screenshot, you just need three pieces of information: the `agent_file_id`, the `name` of the button you want to render, and the `variant` is how you want the button presented (`contained` is a solid button and `outlined` is just an outline for the button).
 4. If we didn't error and we're not done, then the status will be `processed`. In that case, if we have data we want to also display the partial screenshot, but if we have no responses yet, then we want to just inform the user that we don't have anything yet.
 
