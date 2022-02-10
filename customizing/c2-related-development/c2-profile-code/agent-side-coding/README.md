@@ -2,7 +2,7 @@
 
 This section talks about the different components for creating messages _from_ the agent _to_ a C2 docker container and how those can be structured within a C2 profile. Specifically, this goes into the following components:
 
-* [Uploading](action-upload.md) Files
+* [Uploading](../../../hooking-features/action-upload.md) Files
 * How [agent messages](agent-message-format.md) are formatted
 * How to perform [initial checkins](initial-checkin.md) and do encrypted [key exchanges](initial-checkin.md#encrypted-key-exchange-checkins)
 * How to [Get Tasking](action\_get\_tasking.md)
@@ -19,4 +19,3 @@ Every C2 profile has zero or more C2 Parameters that go with it. These describe 
 * `required` - Indicate if this is a required field or not.
 * `randomized` - This is a boolean indicating if the parameter should be randomized each time. This comes into play each time a payload is generated with this c2 profile included. This allows you to have a random value in the c2 profile that's randomized for each payload (like a named pipe name).
 * `format_string` - If `randomized` is `true`, then this is the regex format string used to generate that random value. For example, `[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}` will generate a UUID4 each time.
-
