@@ -2,7 +2,7 @@
 
 This section talks about the different components for creating messages _from_ the agent _to_ a C2 docker container and how those can be structured within a C2 profile. Specifically, this goes into the following components:
 
-* [Uploading](../../../hooking-features/action-upload.md) Files
+* [Uploading](action-upload.md) Files
 * How [agent messages](agent-message-format.md) are formatted
 * How to perform [initial checkins](initial-checkin.md) and do encrypted [key exchanges](initial-checkin.md#encrypted-key-exchange-checkins)
 * How to [Get Tasking](action\_get\_tasking.md)

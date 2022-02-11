@@ -59,9 +59,14 @@ Base64( PayloadUUID + JSON({
     "external_ip": "8.8.8.8", // external ip if known - optional
     "encryption_key": "base64 of key", // encryption key - optional
     "decryption_key": "base64 of key", // decryption key - optional
+    "process_name": "osascript", // name of the current process - optional
     })
 )
 ```
+
+{% hint style="info" %}
+`integrity_level` is an integer from 1-4 that indicates the integrity level of the callback. On Windows, these levels correspond to low integrity (1) , medium integrity (2), high integrity (3), or SYSTEM integrity (4). On Linux, these don't have a great mapping, but you can think of (2) as a standard user, (3) as a user that's in the sudoers file or is able to run sudo, and (4) as the root user.
+{% endhint %}
 
 * The JSON section is not encrypted in any way, it's all plaintext.
 
@@ -76,7 +81,7 @@ Base64( PayloadUUID + JSON({
 )
 ```
 
-From here on, the agent messages use the new UUID instead of the payload UUID.
+From here on, the agent messages use the new UUID instead of the payload UUID. This allows Mythic to track a payload trying to make a new callback vs a callback based on a payload.
 
 ## Static Encryption Checkin
 
