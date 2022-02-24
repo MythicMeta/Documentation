@@ -57,6 +57,7 @@
   * [Scripting Credentials](scripting/scripting-credentials.md)
   * [Scripting Disabled Commands Profiles](scripting/scripting-disabled-commands-profiles.md)
   * [Scripting Event Messages](scripting/scripting-event-messages.md)
+* [Presentations / Webinars](presentations-webinars.md)
 * [Common Errors](common-errors.md)
 
 ## Customizing
