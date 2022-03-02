@@ -144,8 +144,7 @@ There are two currently supported options for doing an encrypted key exchange in
 
 * Client-side generated RSA keys
   * leveraged by the apfell-jxa and poseidon agents
-* Diffie-Hellman key exchange
-  * leveraged by the viper agent
+* Agent specific custom EKE
 
 ### EKE by generating client-side RSA keys
 
