@@ -8,14 +8,18 @@ There are two scenarios to updating Mythic: updates within the minor version (1.
 
 ### Updating within the minor version
 
-This is when you're on version 1.2 for example and want to pull in new updates (but not a new minor version like 1.3 or 1.4). In this case, the database schema should not have changed.&#x20;
+This is when you're on version 1.2 for example and want to pull in new updates (but not a new minor version like 1.3 or 1.4). In this case, the database schema should not have changed.
 
 1. Pull in the latest code for your version (if you're still on the current version, this should be as easy as a `git pull`)
 2. Restart Mythic to pull in the latest code changes into the docker containers with `sudo ./mythic-cli mythic start`
 
 ### Updating minor or major versions
 
-This is when you're on version 1.2 for example and want to upgrade to version 1.3 or 2.1 for example. In this case, the database schema has changed. In order to upgrade, you'll end up losing all of the information in your database, so make sure you download any files, export any reports, or save any tasking you've done.
+This is when you're on version 1.2 for example and want to upgrade to version 1.3 or 2.1 for example. In this case, the database schema has changed.&#x20;
+
+{% hint style="danger" %}
+In order to upgrade, you'll end up losing all of the information in your database, so make sure you download any files, export any reports, or save any tasking you've done. This is irreversible! The entire database will be cleared and reset back to default.
+{% endhint %}
 
 1. Reset the database with `sudo ./mythic-cli database reset`
 2. Pull in the version you want to upgrade to (if you're wanting to upgrade to the latest, it's as easy as `git pull`)
