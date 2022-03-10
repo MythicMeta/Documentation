@@ -10,7 +10,7 @@ This is a nice time saver when creating multiple payloads throughout an operatio
 
 ## Where is it?
 
-The `Save Parameters` button is located next to each C2 profile by going to "Global Configurations" -> "C2 Profiles " from the top navigation bar.&#x20;
+The `Save Parameters` button is located next to each C2 profile by clicking the "headphones" icon at the top of the screen.
 
 ### How to create an instance
 
