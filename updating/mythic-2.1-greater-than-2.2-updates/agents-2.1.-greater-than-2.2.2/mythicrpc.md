@@ -542,19 +542,30 @@ update_loaded_commands(task_id: int, commands: [str], add: bool = None, remove: 
 ```
 
 ```python
-create_subtask(parent_task_id: int, command: str, params: str = '', files: dict = None, subtask_callback_function: str = None, subtask_group_name: str = None, tags: [<class 'str'>] = None, group_callback_function: str = None) -> dict
+create_subtask(parent_task_id: int, command: str, params_string: str = None, params_dict: dict = None, files: dict = None,
+                         subtask_callback_function: str = None, subtask_group_name: str = None, tags: [str] = None,
+                         group_callback_function: str = None) -> dict:
     Issue a new task to the current callback as a child of the current task.
     You can use the "subtask_callback_function" to provide the name of the function you want to call when this new task enters a "completed=True" state.
-    If you issue create_subtask_group, the group name and group callback functions are propagated here
+    If you issue create_subtask_group, the group name and group callback functions are propagated here.
+    You MUST provide params_string or params_dict to this function, but you don't provide both.
     :param parent_task_id: The id of the current task (task.id)
     :param command: The name of the command you want to use
-    :param params: The parameters you want to issue to that command
+    :param params_string: The string parameters you want to issue to that command (this gets passed to the command's parse_arguments function)
+    :param params_dict: THe dictionary of parameters you want to issue to that command (this will get converted into a string and passed to that command's parse_arguments function)
     :param files: If you want to pass along a file to the task, provide it here (example provided)
     :param subtask_callback_function: The name of the function to call on the _parent_ task when this function exits
     :param subtask_group_name: An optional name of a group so that tasks can share a single callback function
     :param tags: A list of strings of tags you want to apply to this new task
     :param group_callback_function: If you're grouping tasks together, this is the name of the shared callback function for when they're all in a "completed=True" state
     :return: Information about the task you just created
+    If the command for your subtask normally takes a parameter of type File, then we need to do something a little bit differently for you to pass that along to the subtask.
+    Let's say you want to call the "upload" command which takes a `path` argument which is a string and a `file` argument which is a type of File.
+    To call this as a subtask you'd need to pass in:
+        MythicRPC().execute("create_subtask", parent_task_id=task.id, command="upload", params_dict={"path": "/wherever", "file": "filename"}, files={"file": "base64 file contents"})
+    Notice here that in the parameters piece, the "file" value is the filename and in the "files" parameter, we associated it with the file contents.
+    This allows us to save off the filename in the task's "original_params" while still getting access to the contents in the "params" value.
+    """
     
 create_subtask_group(parent_task_id: int, tasks: [<class 'dict'>], subtask_group_name: str = None, tags: [<class 'str'>] = None, group_callback_function: str = None) -> dict
     Create a group of subtasks at once and register a single callback function when the entire group is done executing.
