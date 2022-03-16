@@ -110,6 +110,7 @@
 * [FAQ / Troubleshooting Tips](common-qa/faq-troubleshooting-tips.md)
 * [Change Log](common-qa/change-log.md)
 * [Next Release](common-qa/next\_release.md)
+* [Tip of the Week](common-qa/tip-of-the-week.md)
 
 ## Updating
 
