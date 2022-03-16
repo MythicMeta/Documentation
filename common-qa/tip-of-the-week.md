@@ -1,5 +1,5 @@
 ---
-description: Helpful tips and tricks for Mythic basic and power users
+description: Helpful tips and tricks for Mythic operators, devs, and power users
 ---
 
 # Tip of the Week
