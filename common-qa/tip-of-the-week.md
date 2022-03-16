@@ -8,4 +8,4 @@ This page and its sub-pages are dedicated to providing helpful tips and tricks f
 
 ## Mythic UI Tips
 
-1. The tables for the Active Callbacks, File Browser, and Process browser all have a right-click context menu on the headers where you can show/hide columns and even filter columns.
+1. The tables for the Active Callbacks, File Browser, and Process Browser all have a right-click context menu on the headers where you can show/hide columns and even filter columns based on what they contain.
