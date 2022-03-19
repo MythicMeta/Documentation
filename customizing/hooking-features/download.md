@@ -2,7 +2,7 @@
 description: Download a file from the target to the Mythic server
 ---
 
-# Download
+# File Downloads (Agent -> Mythic)
 
 ## What does it mean to download a file?
 
@@ -27,11 +27,13 @@ When an agent is ready to transfer a file from agent to Mythic, it first needs t
 ```javascript
 {"action": "post_response", "responses": [
     {
-        "total_chunks": 4, 
         "task_id": "UUID here",
-        "full_path": "/test/test2/test3.file" // full path to the file downloaded
-        "host": "hostname the file is downloaded from"
-        "is_screenshot": false //indicate if this is a file or screenshot
+        "download": {
+            "total_chunks": 4, 
+            "full_path": "/test/test2/test3.file" // full path to the file downloaded
+            "host": "hostname the file is downloaded from"
+            "is_screenshot": false //indicate if this is a file or screenshot
+        }
     }
 ]}
 ```
@@ -44,17 +46,17 @@ Mythic will respond with a file\_id:
 {"action": "post_response", "responses": [{
         "status": "success",
         "file_id": "UUID Here"
-        "task_id": "task uuid here"
+        "task_id": "task uuid here",
     }
 ]}
 ```
 
 ## Example (agent response pt. 2-n):
 
-The agent sends back each chunk sequentially and calls out the file\_id its referring to along with the actual chunked data.&#x20;
+The agent sends back each chunk sequentially and calls out the file\_id its referring to along with the actual chunked data.
 
 {% hint style="warning" %}
-The `chunk_num` field is 1-based. So, the first chunk you send is `"chunk_num": 1`.&#x20;
+The `chunk_num` field is 1-based. So, the first chunk you send is `"chunk_num": 1`.
 {% endhint %}
 
 Mythic tracks the size of chunks, but doesn't search via offsets to insert chunks out of order, so make sure you send the chunks in order.
@@ -66,10 +68,12 @@ If your agent language is strongly typed or you need to supply all of the fields
 ```javascript
 {"action": "post_response", "responses": [{
     {
-        "chunk_num": 1, 
-        "file_id": "UUID From previous response", 
-        "chunk_data": "base64_blob==",
-        "task_id": "task uuid"
+        "task_id": "task uuid",
+        "download": {
+            "chunk_num": 1, 
+            "file_id": "UUID From previous response", 
+            "chunk_data": "base64_blob==",
+        }
     }
 ]}
 ```
