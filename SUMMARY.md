@@ -71,6 +71,7 @@
   * [Credentials](customizing/hooking-features/credentials.md)
   * [File Downloads (Agent -> Mythic)](customizing/hooking-features/download.md)
   * [File Uploads (Mythic -> Agent)](customizing/c2-related-development/c2-profile-code/agent-side-coding/action-upload.md)
+  * [Screenshots](customizing/hooking-features/screenshots.md)
   * [Commands](customizing/hooking-features/commands.md)
   * [Keylog](customizing/hooking-features/keylog.md)
   * [File Browser](customizing/hooking-features/file-browser.md)
