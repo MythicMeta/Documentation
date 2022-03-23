@@ -518,12 +518,14 @@ This button type allows you to issue additional tasking.
               "disabled": !data["is_file"],
               "ui_feature": "file_browser:download",
               "parameters": ls_path,
-              "hoverText": "List information about the file/folder"
+              "hoverText": "List information about the file/folder",
+              "openDialog": false,
+              "getConfirmation": false
       }
   }
 ```
 
-This button has the same `name` and `type` fields as the dictionary button. Just like with the dictionary button we can make the button disabled or not with the `disabled` field. You might be wondering which task we'll invoke with the button. This works the same way we identify which command to issue via the file browser or the process browser - `ui_feature`. These can be anything you want, just make sure you have the corresponding feature listed somewhere in your commands or you'll never be able to task it. Just like with the dictionary button, we can specify `startIcon` and `startIconColor`.&#x20;
+This button has the same `name` and `type` fields as the dictionary button. Just like with the dictionary button we can make the button disabled or not with the `disabled` field. You might be wondering which task we'll invoke with the button. This works the same way we identify which command to issue via the file browser or the process browser - `ui_feature`. These can be anything you want, just make sure you have the corresponding feature listed somewhere in your commands or you'll never be able to task it. Just like with the dictionary button, we can specify `startIcon` and `startIconColor`. The `openDialog` flag allows you to specify that the tasking popup modal should open and be partially filled out with the data you supplied in the `parameters` field. Similarly, the `getConfirmation` flag allows you to force an `accept/cancel` dialog to get the user's confirmation before issuing a task. This is handy, especially if the tasking is something potentially dangerous (killing a process, removing a file, etc).
 
 The last thing here is the `parameters`. If you provide parameters, then Mythic will automatically use them when tasking. In this example, we're pre-creating the full path for the files in question and passing that along as the parameters to the `download` function. If you don't provide any parameters and the task you're trying to issue takes parameters, then you will get a popup to provide the parameters, just like if you tasked it from the command line.
 
