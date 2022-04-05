@@ -26,13 +26,13 @@ Without going into all the details of the SOCKS5 protocol, agents transmit dicti
 
 These messages contain three components:
 
-* `exit` - boolean True or False. This indicates to either Mythic or your Agent that the connection has been terminated from one end and should be closed on the other end. Because Mythic and 2 HTTP connections sit between the actual tool you're trying to proxy and the agent that makes those requests on your tool's behalf, we need this sort of flag to indicate that a TCP connection has closed on one side.&#x20;
+* `exit` - boolean True or False. This indicates to either Mythic or your Agent that the connection has been terminated from one end and should be closed on the other end (after sending `data`). Because Mythic and 2 HTTP connections sit between the actual tool you're trying to proxy and the agent that makes those requests on your tool's behalf, we need this sort of flag to indicate that a TCP connection has closed on one side.&#x20;
 * `server_id` - integer. This number is how Mythic and the agent can track individual connections. Every new connection from a proxied tool (like through proxychains) will generate a new `server_id` that Mythic will send with data to the Agent.
 * `data` - base64 string. This is the actual bytes that the proxied tool is trying to send.
 
 ## How does this fit into Agent Messages?
 
-These SOCKS messages are passed around as an array of dictionaries in `get_tasking` and `post_response` messages via a `socks` key:
+These SOCKS messages are passed around as an array of dictionaries in `get_tasking` and `post_response` messages via a (added if needed) `socks` key:
 
 ```
 {
@@ -88,7 +88,7 @@ For the most part, the message processing is pretty straight forward:
 1. Get a new SOCKS array
 2. Get the first element from the list
 3. If we know the `server_id`, then we can forward the message off to the appropriate thread or channel to continue processing. If we've never seen the server\_id before, then it's likely a new connection that opened up from an operator starting a new tool through proxychains, so we need to handle that appropriately.
-4. For new connections, the first message is always a SOCKS protocol message with encoded data for IP:PORT to connect to. There's also a very specific message that gets sent back as a response to this. This small negotiation piece isn't something that Mythic created, it's just part of the SOCKS protocol to ensure that a tool like proxychains gets confirmation the agent was able to reach the desired IP:PORT
+4. For new connections, the first message is always a [SOCKS Request message](https://datatracker.ietf.org/doc/html/rfc1928#section-4) with encoded data for IP:PORT to connect to. This means that SOCKS authenticaion is already done. There's also a very specific message that gets sent back as a response to this. This small negotiation piece isn't something that Mythic created, it's just part of the [SOCKS protocol](https://datatracker.ietf.org/doc/html/rfc1928) to ensure that a tool like proxychains gets confirmation the agent was able to reach the desired IP:PORT
 5. For existing connections, the agent looks at if `exit` is True or not. If `exit` is True, then the agent should close its corresponding TCP connection and clean up those resources. If it's not exit, then the agent should base64 decode the `data` field and forward those bytes through the existing TCP connection.
 6. The agent should also be streaming data back from its open TCP connections to Mythic in its `get_tasking` and `post_response` messages.
 
