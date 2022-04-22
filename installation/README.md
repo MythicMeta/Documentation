@@ -9,9 +9,7 @@ $ git clone https://github.com/its-a-feature/Mythic
 ```
 
 {% hint style="info" %}
-This is made to work with docker and docker-compose, so they both need to be installed. If docker is not installed on your ubuntu machine, you can use the `./install_docker_ubuntu.sh` script to install it for you.\
-If you're running on debian, use the `./install_docker_debian.sh` instead.
-{% endhint %}
+This is made to work with docker and docker-compose, so they both need to be installed. If docker is not installed on your machine, you can use the `./install_docker.sh` script to install it for you. Currently only Ubuntu, Debian and Kali are supported. {% endhint %}
 
 {% hint style="danger" %}
 Mythic must be installed on Linux. While macOS supports Docker and Docker-Compose, macOS doesn't handle the shared host networking that Mythic relies on for C2 containers. You can still access the Browser interface from any OS, but the Mythic instance must be installed on Linux
