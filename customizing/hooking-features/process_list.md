@@ -16,7 +16,7 @@ With a special format for process listing, Mythic can track all the different pr
 
 ### Output Format
 
-Naturally, this has a special format for us to make it the most useful. Like almost everything else in Mythic, this requires structured output for each process we want the following:&#x20;
+Naturally, this has a special format for us to make it the most useful. Like almost everything else in Mythic, this requires structured output for each process we want the following:
 
 ```python
  {"action": "post_response", "responses": [
@@ -30,7 +30,7 @@ Naturally, this has a special format for us to make it the most useful. Like alm
         "parent_process_id": ppid, //optional
         "command_line": "command line if you can get it", //optional
         "integrity_level": 3, //optional
-        "start_time": "utc start time string", //optional
+        "start_time": unix epoch time in miliseconds, //optional
         "description": "if it has one", //optional
         "signer": "signing information if you can get it", //optional
     } 
@@ -39,7 +39,6 @@ Naturally, this has a special format for us to make it the most useful. Like alm
 ]}
 ```
 
-All that's needed is an array of all the processes with the above information in the `processes` field of your `post_response` action. That allows Mythic to create a process hierarchy (if you supply both `process_id` and `parent_process_id`) and a sortable/filterable table of processes. The above example shows a `post_response` with one response in it. That one response has a `processes` field with an array of processes it wants to report.&#x20;
+All that's needed is an array of all the processes with the above information in the `processes` field of your `post_response` action. That allows Mythic to create a process hierarchy (if you supply both `process_id` and `parent_process_id`) and a sortable/filterable table of processes. The above example shows a `post_response` with one response in it. That one response has a `processes` field with an array of processes it wants to report.
 
 This new view also allows you to `diff` two different process listing outputs to see what processes were added or removed.
-
