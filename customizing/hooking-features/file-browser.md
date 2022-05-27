@@ -46,7 +46,7 @@ async def parse_arguments(self):
             self.add_arg("file_browser", "true")
 ```
 
-In the above example we check if we are given a JSON string or not by checking that the `self.command_line` length is greater than 0 and that the first character is a `{`. We can then parse it into a Python dictionary and check for the two cases. If we're given something with `host` in it, then it must come from the file browser instead of the operator normally, so we take the supplied parameters and add them to what the command normally needs. In this case, since we only have the one argument `path`, we take the `path` and `file` variables from the file browser dictionary and combine them for our path variable.&#x20;
+In the above example we check if we are given a JSON string or not by checking that the `self.command_line` length is greater than 0 and that the first character is a `{`. We can then parse it into a Python dictionary and check for the two cases. If we're given something with `host` in it, then it must come from the file browser instead of the operator normally, so we take the supplied parameters and add them to what the command normally needs. In this case, since we only have the one argument `path`, we take the `path` and `file` variables from the file browser dictionary and combine them for our path variable.
 
 #### Agent File Browsing Responses
 
@@ -68,8 +68,8 @@ We have another component to the `post_response` for agents.
                 "name": "name of the file or folder you're listing",
                 "parent_path": "full path of the parent folder",
                 "success": True or False,
-                "access_time": "string of the access time for the entity",
-                "modify_time": "string of the modify time for the entity",
+                "access_time": unix epoc time in miliseconds,
+                "modify_time": unix epoc time in miliseconds,
                 "size": 1345, //size of the entity
                 "update_deleted": True, //optional
                 "files": [ // if this is a folder, include data on the files within
@@ -77,8 +77,8 @@ We have another component to the `post_response` for agents.
                         "is_file": "true or false",
                         "permissions": {json of data here that you want to show},
                         "name": "name of the entity",
-                        "access_time": "string of access time",
-                        "modify_time": "string of modify time",
+                        "access_time": unix epoc time in miliseconds,
+                        "modify_time": unix epoc time in miliseconds,
                         "size": 13567 // size of the entity
                     }
                 ]
@@ -98,11 +98,11 @@ By having this information in _another_ component within the responses array, yo
 
 #### update deleted
 
-There's a special key in there that doesn't really match the rest of the normal "file" data in that file\_browser response - `update`. If you include this key as `True` and your `success` flag is `True`, then Mythic will use the data presented here to update which files are deleted.&#x20;
+There's a special key in there that doesn't really match the rest of the normal "file" data in that file\_browser response - `update`. If you include this key as `True` and your `success` flag is `True`, then Mythic will use the data presented here to update which files are deleted.
 
-By default, if you list the contents of `~/Downloads` twice, then the view you see in the UI is a _merge_ of all the data from those two instance of listing that folder. However, that might not _always_ be what you want. For instance, if a file was deleted between the first and second listing, that deletion won't be reflected in the UI because the data is simply merged together. If you want that delete to be automatically picked up and reported as a deleted file, use the `update_deleted` flag to say to Mythic "hey, this should be everything that's in the folder, if you have something else that used to be there but I'm not reporting back right now, assume it's deleted".&#x20;
+By default, if you list the contents of `~/Downloads` twice, then the view you see in the UI is a _merge_ of all the data from those two instance of listing that folder. However, that might not _always_ be what you want. For instance, if a file was deleted between the first and second listing, that deletion won't be reflected in the UI because the data is simply merged together. If you want that delete to be automatically picked up and reported as a deleted file, use the `update_deleted` flag to say to Mythic "hey, this should be everything that's in the folder, if you have something else that used to be there but I'm not reporting back right now, assume it's deleted".
 
-You might be wondering why this isn't just the default behavior for listing files. There are two main other scenarios that we want to support that are counter to this idea - paginated results (only return 20 files at a time) and filtered results (only return files in the folder that end in .txt). In these cases, we don't want the rest of the data to be automatically marked as deleted because we're clearly not returning the full picture of what's in a folder. That's why it's an optional flag to say to performing the automatic updates. If you want to be explicit with things though (for example, if you delete a file and want to report it back without having to re-list the entire contents of the directory), you can use the next section - FIle Removal.&#x20;
+You might be wondering why this isn't just the default behavior for listing files. There are two main other scenarios that we want to support that are counter to this idea - paginated results (only return 20 files at a time) and filtered results (only return files in the folder that end in .txt). In these cases, we don't want the rest of the data to be automatically marked as deleted because we're clearly not returning the full picture of what's in a folder. That's why it's an optional flag to say to performing the automatic updates. If you want to be explicit with things though (for example, if you delete a file and want to report it back without having to re-list the entire contents of the directory), you can use the next section - FIle Removal.
 
 ### File Removal
 
