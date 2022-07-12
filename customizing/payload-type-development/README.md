@@ -155,20 +155,34 @@ External agents need to connect to `mythic_rabbitmq` in order to send/receive me
 {% endhint %}
 
 1. Install python 3.8+ in the VM or on the computer
-2. pip3 install aio\_pika (this is used to communicate via rabbitmq)
-3. pip3 install mythic-payloadtype-container (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention")).
-4. Create a folder on the computer or VM (let's call it path `/pathA`).
-5. Do the same folder structure and files as above in the Payload\_Types/\[agent name] folder (_copy everything from the `Example_Payload_Type`_ \_folder). Essentially, your `/pathA` path will be the new `Payload_Types/[agent name]` folder.
-   1. Your agent code will be in `/pathA/agent_code/`. You can create a Visual Studio project here and simply configure it however you need.
-   2. Your Mythic-based code (payload definitions, tasking functions, builder function, etc) will be in `/pathA/mythic/`.&#x20;
-6. Edit the `rabbitmq_config.json` with the parameters you need
+2. `pip3 install mythic-payloadtype-container` (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention")).
+3. Create a folder on the computer or VM (let's call it path `/pathA`). Essentially, your `/pathA` path will be the new `Payload_Types/[agent name]` folder. From the Mythic install, copy the contents of `Mythic/Example_Payload_Type` to `/pathA`. So, you should have `/pathA/agent_code/`, `/pathA/mythic/` and `/pathA/Dockerfile` (that last one won't matter for us though).
+4. Your agent code will be in `/pathA/agent_code/`. You can create a Visual Studio project here and simply configure it however you need.
+5. Your Mythic-based code (payload definitions, tasking functions, builder function, etc) will be in `/pathA/mythic/`.&#x20;
+6. Edit the `/pathA/mythic/rabbitmq_config.json` with the parameters you need
    1. the `host` value should be the IP address of the main Mythic install
    2. the `name` value should be the name of the payload type (this is tied into how the routing is done within rabbitmq). For Mythic's normal docker containers, this is set to `hostname` because the hostname of the docker container is set to the name of the payload type. For this case though, that might not be true. So, you can set this value to the name of your payload type instead (this must match your agent name **exactly**).
-   3. the `container_files_path` should be the absolute path to the folder in step 3 (`/pathA`in this case)
-7. export a `PYTHONPATH` variable adding your `/pathA` and `/pathA/mythic`
-8. External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. By default, this container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`). The `sudo ./mythic-cli config payload` will ask if you want to do this too.
+   3. the `container_files_path` should be the absolute path to the folder in step 3 (`/pathA/`in this case).
+   4. leave `virtual_host` and `username` the same
+   5. You'll need the password of rabbitmq from your Mythic instance. You can either get this from the `Mythic/.env` file, by running `sudo ./mythic-cli config get rabbitmq_password`, or if you run `sudo ./mythic-cli config payload` you'll see it there too.
+7. External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. By default, this container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`). The `sudo ./mythic-cli config payload` will ask if you want to do this too.
+8. In `/pathA/mythic/agent_functions/builder.py` is where you define the information about your new Payload Type as well as define what it means to "build" your agent. For starters though, just make sure that the `name` in the `/pathA/mythic/rabbitmq_config.json` file matches the `name` in the class definition here **exactly**.
 9. Run `python3.8 mythic_service.py` and now you should see this container pop up in the UI
 10. If you already had the corresponding payload type registered in the Mythic interface, you should now see the red light turn green.
+
+You should see output similar to the following:
+
+```
+itsafeature@spooky mythic % python3 mythic_service.py 
+[*] To enable debug logging, set `MYTHIC_ENVIRONMENT` variable to `testing`
+[*] Mythic PayloadType Version: 12
+[*] PayloadType PyPi Version: 0.1.7
+[*] Setting hostname (which should match payload type name exactly) to: test
+[*] Trying to connect to rabbitmq at: 192.168.53.149:5672
+[+] Ready to go!
+[*] mythic_service - Waiting for messages in mythic_service with version 12.
+[*] mythic_service - total instances of test container running: 1
+```
 
 {% hint style="warning" %}
 If you mythic instance has a randomized password for `rabbitmq_password`, then you need to make sure that the password from `Mythic/.env` after you start Mythic for the first time is copied over to your vm. You can either add this to your `rabbitmq_config.json` file or set it as an environment variable (`MYTHIC_RABBITMQ_PASSWORD`).
