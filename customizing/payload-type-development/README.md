@@ -20,7 +20,8 @@ There are a lot of things involved in making your own agent, c2 profile, or tran
 
 This organization is broken out in five main repos:
 
-* `Mythic_CLI` - This holds all of the code for the PyPi package, `mythic`, that you can use to script up actions.
+* `Mythic_Scripting` - This holds all of the code for the PyPi package, `mythic`, that you can use to script up actions.
+* `Mythic_CLI` - This holds all of the Golang code for the `mythic-cli` binary.
 * `Mythic_Translator_Container` - This holds all of the code for the PyPi package, `mythic_translator_container`, that you can use to build your own translation container.
 * `Mythic_PayloadType_Container` - This holds all of the code for the PyPi package, `mythic_payloadtype_container`, that you can use to create your own payload type docker image or when turning a vm into your own payloadtype container.
 * `Mythic_C2Profile_Container` - This holds all of the code for the PyPi package, `mythic_c2_container`, that you can use to create your own c2 profile docker image or when turning an arbitrary host into a c2 profile service.
@@ -53,7 +54,7 @@ Within `Mythic/Payload_Types/` make a new folder that matches the name of your a
 The default container is pretty bare bones except for python 3.8. Start your `Dockerfile` off with:
 
 ```
-From itsafeaturemythic/python38_payload:0.0.7
+From itsafeaturemythic/python38_payload:0.1.1
 ```
 
 On the next lines, just add in any extra things you need for your agent to properly build, such as:
@@ -158,6 +159,8 @@ External agents need to connect to `mythic_rabbitmq` in order to send/receive me
 3. pip3 install mythic-payloadtype-container (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention")).
 4. Create a folder on the computer or VM (let's call it path `/pathA`).
 5. Do the same folder structure and files as above in the Payload\_Types/\[agent name] folder (_copy everything from the `Example_Payload_Type`_ \_folder). Essentially, your `/pathA` path will be the new `Payload_Types/[agent name]` folder.
+   1. Your agent code will be in `/pathA/agent_code/`. You can create a Visual Studio project here and simply configure it however you need.
+   2. Your Mythic-based code (payload definitions, tasking functions, builder function, etc) will be in `/pathA/mythic/`.&#x20;
 6. Edit the `rabbitmq_config.json` with the parameters you need
    1. the `host` value should be the IP address of the main Mythic install
    2. the `name` value should be the name of the payload type (this is tied into how the routing is done within rabbitmq). For Mythic's normal docker containers, this is set to `hostname` because the hostname of the docker container is set to the name of the payload type. For this case though, that might not be true. So, you can set this value to the name of your payload type instead (this must match your agent name **exactly**).
@@ -171,8 +174,26 @@ External agents need to connect to `mythic_rabbitmq` in order to send/receive me
 If you mythic instance has a randomized password for `rabbitmq_password`, then you need to make sure that the password from `Mythic/.env` after you start Mythic for the first time is copied over to your vm. You can either add this to your `rabbitmq_config.json` file or set it as an environment variable (`MYTHIC_RABBITMQ_PASSWORD`).
 {% endhint %}
 
-### Caveats
+#### Caveats
 
 There are a few caveats to this process over using the normal process. You're now responsible for making sure that the right python version and dependencies are installed, and you're now responsible for making sure that the user context everything is running from has the proper permissions.
 
 One big caveat people tend to forget about is paths. Normal containers run on \*nix, but you might be doing this dev on Windows. So if you develop everything for windows paths hard-coded and then want to convert it to a normal Docker container later, that might come back to haunt you.
+
+### Debugging Locally
+
+Whether you're using a Docker container or not, you can load up the code in your `agent_code` folder in any IDE you want. When an agent is installed via `mythic-cli`, the entire agent folder (`agent_code` and `mythic`) is mapped into the Docker container. This means that any edits you make to the code is automatically reflected inside of the container without having to restart it (pretty handy). The only caveat here is if you make modifications to the `mythic/agent_functions` files - these are Python files loaded up when the container starts, so they don't detect hot patches and will require you to restart your container to load up the changes `sudo ./mythic-cli payload start [payload name]`. If you're making changes to those from a non-Docker instance, simply stop your `python3.8 mythic_service.py` and start it again. This effectively forces those files to be loaded up again and re-synced over to Mythic.
+
+#### Debugging Agent Code Locally
+
+If you're doing anything more than a typo fix, you're going to want to test the fixes/updates you've made to your code before you bother uploading it to a GitHub project, re-installing it, creating new agents, etc. Luckily, this can be super easy.
+
+Say you have a Visual Studio project set up in your `agent_code` directory and you want to just "run" the project, complete with breakpoints and configurations so you can test. The only problem is that your local build needs to be known by Mythic in some way so that the Mythic UI can look up information about your agent, your "installed" commands, your encryption keys, etc.&#x20;
+
+To do this, you first need to generate a payload in the Mythic UI (or via Mythic's Scripting). You'll select any C2 configuration information you need, any commands you want baked in, etc. When you click to build, all of that configuration will get sent to your payload type's "build" function in `mythic/agent_functions/builder.py`. Even if you don't have your container running or it fails to build, no worries, Mythic will first save everything off into the database before trying to actually build the agent. In the Mythic UI, now go to your payloads page and look for the payload you just tried to build. Click to view the information about the payload and you'll see a summary of all the components you selected during the build process, along with some additional pieces of information (payload UUID and generated encryption keys).&#x20;
+
+Take that payload UUID and the rest of the configuration and stamp it into your `agent_code` build. For some agents this is as easy as modifying the values in a Makefile, for some agents this can all be set in a `config` file of some sort, but however you want to specify this information is up to you. Once all of that is set, you're free to run your agent from within your IDE of choice and you should see a callback in Mythic. At this point, you can do whatever code mods you need, re-run your code, etc.&#x20;
+
+#### Callbacks Aplenty
+
+Following from the previous section, if you just use the payload UUID and run your agent, you _should_ end up with a new callback each time. That can be ideal in some scenarios, but sometimes you're doing quick fixes and want to just keep tasking the same callback over and over again. To do this, simply pull the callback UUID and encryption keys from the callback information on the active callbacks page and plug that into your agent. Again, based on your agent's configuration, that could be as easy as modifying a Makefile, updating a config file, or you might have to manually comment/uncomment some lines of code. Once you're reporting back with the callback UUID instead of the payload UUID and using the right encryption keys, you can keep re-running your build without creating new callbacks each time.
