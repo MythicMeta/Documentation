@@ -62,7 +62,11 @@ Syncing happens at a few different times and there are some situations that can 
 
 ## Current Translation Container Versions
 
+* 4 (Mythic 2.3.9)
+  * `mythic_translator_container==0.0.16`
+  * itsafeaturemythic DockerHub Images:
+    * `itsafeaturemythic/python38_translator_container:0.0.4`
 * 4 (Mythic 2.3.1)
   * `mythic_translator_container==0.0.15`
   * itsafeaturemythic DockerHub Images:
-    * itsafeaturemythic/`python38_translator_container`:0.0.4
+    * itsafeaturemythic/`python38_translator_container:0.0.4`
