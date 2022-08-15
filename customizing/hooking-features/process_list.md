@@ -23,6 +23,7 @@ Naturally, this has a special format for us to make it the most useful. Like alm
    {"processes": [
        {
         "process_id": pid, 
+        "host": "a.b.com", //optional
         "architecture": "x64", //optional
         "name": "lol.exe", //optional
         "user": "its-a-feature", //optional
