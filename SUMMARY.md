@@ -75,6 +75,7 @@
   * [Commands](customizing/hooking-features/commands.md)
   * [Keylog](customizing/hooking-features/keylog.md)
   * [File Browser](customizing/hooking-features/file-browser.md)
+  * [Tokens](customizing/hooking-features/tokens.md)
   * [Task Status](customizing/hooking-features/task-status.md)
 * [Payload Type Development](customizing/payload-type-development/README.md)
   * [Translation Containers](customizing/payload-type-development/translation-containers.md)
