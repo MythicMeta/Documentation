@@ -8,7 +8,7 @@ Mythic supports Windows tokens in two ways: tracking which tokens are viewable a
 
 ### Tokens
 
-As part of the normal responses sent back from the agent, there's an additional key you can supply, `tokens` that is a list of token objects that can be stored in the Mythic database. These will be viewable from the "Search" -> "Tokens" page, but are not leveraged as part of further tasking. If you're curious about the fields, they're pulled from the output of the NtObjectManager.
+As part of the normal responses sent back from the agent, there's an additional key you can supply, `tokens` that is a list of token objects that can be stored in the Mythic database. These will be viewable from the "Search" -> "Tokens" page, but are not leveraged as part of further tasking. If you're curious about the fields, they're pulled from the output of the [NtObjectManager](https://github.com/googleprojectzero/sandbox-attacksurface-analysis-tools/blob/main/NtObjectManager/NtTokenFunctions.ps1).
 
 ```
 { "action": "post_response",
@@ -19,7 +19,7 @@ As part of the normal responses sent back from the agent, there's an additional 
             "tokens": [
                 {
                     "TokenId": 18947, // required
-                    "description": "", //
+                    "description": "", // optional
                     "User": "bob", // optional
                     "Groups": "", //optional
                     "EnabledGroups": "", //optional p.TextField(null=True)
@@ -107,3 +107,30 @@ As part of the normal responses sent back from the agent, there's an additional 
     ]
 }
 ```
+
+### Callback Tokens
+
+If you want to be able to leverage tokens as part of your tasking, you need to register those tokens with Mythic and the callback. This can be done as part of the normal `post_response` responses like everything else. The key here is to identify the right token - specifically via the unique combination of TokenID and host.
+
+```
+{"action": "post_response",
+    "responses": [
+        {
+            "task_id": "uuid here",
+            "output": "now tracking token 12345",
+            "callback_tokens": [
+                {
+                    "action": "add", // could also be "remove"
+                    "host": "a.b.com", //optional - default to callback host if not specified
+                    "TokenID": 12345, // id 
+                }
+            ]
+        }
+    ]
+}
+                    
+```
+
+If the token `12345` hasn't been reported via the `tokens` key then it will be created and then associated with Mythic.
+
+Once the token is created and associated with the callback, there will be a new dropdown menu  next to the tasking bar at the bottom of the screen where you can select to use the default token or one of the new ones specified. When you select a token to use in this way when issuing tasking, the `create_tasking` function's `task` object will have a new attribute, `task.token` that contains a dictionary of all the token's associated attributes. This information can then be used to send additional data with the task down to the agent to indicate which tokens should be used for the task.
