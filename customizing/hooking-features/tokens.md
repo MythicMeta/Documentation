@@ -118,11 +118,11 @@ If you want to be able to leverage tokens as part of your tasking, you need to r
         {
             "task_id": "uuid here",
             "output": "now tracking token 12345",
-            "callback_tokens": [
+            "callbacktokens": [
                 {
                     "action": "add", // could also be "remove"
                     "host": "a.b.com", //optional - default to callback host if not specified
-                    "TokenID": 12345, // id 
+                    "TokenId": 12345, // id 
                 }
             ]
         }
