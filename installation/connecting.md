@@ -1,9 +1,9 @@
 # Connecting
 
-By default, the server will bind to `0.0.0.0` on port `7443`  with a self-signed certificate(unless otherwise configured). This IP is an alias meaning that it will be listening on all IPv4 addresses on the machine. Browse to either `https://127.0.0.1:7443` if you’re on the same machine that’s running the server, or you can browse to any of the IPv4 addresses on the machine that’s running the server.
+By default, the server will bind to `0.0.0.0` on port `7443` with a self-signed certificate(unless otherwise configured). This IP is an alias meaning that it will be listening on all IPv4 addresses on the machine. Browse to either `https://127.0.0.1:7443` if you’re on the same machine that’s running the server, or you can browse to any of the IPv4 addresses on the machine that’s running the server.
 
 * Browse to the server with any modern web browser. You will be automatically redirected to the `/login` url. This url is protected by `allowed_ip_blocks` .
-* The default username and password here is `mythic_admin` and the default password is randomized. The password is stored in `Mythic/.env` but you can also view it with `sudo ./mythic-cli config get MYTHIC_ADMIN_PASSWORD`. You can opt to set this before you initially start if you want (or you can change this later through the UI) by setting that environment variable before staring Mythic for the first time.
+* The default username is `mythic_admin` and the default password is randomized. The password is stored in `Mythic/.env` after first launch, but you can also view it with `sudo ./mythic-cli config get MYTHIC_ADMIN_PASSWORD`. You can opt to set this before you initially start if you want (or you can change this later through the UI) by setting that environment variable before staring Mythic for the first time.
 
 Mythic uses JSON Web Tokens (JWT) for authentication. When you use the browser (vs the API on the command line), Mythic stores your access and refresh tokens in a cookie as well as in the local session storage. This should be seamless as long as you leave the server running; however, the history of the refresh tokens is saved in memory. So, if you authenticate in the browser, then restart the server, you’ll have to sign in again.
 
