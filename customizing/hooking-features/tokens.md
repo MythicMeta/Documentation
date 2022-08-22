@@ -118,7 +118,7 @@ If you want to be able to leverage tokens as part of your tasking, you need to r
         {
             "task_id": "uuid here",
             "output": "now tracking token 12345",
-            "callbacktokens": [
+            "callback_tokens": [
                 {
                     "action": "add", // could also be "remove"
                     "host": "a.b.com", //optional - default to callback host if not specified
@@ -133,4 +133,21 @@ If you want to be able to leverage tokens as part of your tasking, you need to r
 
 If the token `12345` hasn't been reported via the `tokens` key then it will be created and then associated with Mythic.
 
-Once the token is created and associated with the callback, there will be a new dropdown menu  next to the tasking bar at the bottom of the screen where you can select to use the default token or one of the new ones specified. When you select a token to use in this way when issuing tasking, the `create_tasking` function's `task` object will have a new attribute, `task.token` that contains a dictionary of all the token's associated attributes. This information can then be used to send additional data with the task down to the agent to indicate which tokens should be used for the task.
+Once the token is created and associated with the callback, there will be a new dropdown menu  next to the tasking bar at the bottom of the screen where you can select to use the default token or one of the new ones specified. When you select a token to use in this way when issuing tasking, the `create_tasking` function's `task` object will have a new attribute, `task.token` that contains a dictionary of all the token's associated attributes. This information can then be used to send additional data with the task down to the agent to indicate which tokens should be used for the task as part of your parameters.&#x20;
+
+Additionally, when getting tasks that have tokens associated with them, the `TokenId` value will be passed down to the agent as an additional field:\
+
+
+```
+{ "action": "get_tasking",
+    "tasks": [
+        {
+            "command": "shell",
+            "parameters": "whoami",
+            "id": "uuid here",
+            "timestamp": 1234567,
+            "token": 12345
+        }
+    ]
+}
+```
