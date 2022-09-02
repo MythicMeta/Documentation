@@ -72,7 +72,7 @@ Base64( CallbackUUID + JSON(
 			"chunk_size": 512000, //bytes of file per chunk
 			"file_id": UUID, //the file specified to pull down to the target
 			"chunk_num": #, // which chunk are we currently pulling down
-			"full_path": "full path to uploaded file on target", //optional
+			"full_path": "full path to uploaded file on target" //optional
 		},
 		"task_id": task_id // the associated task that caused the agent to pull down this file
 }
