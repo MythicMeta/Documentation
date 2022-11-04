@@ -5,6 +5,7 @@
 * [Installation](installation/README.md)
   * [Connecting](installation/connecting.md)
   * [A note about containers](installation/a-note-about-containers.md)
+  * [Offline Installation](installation/offline-installation.md)
   * [Updating Mythic](installation/updating-mythic.md)
 * [Internal Documentation](internal-documentation.md)
 * [Quick Usage](quick-usage.md)
