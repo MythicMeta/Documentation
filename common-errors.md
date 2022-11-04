@@ -12,7 +12,7 @@ All Payload containers leverage the `mythic_payloadtype_container` [PyPi package
 
 ### How do I fix this?
 
-The agent in question needs to have its container updated or downgraded to be within the range specified by your version of Mythic. If you're using a Dockerimage from `itsafeaturemythic` (i.e. in your `Mythic/Payload_Types/[agent name]/Dockerfile` it says `FROM itsafeaturemythic/something`) then you can look [here](customizing/payload-type-development/container-syncing.md#current-payloadtype-versions) to see which version you should change to.&#x20;
+The agent in question needs to have its container updated or downgraded to be within the range specified by your version of Mythic. If you're using a Dockerimage from `itsafeaturemythic` (i.e. in your `Mythic/Payload_Types/[agent name]/Dockerfile` it says `FROM itsafeaturemythic/something`) then you can look [here](customizing/payload-type-development/container-syncing.md#current-payloadtype-versions) to see which version you should change to.
 
 ## C2 Profile's internal server stopped
 
@@ -32,10 +32,18 @@ Go to the C2 Profiles page and click to "Start Internal Server". If the containe
 
 ![Failed to correlate UUID](<.gitbook/assets/Screen Shot 2021-07-08 at 1.30.29 PM.png>)
 
-The "Failed to correlate UUID" message means that data came in through some C2 Profile, made its way to Mythic, Mythic base64 decoded the data successfully and looked at the first characters for a UUID. In Mythic messages, the only piece that's normally not encrypted is this random UUID4 string in the front that means something to Mythic, but is generally meaningless to everybody else. Mythic uses that UUID to look up the callback/payload/stage crypto keys and other related information for processing. In this case though, the UUID that Mythic sees isn't registered within Mythic's database. Normally people see this because they have old agents still connecting in, but they've since reset their database.&#x20;
+The "Failed to correlate UUID" message means that data came in through some C2 Profile, made its way to Mythic, Mythic base64 decoded the data successfully and looked at the first characters for a UUID. In Mythic messages, the only piece that's normally not encrypted is this random UUID4 string in the front that means something to Mythic, but is generally meaningless to everybody else. Mythic uses that UUID to look up the callback/payload/stage crypto keys and other related information for processing. In this case though, the UUID that Mythic sees isn't registered within Mythic's database. Normally people see this because they have old agents still connecting in, but they've since reset their database.
 
-Looking at the rest of the message, we can see additional data. All C2 Profile docker containers add an additional header when forwarding messages to the Mythic server with `mythic: c2profile_name`. So, in this case we see `'mythic': 'http'` which means that the `http` profile is forwarding this message along to the Mythic server.&#x20;
+Looking at the rest of the message, we can see additional data. All C2 Profile docker containers add an additional header when forwarding messages to the Mythic server with `mythic: c2profile_name`. So, in this case we see `'mythic': 'http'` which means that the `http` profile is forwarding this message along to the Mythic server.
 
 ### How do I fix this?
 
 First check if you have any agents that you forgot about from other engagements, tests, or deployments. The error message should tell you where they're connecting from. If the UUID that Mythic shows isn't actually a UUID format, then that means that some other data made its way to Mythic through a C2 profile. In that case, check your Firewall rules to see if there's something getting through that shouldn't be getting through. This kind of error does not impact the ability for your other agents to work (if they're working successfully), but does naturally take resources away from the Mythic server (especially if you're getting a lot of these).
+
+## Exec user process caused: no such file or directory
+
+If you are going back-and-forth between windows and linux doing edits on files, then you might accidentally end up with mixed line endings in your files. This typically manifests after an edit and when you restart the container, it goes into a reboot loop. The above error can be seen by using `sudo ./mythic-cli logs [agent name]`.&#x20;
+
+### How do I fix this?
+
+Running `dos2unix` on your files will convert the line endings to the standard linux `\n` characters and you should then be able to restart your agent `sudo ./mythic-cli payload start [agent name]`. At that point everything should come back up.
