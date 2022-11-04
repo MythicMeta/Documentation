@@ -1,17 +1,5 @@
 # Basic Information
 
-To view a command of a particular payload type, access it via the following:
-
-* Global Configurations -> Payload Types
-* Select the view button for the payload type you're interested in
-* Use the "Select" option at the top to pick the exact command
-
-Take the following Apfell `upload` command for example:
-
-The `description` provides some context as to what the command does or how it does it. The `help` section shows how to call the command. These two fields are presented the user if they type `help upload` while interacting with a callback. The toggles indicate that this command does not need admin level permissions to execute and that this command does not exit the callback. The command that does have the toggle switched for `is exit` will be tasked to the agent if the user select the GUI option to `exit callback`.
-
-The other sections are discussed in greater detail in the following sections.
-
 ## Built-in Commands
 
 All PayloadTypes get 3 commands for free - `clear` , `set`, `help`. The reason these three commands are 'free' is because they don't actually make it down to the agent itself. Instead, they cause actions to be taken on the Mythic server.
