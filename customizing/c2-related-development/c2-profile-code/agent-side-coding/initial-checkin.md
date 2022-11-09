@@ -41,18 +41,19 @@ If your already existing callback sends a checkin message more than once, Mythic
 
 ## Plaintext Checkin
 
-The plaintext checkin is useful for testing or when creating an agent for the first time. When creating payloads, if there's an AESPSK parameter for the C2 profile, then this value will be auto-populated with the operation's 32Byte AES256 key. However, if you're doing plaintext comms, then you need to clear this value when creating your payload. Mythic looks at that outer `PayloadUUID` and checks if there's an associated encryption key with it in the database. If there is, Mythic will automatically try to decrypt the rest of the message, which will fail. This checkin has the following format:
+The plaintext checkin is useful for testing or when creating an agent for the first time. When creating payloads, you can generate encryption keys _per c2 profile_. To do so, the C2 Profile will have a parameter that has an attribute called `crypto_type=True`. This will then signal to Mythic to either generate a new per-payload AES256\_HMAC key or (if your agent is using a translation container) tell your agent's translation container to generate a new key. In the `http` profile for example, this is a `ChooseOne` option between `aes256_hmac` or `none`. If you're doing plaintext comms, then you need to set this value to `none` when creating your payload. Mythic looks at that outer `PayloadUUID` and checks if there's an associated encryption key with it in the database. If there is, Mythic will automatically try to decrypt the rest of the message, which will fail. This checkin has the following format:
 
 ```
 Base64( PayloadUUID + JSON({
     "action": "checkin", // required
-    "ip": "127.0.0.1", // internal ip address - required
-    "os": "macOS 10.15", // os version - required
-    "user": "its-a-feature", // username of current user - required
-    "host": "spooky.local", // hostname of the computer - required
-    "pid": 4444, // pid of the current process - required
     "uuid": "payload uuid", //uuid of the payload - required
     
+    
+    "ip": "127.0.0.1", // internal ip address - optional
+    "os": "macOS 10.15", // os version - optional
+    "user": "its-a-feature", // username of current user - optional
+    "host": "spooky.local", // hostname of the computer - optional
+    "pid": 4444, // pid of the current process - optional
     "architecture": "x64", // platform arch - optional
     "domain": "test", // domain of the host - optional
     "integrity_level": 3, // integrity level of the process - optional
@@ -85,7 +86,7 @@ From here on, the agent messages use the new UUID instead of the payload UUID. T
 
 ## Static Encryption Checkin
 
-This method uses a static AES256 key for all communications. This can be different for each payload that's created, or the operation specific key can be used. To use the operation specific key, make sure that the C2 profile being used has a parameter called "AESPSK" - this will be auto populated on payload creation with the operation key. This key needs to be a 32Byte, base64 encoded value.
+This method uses a static AES256 key for all communications. This will be different for each payload that's created. When creating payloads, you can generate encryption keys _per c2 profile_. To do so, the C2 Profile will have a parameter that has an attribute called `crypto_type=True`. This will then signal to Mythic to either generate a new per-payload AES256\_HMAC key or (if your agent is using a translation container) tell your agent's translation container to generate a new key. In the `http` profile for example, this is a `ChooseOne` option between `aes256_hmac` or `none`. The key passed down to your agent during build time will be the base64 encoded version of the 32Byte key.
 
 The message sent will be of the form:
 
@@ -93,19 +94,21 @@ The message sent will be of the form:
 Base64( PayloadUUID + AES256(
     JSON({
         "action": "checkin", // required
-        "ip": "127.0.0.1", // internal ip address - required
-        "os": "macOS 10.15", // os version - required
-        "user": "its-a-feature", // username of current user - required
-        "host": "spooky.local", // hostname of the computer - required
-        "pid": 4444, // pid of the current process - required
         "uuid": "payload uuid", //uuid of the payload - required
         
+        
+        "ip": "127.0.0.1", // internal ip address - optional
+        "os": "macOS 10.15", // os version - optional
+        "user": "its-a-feature", // username of current user - optional
+        "host": "spooky.local", // hostname of the computer - optional
+        "pid": 4444, // pid of the current process - optional
         "architecture": "x64", // platform arch - optional
         "domain": "test", // domain of the host - optional
         "integrity_level": 3, // integrity level of the process - optional
         "external_ip": "8.8.8.8", // external ip if known - optional
         "encryption_key": "base64 of key", // encryption key - optional
         "decryption_key": "base64 of key", // decryption key - optional
+        "process_name": "osascript", // name of the current process - optional
         })
     )
 )
@@ -161,7 +164,7 @@ Base64( PayloadUUID + AES256(
 )
 ```
 
-where the AES key initially used is defined as the AESPSK value when generating the payload. Similar to the [Initial Checkin](initial-checkin.md#static-encryption-checkin) with a static key, this value will be pre-populated based on the Operation's AESPSK value, but can be swapped out when creating the payload to be any AES256 key.
+where the AES key initially used is defined as the initial encryption value when generating the payload. When creating payloads, you can generate encryption keys _per c2 profile_. To do so, the C2 Profile will have a parameter that has an attribute called `crypto_type=True`. This will then signal to Mythic to either generate a new per-payload AES256\_HMAC key or (if your agent is using a translation container) tell your agent's translation container to generate a new key. In the `http` profile for example, this is a `ChooseOne` option between `aes256_hmac` or `none`.
 
 This message causes the following response:
 
@@ -185,19 +188,21 @@ The next message from the agent to Mythic is as follows:
 Base64( tempUUID + AES256(
     JSON({
         "action": "checkin", // required
-        "ip": "127.0.0.1", // internal ip address - required
-        "os": "macOS 10.15", // os version - required
-        "user": "its-a-feature", // username of current user - required
-        "host": "spooky.local", // hostname of the computer - required
-        "pid": 4444, // pid of the current process - required
         "uuid": "payload uuid", //uuid of the payload - required
         
+        
+        "ip": "127.0.0.1", // internal ip address - optional
+        "os": "macOS 10.15", // os version - optional
+        "user": "its-a-feature", // username of current user - optional
+        "host": "spooky.local", // hostname of the computer - optional
+        "pid": 4444, // pid of the current process - optional
         "architecture": "x64", // platform arch - optional
         "domain": "test", // domain of the host - optional
         "integrity_level": 3, // integrity level of the process - optional
         "external_ip": "8.8.8.8", // external ip if known - optional
         "encryption_key": "base64 of key", // encryption key - optional
         "decryption_key": "base64 of key", // decryption key - optional
+        "process_name": "osascript", // name of the current process - optional
         })
     )
 )
