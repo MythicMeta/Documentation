@@ -10,7 +10,7 @@ When a task has outstanding subtasks, its status will change to "delegating" whi
 
 ## What are task callbacks?
 
-Task callbacks are functions that get executed when a task enters a "completed=True" state (i.e. when it completes successfully or encounters an error). These can be registered on a task itself&#x20;
+Task callbacks are functions that get executed when a task enters a "completed=True" state (i.e. when it completes successfully or encounters an error). These can be registered on a task itself
 
 ```python
 task.completed_callback_function = self.shell_completed
@@ -20,7 +20,7 @@ or on a subtask:
 
 ```python
 resp = await MythicRPC().execute("create_subtask", parent_task_id=task.id,
-        command="pwd", params="",
+        command="pwd", params_string="",
         subtask_callback_function=self.shell_subtask_completed.__name__)
 ```
 
@@ -42,10 +42,10 @@ async def create_tasking(self, task: MythicTask) -> MythicTask:
     task.completed_callback_function = self.shell_completed
     if task.display_params == "whoami":
         resp = await MythicRPC().execute("create_subtask", parent_task_id=task.id,
-                                         command="pwd", params="",
+                                         command="pwd", params_string="",
                                          subtask_callback_function=self.shell_subtask_completed.__name__)
         resp = await MythicRPC().execute("create_subtask", parent_task_id=task.id,
-                                         command="shell", params="echo -c 'hi'",
+                                         command="shell", params_string="echo -c 'hi'",
                                          subtask_callback_function=self.shell_subtask_completed.__name__)
     return task
 
@@ -69,7 +69,7 @@ When issuing a subtask, we can simply do:
 
 ```python
 resp = await MythicRPC().execute("create_subtask", parent_task_id=task.id,
-command="pwd", params="",
+command="pwd", params_string="",
 subtask_callback_function=self.shell_pwd_completed.__name__)
 ```
 
