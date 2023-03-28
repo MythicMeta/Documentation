@@ -11,7 +11,7 @@ There are two scenarios to updating Mythic: updates within the minor version (1.
 This is when you're on version 1.2 for example and want to pull in new updates (but not a new minor version like 1.3 or 1.4). In this case, the database schema should not have changed.
 
 1. Pull in the latest code for your version (if you're still on the current version, this should be as easy as a `git pull`)
-2. Restart Mythic to pull in the latest code changes into the docker containers with `sudo ./mythic-cli mythic start`
+2. Restart Mythic to pull in the latest code changes into the docker containers with `sudo ./mythic-cli start`
 
 ### Updating minor or major versions
 
