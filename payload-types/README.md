@@ -2,19 +2,17 @@
 
 ## What is it?
 
-Payload types are the different kinds of agents that can be created and used with Mythic.&#x20;
+Payload types are the different kinds of agents that can be created and used with Mythic.
 
 ## Where are they located?
 
-Payload type information is located in "Global Configuration" -> "Payload Types" from the top navigation bar.
+Payload type information is located in the C2 Profiles and Payload Types page by clicking the headphone icon in the top of the page.
 
 From this initial high-level view, a few important pieces of information are shown:
 
-* The green light indicates that the corresponding docker container for the payload type has sent a heartbeat within the last 30 seconds. A red light indicates that there has been no heartbeat within the last 30 seconds. There's more information on all of this in the next sections.
+* Container status indicates if the backing container is online or offline based on certain RabbitMQ Queues existing or not. This status is checked every 5 seconds or so.
 * The name of the payload type which must be unique
 * Which operating systems the agent supports
-* The number of commands associated with the payload type
-* The "Commands" section provides the ability to view the commands and their configurations.
 
 {% hint style="info" %}
 To modify the Payload Type itself, you need to modify the corresponding class in the Payload Type's docker container. This class will extend the PayloadType class.

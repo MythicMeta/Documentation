@@ -2,7 +2,7 @@
 
 ## What is it?
 
-This is your standard PDF / JSON report generation. There is also an option to generate a raw LaTeX format.
+Mythic can generate JSON or XML style reports. If you need a PDF version, simply generate the XML, open it up locally, and then in your browser save it off to PDF.&#x20;
 
 ## Where is it?
 

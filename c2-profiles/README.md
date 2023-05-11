@@ -2,22 +2,20 @@
 
 ## What is it?
 
-Command and Control (C2) profiles are the way an agent actually communicates with Mythic to get tasking and post responses. There are two main pieces for every C2 profile:&#x20;
+Command and Control (C2) profiles are the way an agent actually communicates with Mythic to get tasking and post responses. There are two main pieces for every C2 profile:
 
 1. Server code - code that runs in a docker container to convert the C2 profile communication specification (twitter, slack, dropbox, websocket, etc) into the corresponding RESTful endpoints that Mythic uses
 2. Agent code - the code that runs in a callback to implement the C2 profile on the target machine.
 
 ## Where is it?
 
-C2 profiles can be found by going to "Global Configurations" -> "C2 Profiles" from the top navigational bar.&#x20;
+C2 profiles can be found by going to Payload Types and C2 Profiles (headphone icon) from the top navigational bar.
 
 ## How do they work?
 
-Each C2 profile is in its own docker container, the status of which is indicated by the LED next to the C2 profile's name.&#x20;
+Each C2 profile is in its own docker container, the status of which is indicated on the C2 Profiles page.
 
-Each docker container has a python service running in it that connects to a RabbitMQ message broker to receive tasking. This allows Mythic to modify files, execute programs, and more within other docker containers. Each docker container sends a heartbeat every few seconds to the main Mythic server to indicate it is still up and running. If Mythic fails to get that notification for over 30 seconds, then the led will turn to a flashing red led.
-
-The next few sections will walk through the two main C2 profiles and how they work along with what C2 profile code means for the server and for an agent.
+Each docker container has a python or golang service running in it that connects to a RabbitMQ message broker to receive tasking. This allows Mythic to modify files, execute programs, and more within other docker containers.&#x20;
 
 ## Where can I find more documentation about them?
 

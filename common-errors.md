@@ -8,7 +8,7 @@ description: Discussion / Explanation for Common Errors
 
 ![Payload container version not supported](<.gitbook/assets/Screen Shot 2021-07-08 at 1.10.23 PM.png>)
 
-All Payload containers leverage the `mythic_payloadtype_container` [PyPi package](https://github.com/MythicMeta/Mythic\_PayloadType\_Container). This PyPi package keeps track of a version that syncs up with Mythic when the container starts. As Mythic gains new functionality or changes how things are done, these containers might not be supported anymore. At any given time, Mythic could support only a single version or a range of versions. A list of all PyPi reported versions and their corresponding Mythic version/DockerImage versions can be found [here](customizing/payload-type-development/container-syncing.md#current-payloadtype-versions).
+All Payload containers leverage the `mythic_container` [PyPi package](https://github.com/MythicMeta/Mythic\_PayloadType\_Container) or the `github.com/MythicMeta/MythicContainer` golang package. These packages keeps track of a version that syncs up with Mythic when the container starts. As Mythic gains new functionality or changes how things are done, these containers might not be supported anymore. At any given time, Mythic could support only a single version or a range of versions. A list of all PyPi reported versions and their corresponding Mythic version/DockerImage versions can be found [here](customizing/payload-type-development/container-syncing.md#current-payloadtype-versions).
 
 ### How do I fix this?
 
@@ -46,4 +46,4 @@ If you are going back-and-forth between windows and linux doing edits on files, 
 
 ### How do I fix this?
 
-Running `dos2unix` on your files will convert the line endings to the standard linux `\n` characters and you should then be able to restart your agent `sudo ./mythic-cli payload start [agent name]`. At that point everything should come back up.
+Running `dos2unix` on your files will convert the line endings to the standard linux `\n` characters and you should then be able to restart your agent `sudo ./mythic-cli start [agent name]`. At that point everything should come back up.

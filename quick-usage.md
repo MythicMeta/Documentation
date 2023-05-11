@@ -10,7 +10,7 @@ This section will quickly go from first connection to running a basic agent. Thi
 
 When you log in with the admin account, you'll automatically have your current operation set to the default operation. Your current operation is indicated in the top bar in big letters. When other operators sign in for the first time, they won't have an operation set to their current operation. You can always click on the operation name to get back to the operations management page (or click the hamburger icon on the left and select operations on the side).
 
-![](<.gitbook/assets/Screen Shot 2021-12-02 at 3.12.21 PM.png>)
+![](<.gitbook/assets/Screenshot 2023-03-04 at 5.28.17 PM.png>)
 
 ### Creating a Payload
 
@@ -36,7 +36,7 @@ If the server within the HTTP profile container wasn't running when you created 
 
 ### Using the Payload
 
-Click the hazard icon on the top again to go to the created payloads page (or select to view the payload on the payloads page from the green dropdown). This is where you'll be able to see all of the payloads created for the current operation. You can delete the payload, view the configuration, or download the payload. For this walkthrough, download the payload (green download icon).
+Click the hazard icon on the top again to go to the created payloads page.. This is where you'll be able to see all of the payloads created for the current operation. You can delete the payload, view the configuration, or download the payload. For this walkthrough, download the payload (green download icon).
 
 ![](<.gitbook/assets/Screen Shot 2021-12-02 at 3.22.52 PM.png>)
 

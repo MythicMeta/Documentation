@@ -6,7 +6,7 @@ description: Unified process listing across multiple callbacks for a single host
 
 ### Command Component
 
-The supported ui features flag on the command that does this tasking needs to have the following set:`supported_ui_features = ["process_browser:list"]` .
+The supported ui features flag on the command that does this tasking needs to have the following set:`supported_ui_features = ["process_browser:list"]` if you want to be able to issue a process listing from the UI process listing table. If you don't care about that, then you don't need that feature set for your command.
 
 ### Why a Unified Process List per Host
 
@@ -24,22 +24,16 @@ Naturally, this has a special format for us to make it the most useful. Like alm
        {
         "process_id": pid, 
         "host": "a.b.com", //optional
-        "architecture": "x64", //optional
-        "name": "lol.exe", //optional
-        "user": "its-a-feature", //optional
-        "bin_path": "C:\\whatever", //optional
         "parent_process_id": ppid, //optional
-        "command_line": "command line if you can get it", //optional
-        "integrity_level": 3, //optional
-        "start_time": unix epoch time in miliseconds, //optional
-        "description": "if it has one", //optional
-        "signer": "signing information if you can get it", //optional
-    } 
+        "start_time": unix epoch time in milliseconds, //optional
+        } 
     ]
   }
 ]}
 ```
 
-All that's needed is an array of all the processes with the above information in the `processes` field of your `post_response` action. That allows Mythic to create a process hierarchy (if you supply both `process_id` and `parent_process_id`) and a sortable/filterable table of processes. The above example shows a `post_response` with one response in it. That one response has a `processes` field with an array of processes it wants to report.
+All that's needed is an array of all the processes with the above information in the `processes` field of your `post_response` action. That allows Mythic to create a process hierarchy (if you supply both `process_id` and `parent_process_id`) and a sortable/filterable table of processes. The above example shows a `post_response` with one response in it. That one response has a `processes` field with an array of processes it wants to report.&#x20;
 
-This new view also allows you to `diff` two different process listing outputs to see what processes were added or removed.
+Any field that ends with `_time` expects the value to be an int64 of unix epoch time in milliseconds. You're welcome to supply any additional field you want about a process - it all gets aggregated together and provided as part of the "metadata" for the process that you can view in the UI in a nice table listing.
+
+For example, a macOS agent might report back signing flags and entitlements and a windows agent might report back integrity level and user session id.

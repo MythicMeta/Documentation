@@ -38,13 +38,13 @@ Within a delegates array are a series of JSON dictionaries:
         {
             "message": agentMessage,
             "uuid": "same UUID as the message agent -> mythic",
-            "mythic_uuid": UUID that mythic uses
+            "new_uuid": UUID that mythic uses
         }
     ]
 }
 ```
 
-The `mythic_uuid` field indicates that the `uuid` field the agent sent doesn't match up with the UUID in the associated message. If the agent uses the right UUID with the agentMessage then the response would be:
+The `new_uuid` field indicates that the `uuid` field the agent sent doesn't match up with the UUID in the associated message. If the agent uses the right UUID with the agentMessage then the response would be:
 
 ```python
 {
@@ -69,7 +69,7 @@ Ok, so let's walk through an example:
 * agentA connects to agentB (or agentB connects to agentA if agentA opened the port and agentB did a connection to it) over this new P2P protocol (smb, tcp, etc)
 * agentB sends to agentA a staging message if it's doing EKE, a checkin message if it's already an established callback (like the example of re-linking to a callback), or a checkin message if it's doing like a static PSK or plaintext. The format of this message is exactly the same as if it wasn't going through agentA
 * agentA gets this message, and is like "new connection, who dis?", so it makes a random UUID to identify whomever is on the other end of the line and forwards that message off to Mythic with the next message agentA would be sending anyway. So, if the next message that agentA would send to Mythic is another get tasking, then it would look like: `{"action": "get_tasking", "tasking_size": 1, "delegates": [ {"message": agentB's message, "c2_profile": "Name of the profile we're using to communicate", "uuid": "myRandomUUID"} ] }`. That's the message agentA sends to Mythic.
-* Mythic gets the message, processes the get\_tasking for agentA, then sees it has `delegate` messages (i.e. messages that it's passing along on behalf of other agents). So Mythic recursively processes each of the messages in this array. Because that `message` value is the same as if agentB was talking directly to Mythic, Mythic can parse out the right UUIDs and information. The `c2_profile` piece allows Mythic to look up any c2-specific encryption information to pass along for the message. Once Mythic is done processing the message, it sends a response back to agentA like: `{"action": "get_tasking", "tasks": [ normal array of tasks ], "delegates": [ {"message": "response back to what agentB sent", "uuid": "myRandomUUID that agentA generated", "mythic_uuid": "the actual UUID that Mythic uses for agentB"} ] }`. If this is the first time that Mythic has seen a delegate from agentB through agentA, then Mythic knows that there's a route between the two and via which C2 profile, so it can automatically display that in the UI
+* Mythic gets the message, processes the get\_tasking for agentA, then sees it has `delegate` messages (i.e. messages that it's passing along on behalf of other agents). So Mythic recursively processes each of the messages in this array. Because that `message` value is the same as if agentB was talking directly to Mythic, Mythic can parse out the right UUIDs and information. The `c2_profile` piece allows Mythic to look up any c2-specific encryption information to pass along for the message. Once Mythic is done processing the message, it sends a response back to agentA like: `{"action": "get_tasking", "tasks": [ normal array of tasks ], "delegates": [ {"message": "response back to what agentB sent", "uuid": "myRandomUUID that agentA generated", "new_uuid": "the actual UUID that Mythic uses for agentB"} ] }`. If this is the first time that Mythic has seen a delegate from agentB through agentA, then Mythic knows that there's a route between the two and via which C2 profile, so it can automatically display that in the UI
 * agentA gets the response back, processes its get\_tasking like normal, sees the `delegates` array and loops through those messages. It sees "oh, it's myRandomUUID, i know that guy, let me forward it along" and also sees that it's been calling agentB by the wrong name, it now knows agentB's real name according to Mythic. This is important because if agentA and agentB ever lose connection, agentA can report back to Mythic that it can no longer to speak to agentB with the right UUID that Mythic knows.
 
 This same process repeats and just keeps nesting for agentC that would send a message to agentB that would send the message to agentA that sends it to Mythic. agentA can't actually decrypt the messages between agentB and Mythic, but it doesn't need to. It just has to track that connection and shuttle messages around.
@@ -89,8 +89,6 @@ What happens when agentA and agentB can no longer communicate though? agentA nee
     {
       "source": "uuid of source callback",
       "destination": "uuid of destination callback",
-      "direction": 1,
-      "metadata": "",
       "action": "remove"
       "c2_profile": "name of the c2 profile used in this connection"
      }
@@ -107,8 +105,6 @@ If this wasn't part of some task, then there would be no task\_id to use. In thi
     {
       "source": "uuid of source callback",
       "destination": "uuid of destination callback",
-      "direction": 1 or 2 or 3,
-      "metadata": "{ optional metadata json string }",
       "action": "add" or "remove"
       "c2_profile": "name of the c2 profile used in this connection"
      }

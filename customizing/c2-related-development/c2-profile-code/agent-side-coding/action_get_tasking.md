@@ -4,10 +4,6 @@ description: This page describes the format for getting new tasking
 
 # Action: get\_tasking
 
-## Endpoint
-
-All agent messages go to the same endpoint: `/api/v1.4/agent_message`
-
 ## Message Request
 
 The contents of the JSON message from the agent to Mythic when requesting tasking is as follows:
@@ -64,5 +60,5 @@ Base64( CallbackUUID + JSON(
 There are a few things to note here:
 
 * `tasks` - This parameter is always a list, but contains between 0 and `tasking_size` number of entries.
-* `parameters` - this encapsulates the parameters for the task. If a command has parameters like: `{"remote_path": "/users/desktop/test.png", "file_id": "uuid_here"}`, then the `params` field will have that JSON blob as a STRING value (i.e. the command is responsible to parse that out).&#x20;
-* `delegates` - This parameter contains any responses for the messages that came through in the first message.&#x20;
+* `parameters` - this encapsulates the parameters for the task. If a command has parameters like: `{"remote_path": "/users/desktop/test.png", "file_id": "uuid_here"}`, then the `params` field will have that JSON blob as a STRING value (i.e. the command is responsible to parse that out).
+* `delegates` - This parameter contains any responses for the messages that came through in the first message.

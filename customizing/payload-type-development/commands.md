@@ -2,13 +2,9 @@
 
 ## What do Commands track?
 
-Command information is tracked in your Payload Type's container within the `mythic/agent_functions` folder. Each command has its own Python file with a few classes in it. Specifically, things are broken out into three classes:
+Command information is tracked in your Payload Type's container. Each command has its own Python class or GoLang struct. In Python, you leverage `CommandBase` and `TaskArguments` to define information about the command and information about the command's arguments.
 
-* CommandBase
-* TaskArguments
-* CommandOPSEC
-
-**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_tasking` ([Create\_Tasking](create\_tasking.md)) and `process_response` ([Process Response](process-response.md)) functions.
+**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_go_tasking` ([Create\_Tasking](create\_tasking.md)) and `process_response` ([Process Response](process-response.md)) functions.
 
 \*\*\*\*[**TaskArguments**](commands.md#taskarguments) does two things:
 
@@ -16,8 +12,6 @@ Command information is tracked in your Payload Type's container within the `myth
 2. verifies / parses out the user supplied arguments into their proper components
    * this includes taking user supplied free-form input (like arguments to a sleep command - `10 4`) and parsing it into well-defined JSON that's easier for the agent to handle (like `{"interval": 10, "jitter": 4}`). This can also take user-supplied dictionary input and parse it out into the rightful CommandParameter objects.
    * This also includes verifying all the necessary pieces are present. Maybe your command requires a source and destination, but the user only supplied a source. This is where that would be determined and error out for the user. This prevents you from requiring your agent to do that sort of parsing in the agent.
-
-**CommandOPSEC (**[**OPSEC Checking**](opsec-checking.md)\*\*) \*\*defines how your command behaves from an OPSEC perspective and allows scripting points (`opsec_pre` and `opsec_post`) to perform dynamic checks and blocks for users.
 
 If you're curious how this all plays out in a diagram, you can find one here: [#operator-submits-tasking](../../message-flow.md#operator-submits-tasking "mention").
 
@@ -46,12 +40,16 @@ class ScreenshotCommand(CommandBase):
     )
     script_only = False
     
-    async def create_tasking(self, task: MythicTask) -> MythicTask:
-        task.args.command_line += str(datetime.datetime.utcnow())
-        return task
+    async def create_go_tasking(self, taskData: MythicCommandBase.PTTaskMessageAllData) -> MythicCommandBase.PTTaskCreateTaskingMessageResponse:
+        response = MythicCommandBase.PTTaskCreateTaskingMessageResponse(
+            TaskID=taskData.Task.ID,
+            Success=True,
+        )
+        return response
         
-    async def process_response(self, response: AgentResponse):                                                    add=response.response, remove=[])
-        pass
+    async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
+        resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
+        return resp
 ```
 
 Creating your own command requires extending this CommandBase class (i.e. `class ScreenshotCommand(CommandBase)` and providing values for all of the above components.
@@ -81,8 +79,8 @@ Creating your own command requires extending this CommandBase class (i.e. `class
     * `filter_by_build_parameter` is a dictionary of `parameter_name:value` for what's required of the agent's build parameters. This is useful for when some commands are only available depending on certain values when building your agent (such as agent version).
     * You can also add in any other values you want for your own processing. These are simply `key=value` pairs of data that are stored. Some people use this to identify if a command has a dependency on another command. This data can be fetched via RPC calls for things like a `load` command to see what additional commands might need to be included.
   * This ties into the CommandParameter fields `choice_filter_by_command_attributes`, `choices_are_all_commands`, and `choices_are_loaded_commands`.
-* The `create_tasking` function is very broad and covered in [Create\_Tasking](create\_tasking.md#create\_tasking)
-* The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processes and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](process-response.md)).
+* The `create_go_tasking` function is very broad and covered in [Create\_Tasking](create\_tasking.md#create\_tasking)
+* The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processing and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](process-response.md)).
 * The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](create\_tasking.md) scenario (complete with subtasks and full RPC functionality) and then go into a completed state.
 
 ## TaskArguments
@@ -222,14 +220,6 @@ class CommandParameter:
   * ChooseMultiple
   * Credential\_JSON
     * Get a JSON representation of all data for a credential
-  * Credential\_Account
-    * Get just the account name for a credential
-  * Credential\_Realm
-    * Get just the realm for a credential
-  * Credential\_Type
-    * Get just the credential type (i.e. hash, plaintext, key, ticket, etc)
-  * Credential\_Value
-    * Get just the actual credential value itself
   * Number
   * Payload
     * Select a payload that's already been generated and get the UUID for it. This is helpful for using that payload as a template to automatically generate another version of it to use as part of lateral movement or spawning new agents.
@@ -261,7 +251,7 @@ Most command parameters are pretty straight forward - the one that's a bit uniqu
 
 #### parameter\_group\_info
 
-To help with conditional parameters, Mythic 2.3 is introducing parameter groups. Every parameter must belong to at least one parameter group (if one isn't specified by you, then Mythic will add it to the `Default` group and make the parameter `required`).
+To help with conditional parameters, Mythic 2.3 introduced parameter groups. Every parameter must belong to at least one parameter group (if one isn't specified by you, then Mythic will add it to the `Default` group and make the parameter `required`).
 
 You can specify this information via the `parameter_group_info` attribute on `CommandParameter` class. This attribute takes an array of `ParameterGroupInfo` objects. Each one of these objects has three attributes: `group_name` (string), `required`(boolean) `ui_position` (integer). These things together allow you to provide conditional parameter groups to a command.&#x20;
 
@@ -324,20 +314,23 @@ So, the `file` parameter has one `ParameterGroupInfo` that calls out the paramet
 If you're curious, the function used to get the list of files for the user to select is here:
 
 ```python
-async def get_files(self, callback: dict) -> [str]:
-        file_resp = await MythicRPC().execute("get_file", callback_id=callback["id"],
+async def get_files(self, inputMsg: PTRPCDynamicQueryFunctionMessage) -> PTRPCDynamicQueryFunctionMessageResponse:
+        fileResponse = PTRPCDynamicQueryFunctionMessageResponse(Success=False)
+        file_resp = await MythicRPC().execute("get_file", callback_id=inputMsg.Callback,
                                               limit_by_callback=False,
-                                              get_contents=False,
                                               filename="",
                                               max_results=-1)
         if file_resp.status == MythicRPCStatus.Success:
             file_names = []
             for f in file_resp.response:
-                if f["filename"] not in file_names:
+                if f["filename"] not in file_names and f["filename"].endswith(".exe"):
                     file_names.append(f["filename"])
-            return file_names
+            fileResponse.Success = True
+            fileResponse.Choices = file_names
+            return fileResponse
         else:
-            return []
+            fileResponse.Error = file_resp.error
+            return fileResponse
 ```
 
 In the above code block, we're searching for files, not getting their contents, not limiting ourselves to just what's been uploaded to the callback we're tasking, and looking for all files (really it's all files that have "" in the name, which would be all of them). We then go through to de-dupe the filenames and return that list to the user.

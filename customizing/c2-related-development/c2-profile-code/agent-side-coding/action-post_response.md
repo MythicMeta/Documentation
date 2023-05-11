@@ -1,9 +1,5 @@
 # Action: post\_response
 
-## Endpoint
-
-All agent messages go to the same endpoint: `/api/v1.4/agent_message`
-
 ## Message Request
 
 The contents of the JSON message from the agent to Mythic when posting tasking responses is as follows:
@@ -34,12 +30,12 @@ Base64( CallbackUUID + JSON(
 There are two things to note here:
 
 * `responses` - This parameter is a list of all the responses for each tasking.
-  * For each element in the responses array, we have a dictionary of information about the response. We also have a `task_id` field to indicate which task this response is for. After that though, comes the actual response output from the task.&#x20;
+  * For each element in the responses array, we have a dictionary of information about the response. We also have a `task_id` field to indicate which task this response is for. After that though, comes the actual response output from the task.
     * If you don't want to hook a certain feature (like sending keystrokes, downloading files, creating artifacts, etc), but just want to return output to the user, the response section can be as simple as:\
       `{"task_id": "uuid of task", "user_output": "output of task here"}`
   * Each response style is described in [Hooking Features](../../../hooking-features/). The format described in each of the Hooking features sections replaces the `... response message` piece above
     * To continue adding to that JSON response, you can indicate that a command is finished by adding `"completed": true` or indicate that there was an error with `"status": "error"`.
-* `delegates` - This parameter is not required, but allows for an agent to forward on messages from other callbacks. This is the peer-to-peer scenario where inner messages are passed externally by the egress point. Each of these messages is a self-contained "[Agent Message](agent-message-format.md)".&#x20;
+* `delegates` - This parameter is not required, but allows for an agent to forward on messages from other callbacks. This is the peer-to-peer scenario where inner messages are passed externally by the egress point. Each of these messages is a self-contained "[Agent Message](agent-message-format.md)".
 
 ## Message Response
 

@@ -2,7 +2,7 @@
 
 ## Components
 
-For the file browser, there are a few capabilities that need to be present and implemented correctly. Specifically:
+For the file browser, there are a few capabilities that need to be present and implemented correctly if you want to allow users to list, remove, download, or upload from the file browser. Specifically:
 
 * File Listing - there needs to be a command marked as `supported_ui_features = ["file_browser:list"]` with your payload type that sends information in the proper format.
 * File Removal - there needs to be a command marked as `supported_ui_features = ["file_browser:remove"]` with your payload type that reports back success properly
@@ -23,7 +23,8 @@ When doing a file listing via the file browser, the command\_line for tasking wi
 {
   "host": "hostname of computer to list",
   "path": "path to the parent folder",
-  "file": "name of the file or folder you're trying to list"
+  "file": "name of the file or folder you're trying to list",
+  "full_path": "absolute path to the file/folder"
 }
 ```
 
@@ -60,25 +61,25 @@ We have another component to the `post_response` for agents.
     "responses": [
         {
             "task_id": "UUID of task",
-            "user_output": "file browser issued listing",
+            "user_output": "file browser issued listing", // optional
             "file_browser": {
-                "host": "hostname of computer you're listing",
+                "host": "hostname of computer you're listing", // optional
                 "is_file": True or False,
                 "permissions": {json of permission values you want to present},
                 "name": "name of the file or folder you're listing",
                 "parent_path": "full path of the parent folder",
                 "success": True or False,
-                "access_time": unix epoc time in miliseconds,
-                "modify_time": unix epoc time in miliseconds,
+                "access_time": unix epoc time in milliseconds,
+                "modify_time": unix epoc time in milliseconds,
                 "size": 1345, //size of the entity
                 "update_deleted": True, //optional
                 "files": [ // if this is a folder, include data on the files within
                     {
-                        "is_file": "true or false",
+                        "is_file": True or False,
                         "permissions": {json of data here that you want to show},
                         "name": "name of the entity",
-                        "access_time": unix epoc time in miliseconds,
-                        "modify_time": unix epoc time in miliseconds,
+                        "access_time": unix epoc time in milliseconds,
+                        "modify_time": unix epoc time in milliseconds,
                         "size": 13567 // size of the entity
                     }
                 ]
@@ -92,13 +93,17 @@ We have another component to the `post_response` for agents.
 As a shortcut, if the file you're removing is on the same host as your callback, then you can omit the `host` field or set it to `""` and Mythic will automatically add in your callback's host information instead.
 {% endhint %}
 
+{% hint style="info" %}
+If you're listing out the top level folder (`/` on linux/macOS or a drive like `C:\` on Windows, then the parent path should be "" or null.
+{% endhint %}
+
 Most of this is pretty self-explanatory, but there are some nuances. Only list out the inner files for the initial folder/file listed (i.e. don't recursively do this listing). For the `files` array, you don't need to include `host` or `parent_path` because those are both inferred based on the info outside the `files` array, and the `success` flag won't be included since you haven't tried to actually list out the contents of any sub-folders. The permissions JSON blob allows you to include any additional information you want to show the user in the file browser. For example, with the `apfell` agent, this blob includes information about extended attributes, posix file permissions, and user/group information. Because this is heavily OS specific, there's no requirement here other than it being a JSON blob (not a string).
 
 By having this information in _another_ component within the responses array, you can display any information to the user that you want without being forced to _also_ display this listing each time to the user. You can if you want, but it's not required. If you wanted to do that, you could simply turn all of the `file_browser` data into a JSON string and put it in the `user_output` field. In the above example, the user output is a simple message stating why the tasking was issued, but it could be anything (even left blank).
 
 #### update deleted
 
-There's a special key in there that doesn't really match the rest of the normal "file" data in that file\_browser response - `update`. If you include this key as `True` and your `success` flag is `True`, then Mythic will use the data presented here to update which files are deleted.
+There's a special key in there that doesn't really match the rest of the normal "file" data in that file\_browser response - `update_deleted`. If you include this key as `True` and your `success` flag is `True`, then Mythic will use the data presented here to update which files are deleted.
 
 By default, if you list the contents of `~/Downloads` twice, then the view you see in the UI is a _merge_ of all the data from those two instance of listing that folder. However, that might not _always_ be what you want. For instance, if a file was deleted between the first and second listing, that deletion won't be reflected in the UI because the data is simply merged together. If you want that delete to be automatically picked up and reported as a deleted file, use the `update_deleted` flag to say to Mythic "hey, this should be everything that's in the folder, if you have something else that used to be there but I'm not reporting back right now, assume it's deleted".
 

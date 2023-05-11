@@ -4,16 +4,16 @@ description: This page describes how an agent message is formatted
 
 # Agent Message Format
 
-All messages go to the `/api/v1.4/agent_message` endpoint via the associated C2 Profile docker container. These messages can be:
+All messages go to the `/agent_message` endpoint via the associated C2 Profile docker container. These messages can be:
 
 * POST request
   * message content in body
-  * message content in FIRST header value
-  * message content in FIRST cookie value
 * GET request
   * message content in FIRST header value
   * message content in FIRST cookie value
   * message content in FIRST query parameter
+    * For query parameters, the Base64 content must be URL Safe Encoded - this has different meaning in different languages, but means that for the "unsafe" characters of `+` and `/`, they need to be swapped out with `-` and `_` instead of %encoded. Many languages have a special Base64 Encode/Decode function for this. If you're curious, this is an easy site to check your encoding: [https://www.base64url.com/](https://www.base64url.com/)
+  * message content in body
 
 All agent messages have the same general structure, but it's the message inside the structure that varies.
 
@@ -46,8 +46,6 @@ There are a couple of components to note here in what's called an `agentMessage`
     * checkin
     * get\_tasking
     * post\_response
-    * upload
-    * delegate
     * translation\_staging (you're doing your own staging)
   * `...` - This section varies based on the action that's being performed. The different variations here can be found in [Hooking Features](../../../hooking-features/) , [Initial Checkin](initial-checkin.md), and [Agent Responses](action\_get\_tasking.md)
   * `delegates` - This section contains messages from other agents that are being passed along. This is how messages from nested peer-to-peer agents can be forwarded out through and egress callback. If your agent isn't forwarding messages on from others (such as in a p2p mesh or as an egress point), then you don't need this section. More info can be found here: [Delegates (p2p)](delegates.md)

@@ -8,27 +8,17 @@ These redirection rules are up to the C2 Profile creators, but can include thing
 
 ## Where is it?
 
-Operationally, users can invoke this function from the created payloads page with a dropdown menu for the payload they're interested in. Functionally, this code lives in the same place for a C2 profile as all of the other RPC-based functions for a C2 profile.
+Operationally, users can invoke this function from the created payloads page with a dropdown menu for the payload they're interested in. Functionally, this code lives in the class definition of your C2 Profile.
 
 ## What does it look like?
 
-This function gets passed the same sort of information that the opsec check and configuration check functions get; namely, information about all of the payload's supplied c2 profile parameter values. This function can also access the C2 Profile's current configuration by looking in the c2\_code folder (i.e. `../c2_code/config.json`).&#x20;
+This function gets passed the same sort of information that the opsec check and configuration check functions get; namely, information about all of the payload's supplied c2 profile parameter values. This function can also access the C2 Profile's current configuration.
 
 The format of the function is as follows:
 
-```python
-# The redirect_rules function is called on demand by an operator to generate redirection rules for a specific payload
-# The input for "request" is a dictionary of:
-# {
-#   "action": "redirect_rules",
-#   "parameters": {
-#       "param_name": "param_value",
-#       "param_name2: "param_value2",
-#   }
-# }
-# This function should return one of two things:
-#   For success: {"status": "success", "message": "your success message here" }
-#   For error: {"status": "error", "error": "your error message here" }
-async def redirect_rules(request):
-    return {"status": "success", "message": "use the following mod_rewrite rules!"}
-```
+<pre class="language-python"><code class="lang-python">async def redirect_rules(request: C2ProfileBase.C2GetRedirectorRulesMessage) -> C2ProfileBase.C2GetRedirectorRulesMessageResponse:
+    return C2ProfileBase.C2GetRedirectorRulesMessageResponse(
+        Success=True,
+        Message="some mod rewrite rules here"
+<strong>    )
+</strong></code></pre>

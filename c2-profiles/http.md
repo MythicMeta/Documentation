@@ -6,13 +6,13 @@ The "HTTP" C2 profile speaks the exact same protocol as the Mythic server itself
 
 ## How does it work?
 
-This container code starts a small Sanic web server that accepts messages on the specified port and proxies all connections to the `/api/v1.4/agent_message` endpoint within Mythic. This allows you to host the Mythic instance on port 7443 for example and expose the default HTTP profile on port 443 or 80.
+This container code starts a small Golang gin web server that accepts messages on the specified port and proxies all connections to the `/agent_message` endpoint within Mythic. This allows you to host the Mythic instance on port 7443 for example and expose the default HTTP profile on port 443 or 80.
 
 Clicking the "Configure" button gives a few options for how to edit and interact with the profile.
 
 #### Using SSL
 
-If you want to use SSL with this profile, copy your SSL private key and cert into the `C2_Profiles/HTTP/c2_code` folder and update the `config.json` file to have the `key_path` and `cert_path` variables be the name of the private key and cert you copied over. You _have_ to copy the two files into this `c2_code` folder because the profile starts its own container which can't access files outside of the `c2_code` folder.
+If you want to use SSL with this profile, edit the configuration to `use_ssl` to `true` and the C2 profile will automatically generate some self-signed certificates. If you want to use your own certificates though, you can upload them through the UI by clicking the "Manage Files" button next to the `http` profile and uploading your files. Then simply update the configuration with the names of the files you uploaded.
 
 ### Supported Payloads and Info
 

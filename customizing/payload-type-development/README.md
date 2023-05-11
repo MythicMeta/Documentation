@@ -21,11 +21,8 @@ There are a lot of things involved in making your own agent, c2 profile, or tran
 This organization is broken out in five main repos:
 
 * `Mythic_Scripting` - This holds all of the code for the PyPi package, `mythic`, that you can use to script up actions.
-* `Mythic_CLI` - This holds all of the Golang code for the `mythic-cli` binary.
-* `Mythic_Translator_Container` - This holds all of the code for the PyPi package, `mythic_translator_container`, that you can use to build your own translation container.
-* `Mythic_PayloadType_Container` - This holds all of the code for the PyPi package, `mythic_payloadtype_container`, that you can use to create your own payload type docker image or when turning a vm into your own payloadtype container.
-* `Mythic_C2Profile_Container` - This holds all of the code for the PyPi package, `mythic_c2_container`, that you can use to create your own c2 profile docker image or when turning an arbitrary host into a c2 profile service.
-* `Mythic_DockerTemplates` - This holds all of the code and resources that are used to make all of the Docker images hosted on DockerHub ([https://hub.docker.com/search?q=itsafeaturemythic\&type=image](https://hub.docker.com/search?q=itsafeaturemythic\&type=image)). This is helpful if you want to see what's actually happening for a specific container or you want to use one of these as a starting point for your own containers.
+* `MythicContainerPyPi` - This holds all of the code for the PyPi package
+* `MythicContainer` - This holds all of the same sort of code as the PyPi package, but is for agents that wish to define commands in Golang instead of Python.
 
 ## Payload Type Docker Information
 
@@ -33,28 +30,28 @@ The rest of these sections talk about specifics for the docker container for you
 
 ### Creating a docker container for your new agent
 
-There are docker containers for each payload type which contain customized build environments. This allows two payload types that might share the same language to still have different environment variables, build paths, tools installed, etc. Docker containers come into play for a few things:
+There is one docker container base image, `itsafeaturemythic/mythic_base_image`, that contains general environments for Python, Golang, .NET, and even includes a macOS SDK. This allows two payload types that might share the same language to still have different environment variables, build paths, tools installed, etc. Docker containers come into play for a few things:
 
-* Metadata about the payload type (this is in the form of python classes)
+* Metadata about the payload type (this is in the form of python classes or Golang structs)
 * The payload type code base (whatever language your agent is in)
-* The python code to create the payload based on all of the user supplied input
-* Metadata about all of the commands associated with that payload type (more python classes)
+* The code to create the payload based on all of the user supplied input
+* Metadata about all of the commands associated with that payload type
 * The code for all of those commands (whatever language your agent is in)
 * Browser scripts for commands and support scripts for the payload type as a whole (JavaScript)
-* The python code to take user supplied tasking and turn it into tasking for your agent
+* The code to take user supplied tasking and turn it into tasking for your agent
 
 {% hint style="warning" %}
 This part has to happen outside of the web UI at the moment. The web UI is running in its own docker container, and as such, can't create, start, or stop entire docker containers. So, make sure this part is done via CLI access to where Mythic is installed.
 {% endhint %}
 
-Within `Mythic/Payload_Types/` make a new folder that matches the name of your agent. Inside of this folder make a file called `Dockerfile`. This is where you have a choice to make - either use the default Payload Type docker container as a starting point and make your additions from there, or use a different container base.
+Within `Mythic/InstalledServices/` make a new folder that matches the name of your agent. Inside of this folder make a file called `Dockerfile`. This is where you have a choice to make - either use the default docker container as a starting point and make your additions from there, or use a different container base.
 
 #### Using the default container base
 
-The default container is pretty bare bones except for python 3.8. Start your `Dockerfile` off with:
+The default container has the core pieces for many different languages. Start your `Dockerfile` off with:
 
 ```
-From itsafeaturemythic/python38_payload:0.1.1
+From itsafeaturemythic/mythic_base_image:0.0.2
 ```
 
 On the next lines, just add in any extra things you need for your agent to properly build, such as:
@@ -69,61 +66,125 @@ RUN apt-get install -y tool_name
 This happens all in a script for docker, so if a command might make a prompt for something (like apt-get), make sure to auto handle that or your stuff won't get installed properly
 {% endhint %}
 
-There are a few different default containers you can leverage depending on the environment you need:
+The latest container versions and their associated `mythic_container` PyPi versions can be found here: [#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention").
 
-* From itsafeaturemythic/python38\_payload
-  * This is based on `python:3.8-buster` and only has python3.8 installed
-* From itsafeaturemythic/csharp\_payload
-  * This is based on `mono:latest` with python 3.8.6 manually installed along with the `System.Management.Automation.dll` added in (v2 and v4)
-* From itsafeaturemythic/xgolang\_payload
-  * This is based on `karalabe/xgo-latest` with python 3.8.6 manually installed
-
-The latest container versions and their associated `mythic_payloadtype_container` PyPi versions can be found here: [#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention").
-
-If you're curious what else goes into these containers, look in the following repo:
-
-{% embed url="https://github.com/MythicMeta/Mythic_Docker_Templates/tree/master/Docker_Payload_Type_base_files" %}
+If you're curious what else goes into these containers, look in the `docker-templates` folder within the Mythic repository.
 
 #### Required Folder Structure
 
 {% hint style="info" %}
-The `Mythic/Payload_Types/[agent name]` folder is mapped to `/Mythic` in the docker container. Editing the files on disk results in the edits appearing in the docker container and visa versa.
+The `Mythic/InstalledServices/[agent name]` folder is mapped to `/Mythic` in the docker container. Editing the files on disk results in the edits appearing in the docker container and visa versa.
 {% endhint %}
 
-All of your agent code, commands, and c2 profile code should be in the following folder:\
-`Mythic/Payload_Types/[agent name]/agent_code/`. You can have any folder structure or files you want here.
+Most things are left up to you, the agent developer, to decide how best to structure your code and agent code. However, there's a few files that need to be in certain places for Mythic's Docker container to properly kick off your container:
 
-The `Mythic/Payload_Types/[agent name]/mythic` folder contains all information for interacting with Mythic. Inside of the `mythic` folder there's a subfolder `agent_functions` where all of your agent-specific building/command information lives.
+1. `Mythic/InstalledServices/[agent name]/Dockerfile` <-- this defines the docker information for your agent and must be here for docker-compose to properly discover and build your container
+
+Technically, that's all that's required. Within the `Dockerfile` you will then need to do whatever is needed to kick of your main program that imports either the MythicContainer PyPi package or the MythicContainer Golang package. As some examples, here's what you can do for Python and Golang:
+
+#### Python:
+
+1. `Mythic/InstalledServices/[agent name]/main.py` <-- if you plan on using Python as your definition language, this `main.py` file is what will get executed by Python 3.10.
+
+At that point, your `main.py` file will import any other folders/files needed to define your agent/commands and import the `mythic_container` pypi package. Here's an example from Apollo:
+
+```
+FROM itsafeaturemythic/mythic_base_image:0.0.2
+
+RUN python3 -m pip install mythic-container==0.2.3rc03
+RUN python3 -m pip install donut-shellcode
+
+WORKDIR /Mythic/
+
+CMD ["python3", "main.py"]
+```
+
+#### Golang
+
+Things are a little different here as we're going from source code to compiled binaries. To keep things in a simplified area for building, running, and testing, a common file like a `Makefile` is useful.&#x20;
+
+1. `Mythic/InstalledServices/[agent name]/Makefile`&#x20;
+
+From here, that make file can have different functions for what you need to do:
+
+Here's an example of the `Makefile` that allows you to specify custom environment variables when debugging locally, but also support Docker building:
+
+```
+BINARY_NAME?=main
+DEBUG_LEVEL?="warning"
+RABBITMQ_HOST?="127.0.0.1"
+RABBITMQ_PASSWORD?="password here"
+MYTHIC_SERVER_HOST?="127.0.0.1"
+MYTHIC_SERVER_GRPC_PORT?="17444"
+WEBHOOK_DEFAULT_URL?=
+WEBHOOK_DEFAULT_CHANNEL?=
+WEBHOOK_DEFAULT_FEEDBACK_CHANNEL?=
+WEBHOOK_DEFAULT_CALLBACK_CHANNEL?=
+WEBHOOK_DEFAULT_STARTUP_CHANNEL?=
+
+build:
+	go mod tidy
+	GOOS=linux go build -o ${BINARY_NAME} .
+	cp ${BINARY_NAME} /
+
+run:
+	cp /${BINARY_NAME} .
+	./${BINARY_NAME}
+
+run_custom:
+	DEBUG_LEVEL=${DEBUG_LEVEL} \
+RABBITMQ_HOST=${RABBITMQ_HOST} \
+RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD} \
+MYTHIC_SERVER_HOST=${MYTHIC_SERVER_HOST} \
+MYTHIC_SERVER_GRPC_PORT=${MYTHIC_SERVER_GRPC_PORT} \
+WEBHOOK_DEFAULT_URL=${WEBHOOK_DEFAULT_URL} \
+WEBHOOK_DEFAULT_CHANNEL=${WEBHOOK_DEFAULT_CHANNEL} \
+WEBHOOK_DEFAULT_FEEDBACK_CHANNEL=${WEBHOOK_DEFAULT_FEEDBACK_CHANNEL} \
+WEBHOOK_DEFAULT_CALLBACK_CHANNEL=${WEBHOOK_DEFAULT_CALLBACK_CHANNEL} \
+WEBHOOK_DEFAULT_STARTUP_CHANNEL=${WEBHOOK_DEFAULT_STARTUP_CHANNEL} \
+./${BINARY_NAME}
+
+```
 
 {% hint style="info" %}
-The entire folder structure can be copied from the `Example_Payload_Type` folder.
+Pay attention to the `build` and `run` commands - once you're done building your code, notice that it's copied from the current directory to `/` in the Docker Image. This is because when the container starts, your source code is mapped into the Docker image, thus discarding any changes you made to that directory while building. This is also why the `run` function copies the binary back into the current directory and executes it there. The reason it's executed this way instead of from `/` is so that pathing and local folders are located where you expect them to be in relation to your binary.
 {% endhint %}
 
-There isn't _too_ much that's different if you're going to use your own container, it's just on you to make sure that python3.8 is up and running and the entrypoint is set properly. Here's what the base containers do:
+To go along with that, a sample Docker file for Golang is as follows:
 
-{% embed url="https://github.com/MythicMeta/Mythic_Docker_Templates/blob/master/Docker_Payload_Type_base_files/python38_dockerfile" %}
+```
+FROM itsafeaturemythic/mythic_base_image:0.0.2
 
-with the following requirements.txt file in them:
+WORKDIR /Mythic/
 
-{% embed url="https://github.com/MythicMeta/Mythic_Docker_Templates/blob/master/Docker_Payload_Type_base_files/requirements.txt" %}
+COPY [".", "."]
 
-Notice that it installs python3.8, sets it up correctly, installs the required packages (aio\_pika, mythic-payloadtype-container, dynaconf) for Mythic, and sets the entrypoint for a default service file.
+RUN make build
+
+CMD make run
+```
+
+It's very similar to the Python version, except it runs `make build` when building and `make run` when running the code. The Python version doesn't need a `Makefile` or multiple commands because it's an interpreted language.
+
+#### Custom container
+
+There isn't _too_ much that's different if you're going to use your own container, it's just on you to make sure that python3.10/Golang 1.20 is up and running and the entrypoint is set properly.&#x20;
 
 {% hint style="info" %}
-If you're having this hook up through Mythic via `mythic-cli` and the one `docker-compose` file, the `dynaconf` and `mythic-payloadtype-container` are the ones responsible for the `Mythic/.env` configuration being applied to your container.
+If you're having this hook up through Mythic via `mythic-cli` and the one `docker-compose` file, the `dynaconf` and `mythic-container` (or MythicContainer golang package) are the ones responsible for the `Mythic/.env` configuration being applied to your container.
 {% endhint %}
 
 {% hint style="warning" %}
-If your container/service is running on a different host than the main Mythic instance, then you need to make sure the `rabbitmq_password` is shared over to your agent as well. By default, this is a randomized value stored in the `Mythic/.env` file and shared across containers, but you will need to manually share this over with your agent either via an environment variable (`MYTHIC_RABBITMQ_PASSWORD` or by editing the `rabbitmq_password` field in your rabbitmq\_config.json file.
+If your container/service is running on a different host than the main Mythic instance, then you need to make sure the `rabbitmq_password` is shared over to your agent as well. By default, this is a randomized value stored in the `Mythic/.env` file and shared across containers, but you will need to manually share this over with your agent either via an environment variable (`MYTHIC_RABBITMQ_PASSWORD` ) or by editing the `rabbitmq_password` field in your rabbitmq\_config.json file.
 {% endhint %}
 
 ### Starting your Docker container
 
-To start your new payload type docker container, you need to first make sure that the docker-compose file is aware of it (assuming you didn't install it via `mythic-cli install github <url>` ). You can check if your `docker-compose` file is aware of your agent via `mythic-cli payload list`. If it's not aware, you can simply do `mythic-cli payload add <payload name>`. Now you can start just that one container via `mythic-cli payload start <payload name>`.
+To start your new payload type docker container, you need to first make sure that the docker-compose file is aware of it (assuming you didn't install it via `mythic-cli install github <url>` ). You can simply do `mythic-cli add <payload name>`. Now you can start just that one container via `mythic-cli start <payload name>`.
 
 Your container should pull down all the necessary files, run the necessary scripts, and finally start. If it started successfully, you should see it listed in the payload types section when you run `sudo ./mythic-cli status`.
 
-If you go back in the web UI at this point, you should see the red light next to your payload type change to green to indicate that it's now getting heartbeats. If it's not, then something went wrong along the way. You can use the `sudo ./mythic-cli logs payload_type_name` to see the output from the container to potentially troubleshoot.
+If you go back in the web UI at this point, you should see the red text next to your payload type change to green to indicate that it's now running. If it's not, then something went wrong along the way. You can use the `sudo ./mythic-cli logs payload_type_name` to see the output from the container to potentially troubleshoot.
 
 {% hint style="info" %}
 The containers will automatically sync all of their information with the Mythic server when they start, so the first time the Mythic server gets a message from a container it doesn't know about, it'll ask to sync. Similarly, as you do development and restart your Payload Type container, updates will automatically get synced to the main UI.
@@ -146,42 +207,62 @@ There are scenarios in which you need a Mythic container for an agent, but you c
 
 So, to leverage your own custom VM or physical computer into a Mythic recognized container, there are just a few steps.
 
-{% hint style="info" %}
-An easy way to do configuration for your agent outside of the `rabbitmq_config.json` file in step 6, is to use environment variables. These can be exported from your `mythic-cli` and `.env` file via: `sudo ./mythic-cli config payload`.
-{% endhint %}
-
 {% hint style="warning" %}
-External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. By default, this container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`). The `sudo ./mythic-cli config payload` will ask if you want to do this too.
+External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. They also need to connect to the `mythic_server` to transfer files and potentially use gRPC. By default, these container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and `MYTHIC_SERVER_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`).&#x20;
 {% endhint %}
 
-1. Install python 3.8+ in the VM or on the computer
-2. `pip3 install mythic-payloadtype-container` (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention")).
-3. Create a folder on the computer or VM (let's call it path `/pathA`). Essentially, your `/pathA` path will be the new `Payload_Types/[agent name]` folder. From the Mythic install, copy the contents of `Mythic/Example_Payload_Type` to `/pathA`. So, you should have `/pathA/agent_code/`, `/pathA/mythic/` and `/pathA/Dockerfile` (that last one won't matter for us though).
-4. Your agent code will be in `/pathA/agent_code/`. You can create a Visual Studio project here and simply configure it however you need.
-5. Your Mythic-based code (payload definitions, tasking functions, builder function, etc) will be in `/pathA/mythic/`.&#x20;
-6. Edit the `/pathA/mythic/rabbitmq_config.json` with the parameters you need
-   1. the `host` value should be the IP address of the main Mythic install
-   2. the `name` value should be the name of the payload type (this is tied into how the routing is done within rabbitmq). For Mythic's normal docker containers, this is set to `hostname` because the hostname of the docker container is set to the name of the payload type. For this case though, that might not be true. So, you can set this value to the name of your payload type instead (this must match your agent name **exactly**).
-   3. the `container_files_path` should be the absolute path to the folder in step 3 (`/pathA/`in this case).
-   4. leave `virtual_host` and `username` the same
-   5. You'll need the password of rabbitmq from your Mythic instance. You can either get this from the `Mythic/.env` file, by running `sudo ./mythic-cli config get rabbitmq_password`, or if you run `sudo ./mythic-cli config payload` you'll see it there too.
-7. External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. By default, this container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`). The `sudo ./mythic-cli config payload` will ask if you want to do this too.
-8. In `/pathA/mythic/agent_functions/builder.py` is where you define the information about your new Payload Type as well as define what it means to "build" your agent. For starters though, just make sure that the `name` in the `/pathA/mythic/rabbitmq_config.json` file matches the `name` in the class definition here **exactly**.
-9. Run `python3.8 mythic_service.py` and now you should see this container pop up in the UI
-10. If you already had the corresponding payload type registered in the Mythic interface, you should now see the red light turn green.
+1. Install python 3.10+ (or Golang 1.20) in the VM  or on the computer
+2. `pip3 install mythic-container` (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention")). Alternatively, `go get -u github.com/MythicMeta/MythicContainer` for golang.
+3. Create a folder on the computer or VM (let's call it path `/pathA`). Essentially, your `/pathA` path will be the new `InstalledServices/[agent name]` folder. Create a sub folder for your actual agent's code to live, like `/pathA/agent_code`. You can create a Visual Studio project here and simply configure it however you need.
+4. Your command function definitions and payload definition are also helpful to have in a folder, like `/pathA/agent_functions`.
+5.  Edit the `/pathA/rabbitmq_config.json` with the parameters you need\
+
+
+    <pre><code>{
+      "rabbitmq_host": "127.0.0.1",
+      "rabbitmq_password": "PqR9XJ957sfHqcxj6FsBMj4p",
+      "mythic_server_host": "127.0.0.1",
+      "webhook_default_channel": "#mythic-notifications",
+      "debug_level": "debug",
+      "rabbitmq_port": 5432,
+      "mythic_server_grpc_port": 17444,
+    <strong>  "webhook_default_url": "",
+    </strong><strong>  "webhook_default_callback_channel": "",
+    </strong>  "webhook_default_feedback_channel": "",
+      "webhook_default_startup_channel": "",
+      "webhook_default_alert_channel": "",
+      "webhook_default_custom_channel": "",
+    }
+    </code></pre>
+
+    1. the `mythic_server_host` value should be the IP address of the main Mythic install
+    2. the `rabbitmq_host` value should be the IP address of the main Mythic install unless you're running rabbitmq on another host.
+    3. You'll need the password of rabbitmq from your Mythic instance. You can either get this from the `Mythic/.env` file, by running `sudo ./mythic-cli config get rabbitmq_password`, or if you run `sudo ./mythic-cli config payload` you'll see it there too.
+6. External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. By default, this container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`). You'll also need to set `MYTHIC_SERVER_BIND_LOCALHOST_ONLY=false`.
+7. In the file where you define your payload type is where you define what it means to "build" your agent.
+8. Run `python3.10 main.py` and now you should see this container pop up in the UI
+9. If you already had the corresponding payload type registered in the Mythic interface, you should now see the red text turn green.
 
 You should see output similar to the following:
 
 ```
-itsafeature@spooky mythic % python3 mythic_service.py 
-[*] To enable debug logging, set `MYTHIC_ENVIRONMENT` variable to `testing`
-[*] Mythic PayloadType Version: 12
-[*] PayloadType PyPi Version: 0.1.7
-[*] Setting hostname (which should match payload type name exactly) to: test
-[*] Trying to connect to rabbitmq at: 192.168.53.149:5672
-[+] Ready to go!
-[*] mythic_service - Waiting for messages in mythic_service with version 12.
-[*] mythic_service - total instances of test container running: 1
+itsafeature@spooky my_container % python3 main.py    
+INFO 2023-04-03 21:17:10,899 initialize  29  : [*] Using debug level: debug
+INFO 2023-04-03 21:17:10,899 start_services  267 : [+] Starting Services with version v1.0.0-0.0.7 and PyPi version 0.2.0-rc9
+
+INFO 2023-04-03 21:17:10,899 start_services  270 : [*] Processing webhook service
+INFO 2023-04-03 21:17:10,899 syncWebhookData  261 : Successfully started webhook service
+INFO 2023-04-03 21:17:10,899 start_services  281 : [*] Processing agent: apfell
+INFO 2023-04-03 21:17:10,902 syncPayloadData  104 : [*] Processing command jsimport
+INFO 2023-04-03 21:17:10,902 syncPayloadData  104 : [*] Processing command chrome_tabs
+DEBUG 2023-04-03 21:17:10,915 SendRPCMessage  132 : Sending RPC message to pt_sync
+INFO 2023-04-03 21:17:10,915 GetConnection  84  : [*] Trying to connect to rabbitmq at: 127.0.0.1:5672
+INFO 2023-04-03 21:17:10,999 GetConnection  98  : [+] Successfully connected to rabbitmq
+INFO 2023-04-03 21:17:11,038 ReceiveFromMythicDirectTopicExchange  306 : [*] started listening for messages on emit_webhook.new_callback
+INFO 2023-04-03 21:17:11,038 ReceiveFromMythicDirectTopicExchange  306 : [*] started listening for messages on emit_webhook.new_feedback
+INFO 2023-04-03 21:17:11,051 ReceiveFromMythicDirectTopicExchange  306 : [*] started listening for messages on emit_webhook.new_startup
+INFO 2023-04-03 21:17:13,240 syncPayloadData  123 : [+] Successfully synced apfell
+
 ```
 
 {% hint style="warning" %}
@@ -196,7 +277,7 @@ One big caveat people tend to forget about is paths. Normal containers run on \*
 
 ### Debugging Locally
 
-Whether you're using a Docker container or not, you can load up the code in your `agent_code` folder in any IDE you want. When an agent is installed via `mythic-cli`, the entire agent folder (`agent_code` and `mythic`) is mapped into the Docker container. This means that any edits you make to the code is automatically reflected inside of the container without having to restart it (pretty handy). The only caveat here is if you make modifications to the `mythic/agent_functions` files - these are Python files loaded up when the container starts, so they don't detect hot patches and will require you to restart your container to load up the changes `sudo ./mythic-cli payload start [payload name]`. If you're making changes to those from a non-Docker instance, simply stop your `python3.8 mythic_service.py` and start it again. This effectively forces those files to be loaded up again and re-synced over to Mythic.
+Whether you're using a Docker container or not, you can load up the code in your `agent_code` folder in any IDE you want. When an agent is installed via `mythic-cli`, the entire agent folder (`agent_code` and `mythic`) is mapped into the Docker container. This means that any edits you make to the code is automatically reflected inside of the container without having to restart it (pretty handy). The only caveat here is if you make modifications to the python or golang definition files will require you to restart your container to load up the changes `sudo ./mythic-cli start [payload name]`. If you're making changes to those from a non-Docker instance, simply stop your `python3.8 main.py` and start it again. This effectively forces those files to be loaded up again and re-synced over to Mythic.
 
 #### Debugging Agent Code Locally
 

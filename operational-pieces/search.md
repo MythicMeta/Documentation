@@ -8,5 +8,5 @@ The operational search feature can be found by clicking the top "search" icon. F
 
 The search bar checks for what you type as a case insensitive grep.
 
-![](<../.gitbook/assets/Screen Shot 2021-12-02 at 5.10.39 PM.png>)
+![](<../.gitbook/assets/Screenshot 2023-03-06 at 8.37.16 AM.png>)
 

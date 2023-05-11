@@ -10,11 +10,9 @@ This page simply shows all uploads and downloads tracked by Mythic and breaks th
 
 From here, you can see who download or uploaded a file, when it happened, and where it went to or came from. Clicking the download button will download the file to the user's machine.
 
-If you want to download multiple files at once from the `Downloads` section, click the toggle for all the files you want and select the `Zip & Download selected` button at the top right to download them.
+If you want to download multiple files at once from the `Downloads` section, click the toggle for all the files you want and select the `Zip & Download selected` button at the top right to download them. You can also preview the first 512KB of a file either as a string or as a hex xxd formatted view. This makes it easier to browse downloaded files without having to actually download them and open them up in a new tool.
 
-Files are saved as random UUID values on disk with a mapping to the real names in the database. This doesn't come into effect when you download a single file, but when you zip and download files the filenames will stay the UUIDs. To help with this, inside that zip is a `mappings.json` file with a mapping of real names to UUIDs. This is done as a security precaution to prevent malicious file names/paths.
-
-![](<../.gitbook/assets/Screen Shot 2021-12-02 at 5.08.25 PM.png>)
+![](<../.gitbook/assets/Screenshot 2023-03-06 at 8.35.00 AM.png>)
 
 ### Additional Info
 

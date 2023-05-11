@@ -19,18 +19,20 @@ The top table has a list of current callbacks with a bunch of identifying inform
 * OS (arch) - This is the OS and architecture information for the host
 * Initial Checkin - The time when the callback first checked in. This date is stored in UTC in the database, but converted to the operator's local time zone on the page.
 * Last Checkin - How long it's been since the last checkin in day:hour:minute:second time\\
-* Description - The current description of the callback. The default value for this is specified by the `default tag` section when creating a payload. This can be changed either via the callback's dropdown or after clicking the keyboard button, type `set description whatever you want here`.
+* Description - The current description of the callback. The default value for this is specified by the `default description` section when creating a payload. This can be changed either via the callback's dropdown.
 
 Next to the `Interact` button is a dropdown button that provides more accessible information:
 
-![](<../.gitbook/assets/Screen Shot 2021-12-02 at 4.47.01 PM.png>)
+![](<../.gitbook/assets/Screenshot 2023-03-05 at 4.14.16 PM.png>)
 
 * Expand Callback - This opens up the callback in a separate window where you can either just view that whole callback full screen, or selectively add other callbacks to view in a split view
 * Edit Description - This allows you to edit the description of a callback. This will change the side description at the end and also rename the tab at the bottom when somebody clicks `interact`. To set this back to the default value, interact with the callback and type `set description reset`. or set this to an empty string
 * Hide Callback - This removes the callback from the current view and sets it to inactive. Additionally, from the Search page, you can make the callback `Active` again which will bring it back into view here.
+* Hide Multiple - allows you to hide multiple callbacks at once instead of doing one at a time.
 * Process Browser - This allows you to view a unified process listing from all agents related to this `host`, but issue new process listing requests from within this callback's context
 * Locked - If a callback is locked by a specific user, this will be indicated here (along with a changed user and lock icon instead of a keyboard on the interacting button).
 * File Browser - this allows you to view a process browser across all of the agents.
+* Task Multiple - this allows you to task multiple callbacks of the same Payload Type at once.
 
 ## Bottom Area
 

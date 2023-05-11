@@ -6,19 +6,6 @@ description: >-
 
 # Action: Checkin
 
-## Endpoint
-
-All messages go to the `/api/v1.4/agent_message` endpoint. These messages can be:
-
-* POST request
-  * message content in body
-  * message content in FIRST header value
-  * message content in FIRST cookie value
-* GET request
-  * message content in FIRST header value
-  * message content in FIRST cookie value
-  * message content in FIRST query parameter
-
 ### A note about UUIDs
 
 You will see a bunch of UUIDs mentioned throughout this section. All UUIDs are UUIDv4 formatted UUIDs (36 characters in length) and formatted like:
@@ -49,7 +36,7 @@ Base64( PayloadUUID + JSON({
     "uuid": "payload uuid", //uuid of the payload - required
     
     
-    "ip": "127.0.0.1", // internal ip address - optional
+    "ips": ["127.0.0.1"], // internal ip addresses - optional
     "os": "macOS 10.15", // os version - optional
     "user": "its-a-feature", // username of current user - optional
     "host": "spooky.local", // hostname of the computer - optional
@@ -97,7 +84,7 @@ Base64( PayloadUUID + AES256(
         "uuid": "payload uuid", //uuid of the payload - required
         
         
-        "ip": "127.0.0.1", // internal ip address - optional
+        "ips": ["127.0.0.1"], // internal ip addresses - optional
         "os": "macOS 10.15", // os version - optional
         "user": "its-a-feature", // username of current user - optional
         "host": "spooky.local", // hostname of the computer - optional
@@ -191,7 +178,7 @@ Base64( tempUUID + AES256(
         "uuid": "payload uuid", //uuid of the payload - required
         
         
-        "ip": "127.0.0.1", // internal ip address - optional
+        "ips": ["127.0.0.1"], // internal ip addresses - optional
         "os": "macOS 10.15", // os version - optional
         "user": "its-a-feature", // username of current user - optional
         "host": "spooky.local", // hostname of the computer - optional
