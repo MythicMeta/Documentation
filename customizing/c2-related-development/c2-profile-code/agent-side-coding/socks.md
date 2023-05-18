@@ -98,4 +98,4 @@ For the most part, the message processing is pretty straight forward:
 
 That's it really. The hard part is making sure that you don't exhaust all of the system resources by creating too many threads, running into deadlocks, or any number of other potential issues.
 
-While not perfect, the poseidon agent have a generally working implementation for Mythic: [https://github.com/MythicAgents/poseidon/blob/master/Payload\_Type/poseidon/agent\_code/socks/socks.go](https://github.com/MythicAgents/poseidon/blob/master/Payload\_Type/poseidon/agent\_code/socks/socks.go)
+While not perfect, the poseidon agent have a generally working implementation for Mythic: [https://github.com/MythicAgents/poseidon/blob/master/Payload\_Type/poseidon/poseidon/agent\_code/socks/socks.go](https://github.com/MythicAgents/poseidon/blob/master/Payload\_Type/poseidon/poseidon/agent\_code/socks/socks.go)
