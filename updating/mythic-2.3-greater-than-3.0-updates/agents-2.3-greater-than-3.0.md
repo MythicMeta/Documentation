@@ -239,6 +239,10 @@ async def opsec_post(self, taskData: PTTaskMessageAllData) -> PTTTaskOPSECPostTa
     return response
 ```
 
+### SOCKS
+
+The RPC call to start SOCKS is no longer `control_socks`. Instead, you'll use the `SendMythicRPCProxyStart` and `SendMythicRPCProxyStop` commands as detailed [here](../../customizing/payload-type-development/socks.md).&#x20;
+
 ## C2 Profiles
 
 C2 profiles also need to be updated for Mythic 3.0.0, in an extremely similar way to Payload Types.&#x20;
@@ -266,3 +270,6 @@ To see what this looks like all together, look at the `websocket` example here: 
 Translation containers are no different than C2 Profiles and Payload Types for the new format of things. Look to `translator` in the ExampleContainers ([https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services](https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services)) repository for an example of how to format your new structure. Translation containers boil down to one class definition with a few functions.
 
 One big change from Mythic 2.3 -> 3.0 for Translation Containers is that they now operate over gRPC instead of RabbitMQ. This means that they need to access the gRPC port on the Mythic Server if you intend on running a translation container on a separate host from Mythic itself. This port is configurable in the `Mythic/.env` file, but by default it's 17443. This change to gRPC instead of RabbitMQ for the translation container messages speeds things up and reduces the burden on RabbitMQ for transmitting potentially large messages.
+
+
+

@@ -77,6 +77,7 @@
   * [OPSEC Checking](customizing/payload-type-development/opsec-checking.md)
   * [Sub-tasking / Task Callbacks](customizing/payload-type-development/sub-tasking-task-callbacks.md)
   * [Process Response](customizing/payload-type-development/process-response.md)
+  * [SOCKS](customizing/payload-type-development/socks.md)
   * [Adding Commands](customizing/payload-type-development/adding-commands.md)
 * [C2 Related Development](customizing/c2-related-development/README.md)
   * [C2 Profile Code](customizing/c2-related-development/c2-profile-code/README.md)

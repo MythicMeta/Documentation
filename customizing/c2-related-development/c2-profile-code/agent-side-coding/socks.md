@@ -9,7 +9,7 @@ description: How does SOCKS work within Mythic
 Socks provides a way to negotiate and transmit TCP connections through a proxy ([https://en.wikipedia.org/wiki/SOCKS](https://en.wikipedia.org/wiki/SOCKS)). This allows operators to proxy network tools through the Mythic server and out through supported agents. SOCKS5 allows a lot more options for authentication compared to SOCKS4; however, Mythic currently doesn't leverage the authenticated components, so it's important that if you open up this port on your Mythic server that you lock it down.
 
 {% hint style="warning" %}
-Opened SOCKS5 ports in Mythic do not leverage additional authentication, so MAKE SURE YOU LOCK DOWN YOUR PORTS.&#x20;
+Opened SOCKS5 ports in Mythic do not leverage additional authentication, so MAKE SURE YOU LOCK DOWN YOUR PORTS.
 {% endhint %}
 
 ## What do SOCKS messages look like?
@@ -26,9 +26,13 @@ Without going into all the details of the SOCKS5 protocol, agents transmit dicti
 
 These messages contain three components:
 
-* `exit` - boolean True or False. This indicates to either Mythic or your Agent that the connection has been terminated from one end and should be closed on the other end (after sending `data`). Because Mythic and 2 HTTP connections sit between the actual tool you're trying to proxy and the agent that makes those requests on your tool's behalf, we need this sort of flag to indicate that a TCP connection has closed on one side.&#x20;
+* `exit` - boolean True or False. This indicates to either Mythic or your Agent that the connection has been terminated from one end and should be closed on the other end (after sending `data`). Because Mythic and 2 HTTP connections sit between the actual tool you're trying to proxy and the agent that makes those requests on your tool's behalf, we need this sort of flag to indicate that a TCP connection has closed on one side.
 * `server_id` - integer. This number is how Mythic and the agent can track individual connections. Every new connection from a proxied tool (like through proxychains) will generate a new `server_id` that Mythic will send with data to the Agent.
 * `data` - base64 string. This is the actual bytes that the proxied tool is trying to send.
+
+{% hint style="warning" %}
+In Python translation containers, if `exit` is True, then `data` can be `None`
+{% endhint %}
 
 ## How does this fit into Agent Messages?
 
