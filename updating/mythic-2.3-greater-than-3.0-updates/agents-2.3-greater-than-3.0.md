@@ -265,11 +265,24 @@ C2 profiles also need to be updated for Mythic 3.0.0, in an extremely similar wa
 
 To see what this looks like all together, look at the `websocket` example here: [https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services](https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services). You'll notice that the `websocket` is just one of _multiple_ services that the single docker contianer is offering. If you want your container to _only_ offer that one, then you can remove the other folders and adjust your `main.py` accordingly.
 
+{% hint style="warning" %}
+Keys in the C2 Profile Parameter Type `Dictionary` will be sorted alphabetically - they will NOT maintain the order they were specified in the UI. This is currently a limitation of the Golang Google JSON library.
+{% endhint %}
+
 ## Translation Containers
 
 Translation containers are no different than C2 Profiles and Payload Types for the new format of things. Look to `translator` in the ExampleContainers ([https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services](https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services)) repository for an example of how to format your new structure. Translation containers boil down to one class definition with a few functions.
 
 One big change from Mythic 2.3 -> 3.0 for Translation Containers is that they now operate over gRPC instead of RabbitMQ. This means that they need to access the gRPC port on the Mythic Server if you intend on running a translation container on a separate host from Mythic itself. This port is configurable in the `Mythic/.env` file, but by default it's 17443. This change to gRPC instead of RabbitMQ for the translation container messages speeds things up and reduces the burden on RabbitMQ for transmitting potentially large messages.
+
+Some additional notes about Translation container message updates:
+
+* Although Mythic 3 will base64 decode a message before providing it to translate\_from\_c2\_format, Mythic 3 will not base64 encode the result of translate\_to\_c2\_format which you will still need to do like you would have for Mythic 2.3
+* Mythic 2.3 allowed UUID prefixes to custom agent messages to a little endian encoded 16 byte value. In Mythic 3 any 16 byte UUID prefix needs to be big endian encoded
+* Mythic 2.3 required the translation container to base64 encode/decode inputs and outputs for generate\_keys. Mythic 2.3 would directly use that base64 data to populate enc\_key or dec\_key values for building and would provide that base64 data directly to any translate\_to\_c2\_format and translate\_from\_c2\_format functions.&#x20;
+  * Mythic 3 expects generate\_keys to provide the keys as byte arrays. Mythic 3 will base64 encode/decode the byte arrays when populating any enc\_key or dec\_key value for an agent configuration, but will use the byte array when calling any translate\_to\_c2\_format and translate\_from\_c2\_format function
+* Mythic 2.3 would provide the entire message as input to translate\_from\_c2\_format. Mythic 3 provides the message, minus any UUID prefix
+*
 
 
 
