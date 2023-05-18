@@ -282,7 +282,4 @@ Some additional notes about Translation container message updates:
 * Mythic 2.3 required the translation container to base64 encode/decode inputs and outputs for generate\_keys. Mythic 2.3 would directly use that base64 data to populate enc\_key or dec\_key values for building and would provide that base64 data directly to any translate\_to\_c2\_format and translate\_from\_c2\_format functions.&#x20;
   * Mythic 3 expects generate\_keys to provide the keys as byte arrays. Mythic 3 will base64 encode/decode the byte arrays when populating any enc\_key or dec\_key value for an agent configuration, but will use the byte array when calling any translate\_to\_c2\_format and translate\_from\_c2\_format function
 * Mythic 2.3 would provide the entire message as input to translate\_from\_c2\_format. Mythic 3 provides the message, minus any UUID prefix
-*
-
-
 
