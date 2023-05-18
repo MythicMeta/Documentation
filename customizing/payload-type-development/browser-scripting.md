@@ -527,7 +527,12 @@ This button type allows you to issue additional tasking.
 
 This button has the same `name` and `type` fields as the dictionary button. Just like with the dictionary button we can make the button disabled or not with the `disabled` field. You might be wondering which task we'll invoke with the button. This works the same way we identify which command to issue via the file browser or the process browser - `ui_feature`. These can be anything you want, just make sure you have the corresponding feature listed somewhere in your commands or you'll never be able to task it. Just like with the dictionary button, we can specify `startIcon` and `startIconColor`. The `openDialog` flag allows you to specify that the tasking popup modal should open and be partially filled out with the data you supplied in the `parameters` field. Similarly, the `getConfirmation` flag allows you to force an `accept/cancel` dialog to get the user's confirmation before issuing a task. This is handy, especially if the tasking is something potentially dangerous (killing a process, removing a file, etc). If you're setting `getConfirmation` to true, you can also set `acceptText` to something that makes sense for your tasking, like "yes", "remove", "delete", "kill", etc.&#x20;
 
-The last thing here is the `parameters`. If you provide parameters, then Mythic will automatically use them when tasking. In this example, we're pre-creating the full path for the files in question and passing that along as the parameters to the `download` function. If you don't provide any parameters and the task you're trying to issue takes parameters, then you will get a popup to provide the parameters, just like if you tasked it from the command line.
+The last thing here is the `parameters`. If you provide parameters, then Mythic will automatically use them when tasking. In this example, we're pre-creating the full path for the files in question and passing that along as the parameters to the `download` function.
+
+* Remember: your `parse_arguments` function gets called when your input _isn’t_ a dictionary or if your `parse_dictionary` function isn’t defined. So keep that in mind - string arguments go here
+* when you issue `ls -Path some_path` on the command line, Mythic’s UI is automatically parsing that into `{"Path": "some_path"}` for you and since you have a dictionary now, it goes to your `parse_dictionary` function
+* when you set the parameters in the browser script, Mythic doesn’t first try to pre-process them like it does when you’re typing on the command.
+* If you want to pass in a parsed parameter set, then you can just pass in a dictionary. So, `"parameters": {"Path": "my path value"}`
 
 #### table button
 
