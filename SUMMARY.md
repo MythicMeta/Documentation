@@ -26,6 +26,7 @@
   * [Event Feed](operational-pieces/event-feed.md)
   * [API Tokens](operational-pieces/api-tokens.md)
 * [Message Flow](message-flow.md)
+* [Database Schema](database-schema.md)
 * [Understanding Commands](understanding-commands/README.md)
   * [Basic Information](understanding-commands/basic-information.md)
   * [Parameters](understanding-commands/parameters.md)
