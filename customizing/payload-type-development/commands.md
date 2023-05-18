@@ -215,11 +215,14 @@ class CommandParameter:
   * String
   * Boolean
   * File
+    * Upload a file through your browser. In your create tasking though, you get a String UUID of the file that can be used via SendMythicRPC\* calls to get more information about the file or the file contents
   * Array
+    * An Array of string values
   * ChooseOne
   * ChooseMultiple
+    * An Array of string values
   * Credential\_JSON
-    * Get a JSON representation of all data for a credential
+    * Select a specific credential that's registered in the Mythic credential store. In your create tasking, get a JSON representation of all data for a credential
   * Number
   * Payload
     * Select a payload that's already been generated and get the UUID for it. This is helpful for using that payload as a template to automatically generate another version of it to use as part of lateral movement or spawning new agents.
