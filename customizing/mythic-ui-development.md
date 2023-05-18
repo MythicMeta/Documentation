@@ -16,3 +16,20 @@ At this point, any changes you make to the source code in `Mythic/MythicReactUI`
 ### Building the Mythic UI
 
 When you're done with all of your changes, run `sudo ./mythic-cli build_ui` and Mythic will automatically build the UI and place it in the `mythic-react-docker` folder. At this point, if you set the `mythic_react_debug` back to `false` and run `./mythic-cli start mythic_react`, you'll see the UI exactly as somebody else would with a fresh install of Mythic.
+
+### Modifying permissions with GraphQL/Hasura
+
+If you modify any of the permissions, create new actions, or make any modifications at all in Hasura's GraphQL, then you need to make sure those get saved off. There's not a _great_ way to do this yet, but for now the following steps will save them when done from the Mythic directory:
+
+```
+docker exec -it mythic_graphql /bin/bash
+hasura-cli init
+[enter some random name here, let's say Bob]
+cd Bob
+cp /metadata/config.yml .
+hasura-cli metadata export
+cd metadata
+cp * -R /metadata
+```
+
+The above steps export the metadata and puts it back into the mounted `/metadata` directory for Hasura.
