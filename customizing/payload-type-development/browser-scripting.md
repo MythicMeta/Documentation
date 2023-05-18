@@ -532,7 +532,8 @@ The last thing here is the `parameters`. If you provide parameters, then Mythic 
 * Remember: your `parse_arguments` function gets called when your input _isn’t_ a dictionary or if your `parse_dictionary` function isn’t defined. So keep that in mind - string arguments go here
 * when you issue `ls -Path some_path` on the command line, Mythic’s UI is automatically parsing that into `{"Path": "some_path"}` for you and since you have a dictionary now, it goes to your `parse_dictionary` function
 * when you set the parameters in the browser script, Mythic doesn’t first try to pre-process them like it does when you’re typing on the command.
-* If you want to pass in a parsed parameter set, then you can just pass in a dictionary. So, `"parameters": {"Path": "my path value"}`
+* If you want to pass in a parsed parameter set, then you can just pass in a dictionary. So, `"parameters": {"Path": "my path value"}.`
+* If you set `"parameters": "-Path some_path"` just like you would type on the command line, then you need to have a `parse_arguments` function that will parse that out into the appropriate command parameters you have. If your command doesn't take any parameters and just uses the input as a raw command line, then you can do like above and have `"parameters": "path here"`
 
 #### table button
 
