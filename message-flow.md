@@ -36,10 +36,7 @@ Here we can see an operator issue tasking to the Mythic server. The Mythic serve
 
 ## Agent Sends Message
 
-![Agent Sends Message](<.gitbook/assets/Screen Shot 2021-03-21 at 5.42.41 PM.png>)
-
-```
-{{<mermaid>}}
+```mermaid
 sequenceDiagram
     participant T as Translation Container
     participant M as Mythic
@@ -63,7 +60,6 @@ sequenceDiagram
     T -->>- M: Return Final Blob
     M -->>- C: Return Final Blob
     C -->>- A: Return Final Message
-{{< /mermaid >}}
 ```
 
 Here we can see an agent sends a message to Mythic. The C2 Profile container is simply a fancy redirector that know show to pull the message off the wire, it doesn't do anything else than that. From there, Mythic starts processing the message. It pulls out the UUID so it can determine which agent/callback we're talking about. This is where a decision point happens:
@@ -79,16 +75,7 @@ Mythic then potentially goes back to the translation container to convert the re
 
 What happens when an operator tasks a payload to build?
 
-![](<.gitbook/assets/Screen Shot 2021-03-21 at 6.07.22 PM.png>)
-
-Here we can see that the operator selects the different payload options they desire in the web user interface and clicks submit. That information goes to Mythic which looks up all the database objects corresponding to the user's selection. Mythic then registers a payload in a `building` state. Mythic sends all this information to the corresponding Payload Type container to build an agent to meet the desired specifications. The corresponding `build` command parses these parameters, stamps in any required user parameters (such as callback host, port, jitter, etc) and uses any user supplied build parameters (such as exe/dll/raw) to build the agent.
-
-In the build process, there's a lot of room for customizing. Since it's all async through rabbitMQ, you are free to stamp code together, spin off subprocesses (like mono or go) to build your agent, or even make web requests to CI/CD pipelines to build the agent for you. Eventually, this process either returns an agent or some sort of error. That final result gets send back to Mythic via rabbitMQ which then updates the database and user interface to allow an operator to download their payload.
-
-The corresponding mermaid diagram code is:
-
-```
-{{<mermaid>}}
+```mermaid
 sequenceDiagram
     participant O as Operator
     participant M as Mythic
@@ -115,8 +102,11 @@ sequenceDiagram
     P -->>- M: Send finished Payload
     M ->> M: Updates Payload build status
     M -->> O: Update with new Build Status
-{{< /mermaid >}}
 ```
+
+Here we can see that the operator selects the different payload options they desire in the web user interface and clicks submit. That information goes to Mythic which looks up all the database objects corresponding to the user's selection. Mythic then registers a payload in a `building` state. Mythic sends all this information to the corresponding Payload Type container to build an agent to meet the desired specifications. The corresponding `build` command parses these parameters, stamps in any required user parameters (such as callback host, port, jitter, etc) and uses any user supplied build parameters (such as exe/dll/raw) to build the agent.
+
+In the build process, there's a lot of room for customizing. Since it's all async through rabbitMQ, you are free to stamp code together, spin off subprocesses (like mono or go) to build your agent, or even make web requests to CI/CD pipelines to build the agent for you. Eventually, this process either returns an agent or some sort of error. That final result gets send back to Mythic via rabbitMQ which then updates the database and user interface to allow an operator to download their payload.
 
 ## File uploads from Mythic -> Agent
 
