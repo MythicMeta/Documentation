@@ -325,7 +325,7 @@ The last thing to mention are build steps. These are defined as part of the agen
 
 ## Execution flow
 
-So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../message-flow.md#what-happens-for-building-payloads "mention").
+So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../message-flow/#what-happens-for-building-payloads "mention").
 
 1. PayloadType container is started, it connects to Mythic and sends over its data (by parsing all these python files)
 2. An operator wants to create a payload from it, so they go to "Create Components" -> "Create Payload"

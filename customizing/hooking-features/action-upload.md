@@ -8,7 +8,7 @@ description: Upload a file from Mythic to the target
 
 This section is specifically for uploading a file from the Mythic server to an agent. Because these messages aren't just to an agent directly (they can be routed through a p2p mesh), they can't just be as simple as a GET request to download a file. The file needs to be chunked and routed through the agents. This isn't specific to the `upload` command, this is for any command that wants to leverage a file from Mythic.
 
-In general, there's a few steps that happen for this process (this can be seen visually on the [Message Flow](../../../../message-flow.md#file-uploads-from-mythic-greater-than-agent) page):
+In general, there's a few steps that happen for this process (this can be seen visually on the [Message Flow](../../message-flow/#file-uploads-from-mythic-greater-than-agent) page):
 
 1. The operator issues some sort of tasking that has a parameter type of "File". You'll notice this in the Mythic user interface because you'll always see a popup for you to supply a file from your file system.&#x20;
 2. Once you select a file and hit submit, Mythic loops through all of the files selected and registers them. This process sends each one down to Mythic, saves it off to disk, and assigns it a UUID. These UUIDs are what's stored in place of the raw bytes when you submit your task. So, if you had an upload command that takes a file and a path, your arguments would end up looking like `{"file":"uuid", "path": "/some/path"}` rather than `{"file": raw bytes of file, "path": "/some/path"}`.&#x20;

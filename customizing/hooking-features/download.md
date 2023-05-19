@@ -8,7 +8,7 @@ description: Download a file from the target to the Mythic server
 
 This section is specifically for downloading a file from the agent to the Mythic server. Because these can be very large files that you task to download, a bit of processing needs to happen: the file needs to be chunked and routed through the agents.
 
-In general, there's a few steps that happen for this process (visually this can be found on the [Message Flow](../../message-flow.md#downloading-a-file-from-agent-greater-than-mythic) page):
+In general, there's a few steps that happen for this process (visually this can be found on the [Message Flow](../../message-flow/#downloading-a-file-from-agent-greater-than-mythic) page):
 
 1. The operator issues a task to download a file, such as `download file.txt`
 2. This gets sent down to the agent in tasking, the agent locates the file, and determines it has the ability to read it. Now it needs to send the data back

@@ -13,7 +13,7 @@ Command information is tracked in your Payload Type's container. Each command ha
    * this includes taking user supplied free-form input (like arguments to a sleep command - `10 4`) and parsing it into well-defined JSON that's easier for the agent to handle (like `{"interval": 10, "jitter": 4}`). This can also take user-supplied dictionary input and parse it out into the rightful CommandParameter objects.
    * This also includes verifying all the necessary pieces are present. Maybe your command requires a source and destination, but the user only supplied a source. This is where that would be determined and error out for the user. This prevents you from requiring your agent to do that sort of parsing in the agent.
 
-If you're curious how this all plays out in a diagram, you can find one here: [#operator-submits-tasking](../../message-flow.md#operator-submits-tasking "mention").
+If you're curious how this all plays out in a diagram, you can find one here: [#operator-submits-tasking](../../message-flow/#operator-submits-tasking "mention").
 
 ## CommandBase
 
