@@ -6,16 +6,9 @@ description: This page describes how messages flow within Mythic
 
 ## Operator Submits Tasking
 
-There's a lot of moving pieces within Mythic and its agents, so it's helpful to take a step back and see how messages are flowing between the different components.&#x20;
+There's a lot of moving pieces within Mythic and its agents, so it's helpful to take a step back and see how messages are flowing between the different components.
 
-![](<.gitbook/assets/Screen Shot 2021-03-21 at 5.20.42 PM.png>)
-
-Here we can see an operator issue tasking to the Mythic server. The Mythic server registers the task as "preprocessing" and informs the operator that it got the task. Mythic then sends the task off to the corresponding Payload Type container for processing. The container looks up the corresponding command python file, parses the arguments, validates the arguments, and passes the resulting parameters to the create\_tasking function. This function can leverage a bunch of RPC functionality going back to Mythic to register files, send output, etc. When it's done, it sends the final parameters back to Mythic which updates the Task to either `Submitted` or `Error`. Now that the task is out of the `preprocessing` state, when an agent checks in, it can receive the task.
-
-The corresponding mermaid diagram code is:
-
-```
-{{<mermaid>}}
+```mermaid
 sequenceDiagram
     participant O as Operator
     participant M as Mythic
@@ -37,8 +30,9 @@ sequenceDiagram
     P -->>- M: Send finished task
     M ->> M: Updates Task to Submitted or Error
     M -->> O: Update with new Task Status
-{{< /mermaid >}}
 ```
+
+Here we can see an operator issue tasking to the Mythic server. The Mythic server registers the task as "preprocessing" and informs the operator that it got the task. Mythic then sends the task off to the corresponding Payload Type container for processing. The container looks up the corresponding command python file, parses the arguments, validates the arguments, and passes the resulting parameters to the create\_tasking function. This function can leverage a bunch of RPC functionality going back to Mythic to register files, send output, etc. When it's done, it sends the final parameters back to Mythic which updates the Task to either `Submitted` or `Error`. Now that the task is out of the `preprocessing` state, when an agent checks in, it can receive the task.
 
 ## Agent Sends Message
 
@@ -74,7 +68,7 @@ sequenceDiagram
 
 Here we can see an agent sends a message to Mythic. The C2 Profile container is simply a fancy redirector that know show to pull the message off the wire, it doesn't do anything else than that. From there, Mythic starts processing the message. It pulls out the UUID so it can determine which agent/callback we're talking about. This is where a decision point happens:
 
-* If the Payload Type associated with the payload/callback for the UUID of the message has a translation container associated with it, then Mythic will send the message there. It's here that the rest of the message is converted from the agent's special sauce C2 format into the standard JSON that Mythic expects. Additionally, if the Payload Type handles encryption for itself, then this is where that happens.&#x20;
+* If the Payload Type associated with the payload/callback for the UUID of the message has a translation container associated with it, then Mythic will send the message there. It's here that the rest of the message is converted from the agent's special sauce C2 format into the standard JSON that Mythic expects. Additionally, if the Payload Type handles encryption for itself, then this is where that happens.
 * If there is not translation container associated with the payload/callback for the UUID in the message, then Mythic moves on to the next step and starts processing the message.
 
 Mythic then processes the message according to the "action" listed.
@@ -87,7 +81,7 @@ What happens when an operator tasks a payload to build?
 
 ![](<.gitbook/assets/Screen Shot 2021-03-21 at 6.07.22 PM.png>)
 
-Here we can see that the operator selects the different payload options they desire in the web user interface and clicks submit. That information goes to Mythic which looks up all the database objects corresponding to the user's selection. Mythic then registers a payload in a `building` state. Mythic sends all this information to the corresponding Payload Type container to build an agent to meet the desired specifications. The corresponding `build` command parses these parameters, stamps in any required user parameters (such as callback host, port, jitter, etc) and uses any user supplied build parameters (such as exe/dll/raw) to build the agent.&#x20;
+Here we can see that the operator selects the different payload options they desire in the web user interface and clicks submit. That information goes to Mythic which looks up all the database objects corresponding to the user's selection. Mythic then registers a payload in a `building` state. Mythic sends all this information to the corresponding Payload Type container to build an agent to meet the desired specifications. The corresponding `build` command parses these parameters, stamps in any required user parameters (such as callback host, port, jitter, etc) and uses any user supplied build parameters (such as exe/dll/raw) to build the agent.
 
 In the build process, there's a lot of room for customizing. Since it's all async through rabbitMQ, you are free to stamp code together, spin off subprocesses (like mono or go) to build your agent, or even make web requests to CI/CD pipelines to build the agent for you. Eventually, this process either returns an agent or some sort of error. That final result gets send back to Mythic via rabbitMQ which then updates the database and user interface to allow an operator to download their payload.
 
@@ -175,7 +169,7 @@ Conversely, you can opt to not track the file (or track the file within Mythic, 
 
 ![](<.gitbook/assets/Screen Shot 2021-05-03 at 3.31.36 PM.png>)
 
-You're able to upload and transfer the file just fine, but when it comes to reporting back information on it, Mythic and the Agent can't agree on the same file, so it doesn't get updated. You might be thinking that this is silly, of course the two know what the file is, it was just uploaded. Consider the case of files being deleted or multiple instances of a file being uploaded.&#x20;
+You're able to upload and transfer the file just fine, but when it comes to reporting back information on it, Mythic and the Agent can't agree on the same file, so it doesn't get updated. You might be thinking that this is silly, of course the two know what the file is, it was just uploaded. Consider the case of files being deleted or multiple instances of a file being uploaded.
 
 ```
 {{<mermaid>}}
@@ -246,7 +240,7 @@ sequenceDiagram
 
 ## P2P Message Flow
 
-More information on P2P message communication can be found [here](customizing/c2-related-development/c2-profile-code/agent-side-coding/delegates.md).&#x20;
+More information on P2P message communication can be found [here](customizing/c2-related-development/c2-profile-code/agent-side-coding/delegates.md).
 
 ![](<.gitbook/assets/Screen Shot 2021-05-12 at 10.00.30 AM.png>)
 
@@ -301,7 +295,7 @@ sequenceDiagram
 {{< /mermaid >}}
 ```
 
-1\. P2P agents do their "C2 Comms" (which in this case is reaching out to agent1 over the decided TCP port) and start their Checkin/Encrypted Key Exchange/etc.&#x20;
+1\. P2P agents do their "C2 Comms" (which in this case is reaching out to agent1 over the decided TCP port) and start their Checkin/Encrypted Key Exchange/etc.
 
 2\. When Agent1 gets a connection from Agent2, there's a lot of unknowns. Agent2 could be a new payload that isn't registered as a callback in Mythic yet. It could be an already existing callback that you're re-linking to or linking to for the first time from this callback. Either way, Agent1 doesn't know anything about Agent2 other than it connected to the right port, so it generates a temporary UUID to refer to that connection and waits for a message from Agent 2 (the first message sent through should always be from Agent2->Agent1 with a checkin message). Agent1 sends this information out with its next message as a "Delegate" Message of the form:
 
@@ -318,11 +312,11 @@ sequenceDiagram
 }
 ```
 
-This "delegates" key sits at the same level as the "action" key and can go with any message (upload, checkin, post\_response, etc). The "message" field is the checkin message from Agent2, the "uuid" field is the tempUUID that agent1 generated, and the "c2\_profile" is the name of the C2 profile that the two agents are using to connect.&#x20;
+This "delegates" key sits at the same level as the "action" key and can go with any message (upload, checkin, post\_response, etc). The "message" field is the checkin message from Agent2, the "uuid" field is the tempUUID that agent1 generated, and the "c2\_profile" is the name of the C2 profile that the two agents are using to connect.
 
-3\. When Mythic parses this delegate message, it can automatically assume that there's a connection between Agent1 and Agent2 because Agent1's message has a Deleggate from Agent 2.&#x20;
+3\. When Mythic parses this delegate message, it can automatically assume that there's a connection between Agent1 and Agent2 because Agent1's message has a Deleggate from Agent 2.
 
-4\. When Mythic is done processing Agent2's checkin message, it takes that result and adds it as a "delegate" message back for Agent1's message.&#x20;
+4\. When Mythic is done processing Agent2's checkin message, it takes that result and adds it as a "delegate" message back for Agent1's message.
 
 5\. When Agent1 gets its message back, it sees that there is a delegate message. That message is of the format:
 
@@ -340,3 +334,4 @@ This "delegates" key sits at the same level as the "action" key and can go with 
 ```
 
 6\. You can see that the response format is a little different. We don't need to echo back the C2 Profile because the agent already knows that information. The "message" field is the Mythic response that goes back to Agent 2. The "uuid" field is the same tempUUID that the agent sent in the message to Mythic. The "mythic\_uuid" field though is Mythic indicating back to Agent1 that it doesn't know what `tempUUID` is, but the agent that sent that message actually has this UUID. That allows the agent to update its records. The main reason this is important is in the case where the connection between Agent1 and Agent2 goes away. Agent1 has to have some way of indicating to Mythic that Agent2 is no longer talking to it. Mythic only knows Agent2 by its UUID, so if Agent1 tried to report that it could no longer talk to tempUUID, Mythic would have no idea who that is.
+
