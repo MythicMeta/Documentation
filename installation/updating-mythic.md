@@ -12,7 +12,7 @@ This is when you're on version 1.2 for example and want to pull in new updates (
 
 1. Pull in the latest code for your version (if you're still on the current version, this should be as easy as a `git pull`)
 2. Make a new mythic-cli binary with `sudo make`
-3. Restart Mythic to pull in the latest code changes into the docker containers with `sudo ./mythic-cli mythic start`
+3. Restart Mythic to pull in the latest code changes into the docker containers with `sudo ./mythic-cli start`
 
 ### Updating minor or major versions
 
