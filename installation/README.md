@@ -14,7 +14,7 @@ If you're running on debian, use the `./install_docker_debian.sh` instead.
 {% endhint %}
 
 {% hint style="warning" %}
-You need to have Docker server version `20.10.22` or above (latest version is `23.0.1`) for Mythic and the docker containers to work properly. If you do `sudo apt grade` and `sudo apt install docker-compose-plugin` on a new version of Ubuntu or Debian, then you should be good. You can check your version with `sudo docker version`.
+You need to have Docker server version `20.10.22` or above (latest version is `23.0.1`) for Mythic and the docker containers to work properly. If you do `sudo apt upgrade` and `sudo apt install docker-compose-plugin` on a new version of Ubuntu or Debian, then you should be good. You can check your version with `sudo docker version`.
 {% endhint %}
 
 {% hint style="danger" %}
