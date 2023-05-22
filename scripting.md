@@ -10,7 +10,7 @@ Mythic utilizes a combination of a GoLang Gin webserver and a Hasura GraphQL int
 
 ## Where is it?
 
-Install the PyPi package via pip `pip3 install mythic` . The current mythic package is version `0.1.0rc2`. The code for it is public - [https://github.com/MythicMeta/Mythic\_Scripting](https://github.com/MythicMeta/Mythic\_Scripting)
+Install the PyPi package via pip `pip3 install mythic` . The current mythic package is version `0.1.1`. The code for it is public - [https://github.com/MythicMeta/Mythic\_Scripting](https://github.com/MythicMeta/Mythic\_Scripting)
 
 ### How do I know what I can do?
 
