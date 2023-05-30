@@ -269,6 +269,10 @@ To see what this looks like all together, look at the `websocket` example here: 
 Keys in the C2 Profile Parameter Type `Dictionary` will be sorted alphabetically - they will NOT maintain the order they were specified in the UI. This is currently a limitation of the Golang Google JSON library.
 {% endhint %}
 
+### Env Settings
+
+Mythic provides a `MYTHIC_ADDRESS` environment variable that points to `http://mythic_server:17443/agent_message` for C2 Profiles to use for forwarding their messages. With Mythic 3.0+, there are going to be more options for connections outside of a static HTTP endpoint. Therefore, the `MYTHIC_ADDRESS` field exists, but there's additional values for `MYTHIC_SERVER_HOST` and `MYTHIC_SERVER_PORT` so that we can dynamically use these later on.
+
 ## Translation Containers
 
 Translation containers are no different than C2 Profiles and Payload Types for the new format of things. Look to `translator` in the ExampleContainers ([https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services](https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type/python\_services)) repository for an example of how to format your new structure. Translation containers boil down to one class definition with a few functions.
