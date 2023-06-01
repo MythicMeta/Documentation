@@ -31,6 +31,12 @@ You can send multiple alerts at once since it's an array.
 
 {% hint style="warning" %}
 The `source` field doesn't get displayed to the user, but it is used to collapse like-messages within the UI. If the user has an alert that's not resolved with a source of "bob", then the next message with a source of "bob" will **NOT** be displayed, but will instead simply increase the count of the current message. If the user resolves the message with a source of "bob" and a new one comes in, then that message **WILL** be displayed. This is to help prevent users from getting flooded with messages.
+
+
+{% endhint %}
+
+{% hint style="info" %}
+The "squishing" of alert messages only happens in the UI - if you have a webhook container and are listening for alerts, you will get _all_ of the messages. The `basic_webhook` container has code in it to throttle alert messages of the same source though that they must be a minute apart (again, to help prevent spam to users)
 {% endhint %}
 
 #### Not as part of a task
