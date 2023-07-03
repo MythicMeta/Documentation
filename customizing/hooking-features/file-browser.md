@@ -101,6 +101,10 @@ Most of this is pretty self-explanatory, but there are some nuances. Only list o
 
 By having this information in _another_ component within the responses array, you can display any information to the user that you want without being forced to _also_ display this listing each time to the user. You can if you want, but it's not required. If you wanted to do that, you could simply turn all of the `file_browser` data into a JSON string and put it in the `user_output` field. In the above example, the user output is a simple message stating why the tasking was issued, but it could be anything (even left blank).
 
+{% hint style="info" %}
+Mythic doesn't currently support `.`, `..`, or `~` paths. Any information about `.` should be part of the main `file_browser` JSON data (not part of the `files` array). `~` should be fixed to an absolute path.
+{% endhint %}
+
 #### update deleted
 
 There's a special key in there that doesn't really match the rest of the normal "file" data in that file\_browser response - `update_deleted`. If you include this key as `True` and your `success` flag is `True`, then Mythic will use the data presented here to update which files are deleted.
