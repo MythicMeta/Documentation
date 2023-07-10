@@ -27,7 +27,7 @@ Without going into all the details of the SOCKS5 protocol, agents transmit dicti
 These messages contain three components:
 
 * `exit` - boolean True or False. This indicates to either Mythic or your Agent that the connection has been terminated from one end and should be closed on the other end (after sending `data`). Because Mythic and 2 HTTP connections sit between the actual tool you're trying to proxy and the agent that makes those requests on your tool's behalf, we need this sort of flag to indicate that a TCP connection has closed on one side.
-* `server_id` - integer. This number is how Mythic and the agent can track individual connections. Every new connection from a proxied tool (like through proxychains) will generate a new `server_id` that Mythic will send with data to the Agent.
+* `server_id` - uint32. This number is how Mythic and the agent can track individual connections. Every new connection from a proxied tool (like through proxychains) will generate a new `server_id` that Mythic will send with data to the Agent.
 * `data` - base64 string. This is the actual bytes that the proxied tool is trying to send.
 
 {% hint style="warning" %}
