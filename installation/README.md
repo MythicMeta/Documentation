@@ -22,7 +22,7 @@ Mythic must be installed on Linux. While macOS supports Docker and Docker-Compos
 {% endhint %}
 
 {% hint style="info" %}
-It's recommended to run Mythic on a VM with at least 2CPU and 4GB Ram.&#x20;
+It's recommended to run Mythic on a VM with at least 2CPU and 4GB Ram.
 {% endhint %}
 
 ### Make the mythic-cli
@@ -37,7 +37,7 @@ Mythic configuration is all done via `Mythic/.env`, which means for your configu
 Mythic/.env doesn't exist by default. You can either let Mythic create it for you when you run `sudo ./mythic-cli start` for the first time or you can create it ahead of time with just the variables you want to configure.
 {% endhint %}
 
-If you need to run `mythic-cli` as root for Docker and you set your environment variables as a user, be sure to run `sudo -E ./mythic-cli` so that your environment variables are carried over into your sudo call. The following are the default values that Mythic will generate on first execution of `sudo ./mythic-cli mythic start` unless overridden:
+If you need to run `mythic-cli` as root for Docker and you set your environment variables as a user, be sure to run `sudo -E ./mythic-cli` so that your environment variables are carried over into your sudo call. The following are the default values that Mythic will generate on first execution of `sudo ./mythic-cli start` unless overridden:
 
 ```python
 ALLOWED_IP_BLOCKS="0.0.0.0/0"
@@ -97,7 +97,7 @@ A few important notes here:
 
 * `MYTHIC_SERVER_PORT` will be the port opened on the server where you're running Mythic. The `NGINX_PORT` is the one that's opened by Nginx and acts as a reverse proxy to all other services. The `NGINX_PORT` is the one you'll connect to for your web user interface and should be the only port you need to expose externally (unless you prefer to SSH port forward your web UI port).
 * The `allowed_ip_blocks` allow you to restrict access to the `login` page of Mythic. This should be set as a series of netblocks with **NO** host bits set - i.e. `127.0.0.0/16,192.168.10.0/24,10.0.0.0/8`
-* `*_BIND_LOCALHOST_ONLY` - these settings determine if the associated container binds the port to `127.0.0.1:port` or `0.0.0.0:port`. These are all set to true (except for the nginx container) by default so that you're not exposing these services externally.&#x20;
+* `*_BIND_LOCALHOST_ONLY` - these settings determine if the associated container binds the port to `127.0.0.1:port` or `0.0.0.0:port`. These are all set to true (except for the nginx container) by default so that you're not exposing these services externally.
 
 {% hint style="warning" %}
 If you want to have a services (agent, c2 profile, etc) on a host _other_ than where the Mythic server is running, then you need to make sure that RABBITMQ\_BIND\_LOCALHOST\_ONLY and MYTHIC\_SERVER\_BIND\_LOCALHOST\_ONLY are both set to `false` so that your remote services can access Mythic.
