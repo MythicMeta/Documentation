@@ -55,6 +55,14 @@ There are a couple key pieces of information here:
 
 The `PayloadType` base class is in the `PayloadBuilder.py` file. This is an abstract class, so your instance needs to provide values for all these fields.
 
+### Wrapper Payloads
+
+A quick note about wrapper payload types - there's only a few differences between a wrapper payload type and a normal payload type. Line 12 in the above snippet determines if something is a wrapper or not. A wrapper payload type takes as input the output of a previous build (normal payload type or wrapper payload type) along with build parameters and generates a new payload. A wrapper payload type does NOT have any c2 profiles associated with it because it's simply wrapping an existing payload.&#x20;
+
+An easy example is thinking of the `service_wrapper` - this wrapper payload type takes in the shellcode version of another payload and "wraps" it in the execution of a service so that it'll properly respond to the service control manager on windows. A similar example would be to take an agent and wrap it in an MSBuild format. These things don't have their own C2, but rather just package/wrap an existing agent into a new, more generic, format.
+
+To access the payload that you're going to wrap, use the `self.wrapped_payload` attribute during your `build` execution. This will be the base64 encoded version of the payload you're going to wrap. When you're done generating the payload, you'll return your new result the exact same way as normal payloads.&#x20;
+
 ## Build Parameters
 
 Build parameters define the components shown to the user when creating a payload.
