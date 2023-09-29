@@ -1,8 +1,9 @@
 # Payload Type Info
 
-Payload Type information must be set and pulled from a definition either in Python or in GoLang. Below is a python example of the `apfell` agent:
+Payload Type information must be set and pulled from a definition either in Python or in GoLang. Below are basic examples in Python and Golang:
 
-{% code lineNumbers="true" %}
+{% tabs %}
+{% tab title="Python" %}
 ```python
 from mythic_container.PayloadBuilder import *
 from mythic_container.MythicCommandBase import *
@@ -36,9 +37,8 @@ class Apfell(PayloadType):
         # this function gets called to create an instance of your payload
         resp = BuildResponse(status=BuildStatus.Success)
         return resp
-
+        
 ```
-{% endcode %}
 
 There are a couple key pieces of information here:
 
@@ -54,14 +54,30 @@ There are a couple key pieces of information here:
 * The last piece is the function that's called to **build** the agent based on all of the information the user provides from the web UI.
 
 The `PayloadType` base class is in the `PayloadBuilder.py` file. This is an abstract class, so your instance needs to provide values for all these fields.
+{% endtab %}
+
+{% tab title="Golang" %}
+
+{% endtab %}
+{% endtabs %}
 
 ### Wrapper Payloads
 
-A quick note about wrapper payload types - there's only a few differences between a wrapper payload type and a normal payload type. Line 12 in the above snippet determines if something is a wrapper or not. A wrapper payload type takes as input the output of a previous build (normal payload type or wrapper payload type) along with build parameters and generates a new payload. A wrapper payload type does NOT have any c2 profiles associated with it because it's simply wrapping an existing payload.&#x20;
+A quick note about wrapper payload types - there's only a few differences between a wrapper payload type and a normal payload type. A configuration variable, `wrapper`, determines if something is a wrapper or not. A wrapper payload type takes as input the output of a previous build (normal payload type or wrapper payload type) along with build parameters and generates a new payload. A wrapper payload type does NOT have any c2 profiles associated with it because it's simply wrapping an existing payload.&#x20;
 
 An easy example is thinking of the `service_wrapper` - this wrapper payload type takes in the shellcode version of another payload and "wraps" it in the execution of a service so that it'll properly respond to the service control manager on windows. A similar example would be to take an agent and wrap it in an MSBuild format. These things don't have their own C2, but rather just package/wrap an existing agent into a new, more generic, format.
 
-To access the payload that you're going to wrap, use the `self.wrapped_payload` attribute during your `build` execution. This will be the base64 encoded version of the payload you're going to wrap. When you're done generating the payload, you'll return your new result the exact same way as normal payloads.&#x20;
+{% tabs %}
+{% tab title="Python" %}
+To access the payload that you're going to wrap, use the `self.wrapped_payload` attribute during your `build` execution. This will be the base64 encoded version of the payload you're going to wrap.
+{% endtab %}
+
+{% tab title="Golang" %}
+
+{% endtab %}
+{% endtabs %}
+
+When you're done generating the payload, you'll return your new result the exact same way as normal payloads.&#x20;
 
 ## Build Parameters
 
@@ -71,8 +87,39 @@ Build parameters define the components shown to the user when creating a payload
 
 The `BuildParameter` class has a couple of pieces of information that you can use to customize and validate the parameters supplied to your build:
 
+{% tabs %}
+{% tab title="Python" %}
+The most up-to-date code is available in the `https://github.com/MythicMeta/MythicContainerPyPi` repository.
+
 ```python
 class BuildParameter:
+    """Build Parameter Definition for use when generating payloads
+
+    Attributes:
+        name (str):
+            Name of the parameter for scripting and for when building payloads
+        description (str):
+            Informative description displayed when building a payload
+        default_value (any):
+            Default value to pre-populate
+        randomize (bool):
+            Should this value be randomized (requires format_string)
+        format_string (str):
+            A regex used for randomizing values if randomize is true
+        parameter_type (BuildParameterType):
+            The type of parameter this is
+        required (bool):
+            Is this parameter required to have a non-empty value or not
+        verifier_regex (str):
+            Regex used to verify that the user typed something appropriate
+        choices (list[str]):
+            Choices for ChooseOne parameter type
+        dictionary_choices (list[DictionaryChoice]):
+            Configuration options for the Dictionary parameter type
+        crypto_type (bool):
+            Indicate if this value should be used to generate a crypto key or not
+
+    """
     def __init__(
             self,
             name: str,
@@ -107,28 +154,111 @@ class BuildParameter:
         self.crypto_type = crypto_type
         self.randomize = randomize
         self.format_string = format_string
+
+    def to_json(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "default_value": self.default_value,
+            "randomize": self.randomize,
+            "format_string": self.format_string,
+            "required": self.required,
+            "parameter_type": self.parameter_type.value,
+            "verifier_regex": self.verifier_regex,
+            "crypto_type": self.crypto_type,
+            "choices": self.choices,
+            "dictionary_choices": [x.to_json() for x in
+                                   self.dictionary_choices] if self.dictionary_choices is not None else None
+        }
+
+    def __str__(self):
+        return json.dumps(self.to_json(), sort_keys=True, indent=2)
 ```
+{% endtab %}
+
+{% tab title="Golang" %}
+The most up-to-date code is available at `https://github.com/MythicMeta/MythicContainer`.
+
+```go
+type BuildParameterType = string
+
+const (
+   BUILD_PARAMETER_TYPE_STRING          BuildParameterType = "String"
+   BUILD_PARAMETER_TYPE_BOOLEAN                            = "Boolean"
+   BUILD_PARAMETER_TYPE_CHOOSE_ONE                         = "ChooseOne"
+   BUILD_PARAMETER_TYPE_CHOOSE_MULTIPLE                    = "ChooseMultiple"
+   BUILD_PARAMETER_TYPE_DATE                               = "Date"
+   BUILD_PARAMETER_TYPE_DICTIONARY                         = "Dictionary"
+   BUILD_PARAMETER_TYPE_ARRAY                              = "Array"
+   BUILD_PARAMETER_TYPE_NUMBER                             = "Number"
+   BUILD_PARAMETER_TYPE_FILE                               = "File"
+   BUILD_PARAMETER_TYPE_TYPED_ARRAY                        = "TypedArray"
+)
+
+// BuildParameter - A structure defining the metadata about a build parameter for the user to select when building a payload.
+type BuildParameter struct {
+   // Name - the name of the build parameter for use during the Payload Type's build function
+   Name string `json:"name"`
+   // Description - the description of the build parameter to be presented to the user during build
+   Description string `json:"description"`
+   // Required - indicate if this requires the user to supply a value or not
+   Required bool `json:"required"`
+   // VerifierRegex - if the user is supplying text and it needs to match a specific pattern, specify a regex pattern here and the UI will indicate to the user if the value is valid or not
+   VerifierRegex string `json:"verifier_regex"`
+   // DefaultValue - A default value to show the user when building in the Mythic UI. The type here depends on the Parameter Type - ex: for a String, supply a string. For an array, provide an array
+   DefaultValue interface{} `json:"default_value"`
+   // ParameterType - The type of parameter this is so that the UI can properly render components for the user to modify
+   ParameterType BuildParameterType `json:"parameter_type"`
+   // FormatString - If Randomize is true, this regex format string is used to generate a value when presenting the option to the user
+   FormatString string `json:"format_string"`
+   // Randomize - Should this value be randomized each time it's shown to the user so that each payload has a different value
+   Randomize bool `json:"randomize"`
+   // IsCryptoType -If this is True, then the value supplied by the user is for determining the _kind_ of crypto keys to generate (if any) and the resulting stored value in the database is a dictionary composed of the user's selected and an enc_key and dec_key value
+   IsCryptoType bool `json:"crypto_type"`
+   // Choices - If the ParameterType is ChooseOne or ChooseMultiple, then the options presented to the user are here.
+   Choices []string `json:"choices"`
+   // DictionaryChoices - if the ParameterType is Dictionary, then the dictionary choices/preconfigured data is set here
+   DictionaryChoices []BuildParameterDictionary `json:"dictionary_choices"`
+}
+
+// BuildStep - Identification of a step in the build process that's shown to the user to eventually collect start/end time as well as stdout/stderr per step
+type BuildStep struct {
+   Name        string `json:"step_name"`
+   Description string `json:"step_description"`
+}
+```
+{% endtab %}
+{% endtabs %}
 
 * name is the name of the parameter, if you don't provide a longer description, then this is what's presented to the user when building your payload
 * parameter\_type describes what is presented to the user - valid types are:
   * BuildParameterType.String
   * BuildParameterType.ChooseOne
+  * BuildParameterType.ChooseMultiple
   * BuildParameterType.Array
   * BuildParameterType.Date
   * BuildParameterType.Dictionary
   * BuildParameterType.Boolean
-* required indicates if there must be a value supplied. If no value is supplied by the user and no default value supplied here, then an exception is thrown before execution gets to the `build` function.
-* verifier\_regex is a regex the web UI can use to provide some information to the user about if they're providing a valid value or not
-* default\_value is the default value used for building if the user doesn't supply anything
-* choices is where you can supply an array of options for the user to pick from if the parameter\_type is ChooseOne
-* dictionary\_choices are the choices and metadata about what to display to the user for key-value pairs that the user might need to supply
-* value is the component you access when building your payload - this is the final value (either the default value or the value the user supplied)
-* verifier\_func is a function you can provide for additional checks on the value the user supplies to make sure it's what you want. This function should either return nothing or raise an exception if something isn't right
+  * BuildParameterType.File
+  * BuildParameterType.TypedArray
+* `required` indicates if there must be a value supplied. If no value is supplied by the user and no default value supplied here, then an exception is thrown before execution gets to the `build` function.&#x20;
+* `verifier_regex` is a regex the web UI can use to provide some information to the user about if they're providing a valid value or not
+* `default_value` is the default value used for building if the user doesn't supply anything
+* `choices` is where you can supply an array of options for the user to pick from if the parameter\_type is ChooseOne
+* `dictionary_choice`s are the choices and metadata about what to display to the user for key-value pairs that the user might need to supply
+* `value` is the component you access when building your payload - this is the final value (either the default value or the value the user supplied)
+* `verifier_func` is a function you can provide for additional checks on the value the user supplies to make sure it's what you want. This function should either return nothing or raise an exception if something isn't right
 
 As a recap, where does this come into play? In the first section, we showed a section like:
 
+
+
+{% tabs %}
+{% tab title="Python" %}
+
+
 ```python
-bbuild_parameters = [
+build_parameters = [
         BuildParameter(name="string", parameter_type=BuildParameterType.String, 
                        description="test string", default_value="test"),
         BuildParameter(name="choose one", parameter_type=BuildParameterType.ChooseOne, 
@@ -157,6 +287,12 @@ bbuild_parameters = [
     ]
     
 ```
+{% endtab %}
+
+{% tab title="Golang" %}
+
+{% endtab %}
+{% endtabs %}
 
 ## Building
 
@@ -172,11 +308,21 @@ You have to implement the `build` function and return an instance of the `BuildR
 
 The most basic version of the build function would be:
 
+{% tabs %}
+{% tab title="Python" %}
+
+
 ```python
 async def build(self) -> BuildResponse:
         # this function gets called to create an instance of your payload
         return BuildResponse(status=BuildStatus.Success)
 ```
+{% endtab %}
+
+{% tab title="Golang" %}
+
+{% endtab %}
+{% endtabs %}
 
 Once the `build` function is called, all of your `BuildParameters` will already be verified (all parameters marked as `required` will have a `value` of some form (user supplied or default\_value) and all of the verifier functions will be called if they exist). This allows you to _know_ that by the time your `build` function is called that all of your parameters are valid.
 
@@ -184,6 +330,8 @@ Your build function gets a few pieces of information to help you build the agent
 
 From within your build function, you'll have access to the following pieces of information:
 
+{% tabs %}
+{% tab title="Python" %}
 * `self.uuid` - the UUID associated with your payload
   * This is how your payload identifies itself to Mythic before getting a new Staging and final Callback UUID
 * `self.commands` - a wrapper class around the names of all the commands the user selected.
@@ -238,9 +386,19 @@ for c2 in self.c2info:
         build_msg += str(p)
         pass
 ```
+{% endtab %}
+
+{% tab title="Golang" %}
+
+{% endtab %}
+{% endtabs %}
 
 Finally, when building a payload, it can often be helpful to have both stdout and stderr information captured, especially if you're compiling code. Because of this, you can set the `build_essage` ,`build_stderr` , and `build_stdout` fields of the `BuildResponse` to have this data. For example:
 
+
+
+{% tabs %}
+{% tab title="Python" %}
 ```python
     async def build(self) -> BuildResponse:
         # this function gets called to create an instance of your payload
@@ -313,6 +471,12 @@ Finally, when building a payload, it can often be helpful to have both stdout an
             resp.build_stderr = "Error building payload: " + str(e)
         return resp
 ```
+{% endtab %}
+
+{% tab title="Golang" %}
+
+{% endtab %}
+{% endtabs %}
 
 Depending on the status of your build (success or error), either the message or build\_stderr values will be presented to the user via the UI notifications. However, at any time you can go back to the Created Payloads page and view the build message, build errors, and build stdout for any payload.
 
