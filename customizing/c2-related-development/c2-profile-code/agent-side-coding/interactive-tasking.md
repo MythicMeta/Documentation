@@ -52,3 +52,18 @@ const (
 When something is coming from Mythic -> Agent, you'll typically see `Input`, `Exit`, or `Escape` -> `CtrlZ`. When sending data back from Agent -> Mythic, you'll set either `Output` or `Error`. This enum example also includes what the user typically sees in a terminal (ex: `^C` when you type CtrlC) along with the hex value that's normally sent. Having data split out this way can be helpful depending on what you're trying to do. Consider the case of trying to do a `tab-complete`. You want to send down data _and_ the tab character (in that order). For other things though, like `escape`, you might want to send down `escape` and then data (in that order for things like control sequences).&#x20;
 
 You'll probably notice that some letters are missing from the control codes above. There's no need to send along a special control code for `\n` or `\r` because we can send those down as part of our input. Similarly, clearing the screen isn't useful through the web UI because it doesn't quite match up as a full TTY.
+
+
+
+## Message Location
+
+This data is located in a similar way to SOCKS and RPFWD:
+
+```
+{
+    "action": "some action",
+    "interactive": [ {"task_id": UUID, "data": "base64", "message_type": 0 } ]
+}
+```
+
+the `interactive` keyword takes an array of these sorts of messages to/from the agent. This keyword is at the same level in the JSON structure as `action`, `socks`, `responses`, etc.
