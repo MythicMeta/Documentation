@@ -18,7 +18,7 @@ You need to have Docker server version `20.10.22` or above (latest version is `2
 {% endhint %}
 
 {% hint style="danger" %}
-Mythic must be installed on Linux. While macOS supports Docker and Docker-Compose, macOS doesn't handle the shared host networking that Mythic relies on for C2 containers. You can still access the Browser interface from any OS, but the Mythic instance must be installed on Linux
+Mythic is normally installed on Linux. If you want to install on macOS, you need to use orbstack (not Docker Desktop). This because macOS's Docker Desktop doesn't support host networking, which the C2 containers need to dynamically open up ports.
 {% endhint %}
 
 {% hint style="info" %}
