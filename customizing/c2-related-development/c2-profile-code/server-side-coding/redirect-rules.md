@@ -16,9 +16,39 @@ This function gets passed the same sort of information that the opsec check and 
 
 The format of the function is as follows:
 
+
+
+{% tabs %}
+{% tab title="Python" %}
 <pre class="language-python"><code class="lang-python">async def redirect_rules(request: C2ProfileBase.C2GetRedirectorRulesMessage) -> C2ProfileBase.C2GetRedirectorRulesMessageResponse:
     return C2ProfileBase.C2GetRedirectorRulesMessageResponse(
         Success=True,
         Message="some mod rewrite rules here"
 <strong>    )
 </strong></code></pre>
+{% endtab %}
+
+{% tab title="Golang" %}
+```go
+GetRedirectorRulesFunction func(message C2GetRedirectorRuleMessage) C2GetRedirectorRuleMessageResponse
+```
+
+```go
+package c2structs
+
+// C2_REDIRECTOR_RULES STRUCTS
+
+type C2_GET_REDIRECTOR_RULE_STATUS = string
+
+type C2GetRedirectorRuleMessage struct {
+   C2Parameters
+}
+
+type C2GetRedirectorRuleMessageResponse struct {
+   Success bool   `json:"success"`
+   Error   string `json:"error"`
+   Message string `json:"message"`
+}
+```
+{% endtab %}
+{% endtabs %}

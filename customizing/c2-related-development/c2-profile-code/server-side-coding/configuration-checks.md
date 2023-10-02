@@ -16,6 +16,10 @@ This check occurs every time an agent is generated, and this output is added to 
 
 The function is part of your C2 Profile's class definition, so it has access to your local `config.json` file as well as the instance configuration from the agent.
 
+
+
+{% tabs %}
+{% tab title="Python" %}
 ```python
 async def config_check(request: C2ProfileBase.C2ConfigCheckMessage) -> C2ProfileBase.C2ConfigCheckMessageResponse:
     return C2ProfileBase.C2ConfigCheckMessageResponse(
@@ -23,3 +27,31 @@ async def config_check(request: C2ProfileBase.C2ConfigCheckMessage) -> C2Profile
         Message="Some configuration check message",
         )
 ```
+{% endtab %}
+
+{% tab title="Golang" %}
+
+
+```go
+ConfigCheckFunction        func(message C2ConfigCheckMessage) C2ConfigCheckMessageResponse 
+```
+
+
+
+```go
+package c2structs
+
+// C2_CONFIG_CHECK STRUCTS
+
+type C2ConfigCheckMessage struct {
+   C2Parameters
+}
+
+type C2ConfigCheckMessageResponse struct {
+   Success bool   `json:"success"`
+   Error   string `json:"error"`
+   Message string `json:"message"`
+}
+```
+{% endtab %}
+{% endtabs %}

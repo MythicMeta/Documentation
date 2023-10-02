@@ -104,6 +104,8 @@
       * [OPSEC Checks For C2 Profiles](customizing/c2-related-development/c2-profile-code/server-side-coding/opsec-checks-for-c2-profiles.md)
       * [Configuration Checks](customizing/c2-related-development/c2-profile-code/server-side-coding/configuration-checks.md)
       * [Redirect Rules](customizing/c2-related-development/c2-profile-code/server-side-coding/redirect-rules.md)
+      * [Get IOC](customizing/c2-related-development/c2-profile-code/server-side-coding/get-ioc.md)
+      * [File Hosting](customizing/c2-related-development/c2-profile-code/server-side-coding/file-hosting.md)
       * [C2 Docker Containers](customizing/c2-related-development/c2-profile-code/server-side-coding/c2-docker-containers.md)
       * [C2 Configuration Files](customizing/c2-related-development/c2-profile-code/server-side-coding/c2-configuration-files.md)
 * [Mythic UI Development](customizing/mythic-ui-development.md)
