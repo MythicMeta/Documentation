@@ -87,6 +87,7 @@
   * [Process Response](customizing/payload-type-development/process-response.md)
   * [SOCKS](customizing/payload-type-development/socks.md)
   * [Reverse PortFwd](customizing/payload-type-development/reverse-portfwd.md)
+  * [Interactive Tasking](customizing/payload-type-development/interactive-tasking.md)
   * [Translation Containers](customizing/payload-type-development/translation-containers.md)
 * [C2 Related Development](customizing/c2-related-development/README.md)
   * [C2 Profile Code](customizing/c2-related-development/c2-profile-code/README.md)

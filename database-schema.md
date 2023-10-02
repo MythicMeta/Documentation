@@ -30,6 +30,6 @@ If you want to have even more fun exploring how the GraphQL interface manipulate
 
 <figure><img src=".gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src=".gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 This scripting, combined with the Hasura GraphQL console allows operators to very easily get direct access and real-time updates to the database without having to know any specific SQL syntax or worry about accidentally making a schema change.
