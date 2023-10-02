@@ -98,6 +98,7 @@
       * [Action: get\_tasking](customizing/c2-related-development/c2-profile-code/agent-side-coding/action\_get\_tasking.md)
       * [Action: post\_response](customizing/c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md)
       * [SOCKS](customizing/c2-related-development/c2-profile-code/agent-side-coding/socks.md)
+      * [Interactive Tasking](customizing/c2-related-development/c2-profile-code/agent-side-coding/interactive-tasking.md)
       * [RPFWD](customizing/c2-related-development/c2-profile-code/agent-side-coding/rpfwd.md)
     * [Server Side Coding](customizing/c2-related-development/c2-profile-code/server-side-coding/README.md)
       * [OPSEC Checks For C2 Profiles](customizing/c2-related-development/c2-profile-code/server-side-coding/opsec-checks-for-c2-profiles.md)
