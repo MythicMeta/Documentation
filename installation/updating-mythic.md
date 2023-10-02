@@ -4,9 +4,9 @@
 
 In the Mythic UI, you can click the hamburger icon (three horizontal lines) in the top left to see the current Server version and UI version.&#x20;
 
-There are two scenarios to updating Mythic: updates within the minor version (1.4.1 to 1.4.2) and updates to the minor (1.4.1 to 1.5) or major version (1.4 to 2.0).
+There are three scenarios to updating Mythic: updates to the patch version (1.4.1 to 1.4.2), updates to the minor (1.4.1 to 1.5), or major version (1.4 to 2.0).
 
-### Updating within the minor version
+### Updating patches
 
 This is when you're on version 1.2 for example and want to pull in new updates (but not a new minor version like 1.3 or 1.4). In this case, the database schema should not have changed.
 
@@ -18,9 +18,13 @@ This is when you're on version 1.2 for example and want to pull in new updates (
 
 This is when you're on version 1.2 for example and want to upgrade to version 1.3 or 2.1 for example. In this case, the database schema has changed.&#x20;
 
-{% hint style="danger" %}
-In order to upgrade, you'll end up losing all of the information in your database, so make sure you download any files, export any reports, or save any tasking you've done. This is irreversible! The entire database will be cleared and reset back to default.
-{% endhint %}
+Starting with Mythic 3.1, we now have database migrations within PostgreSQL. You should be fine to git pull and rebuild everything. It's important that you rebuild so that server changes are pulled in for the various services that updated. This means that if you're on Mythic 3.0.0-rc\* and want to upgrade to Mythic 3.1.0, you'll automatically get database migrations to help with this.
+
+**Note:** I always highly recommend backing everything up if you plan to update a production system. Just in case something happens, you'll be able to revert.&#x20;
+
+You will have some down time while this happens (the containers need to rebuild and start back up), so make sure whatever you're doing can handle a few seconds to a few minutes of down time.
+
+If you want to wipe the database and upgrade, the following steps will help:
 
 1. Reset the database with `sudo ./mythic-cli database reset`
 2. Make sure Mythic is stopped, `sudo ./mythic-cli stop`
