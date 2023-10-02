@@ -233,14 +233,23 @@ type BuildStep struct {
 * name is the name of the parameter, if you don't provide a longer description, then this is what's presented to the user when building your payload
 * parameter\_type describes what is presented to the user - valid types are:
   * BuildParameterType.String
+    * During build, this is a string
   * BuildParameterType.ChooseOne
+    * During build, this is a string
   * BuildParameterType.ChooseMultiple
+  * During build, this is an array of strings
   * BuildParameterType.Array
+    * During build, this is an array of strings
   * BuildParameterType.Date
+    * During build, this is a string of the format YYYY-MM-DD
   * BuildParameterType.Dictionary
+    * During build, this is a dictionary
   * BuildParameterType.Boolean
+    * During build, this is a boolean
   * BuildParameterType.File
+    * During build, this is a string UUID of the file (so that you can use a MythicRPC call to fetch the contents of the file)
   * BuildParameterType.TypedArray
+    * During build, this is an arrray of arrays, always in the format `[ [ type, value], [type value], [type, value] ...]`
 * `required` indicates if there must be a value supplied. If no value is supplied by the user and no default value supplied here, then an exception is thrown before execution gets to the `build` function.&#x20;
 * `verifier_regex` is a regex the web UI can use to provide some information to the user about if they're providing a valid value or not
 * `default_value` is the default value used for building if the user doesn't supply anything
@@ -508,5 +517,4 @@ So, what's the actual, end-to-end execution flow that goes on? A diagram can be 
 6. The operator fills out/selects all of the payload type's build parameters
 7. The operator selects all commands they want included in the payload
 8. Mythic takes all of this information and sends it to the payload type container
-
-The container sends the `BuildResponse` message back to the Mythic server.
+9. The container sends the `BuildResponse` message back to the Mythic server.
