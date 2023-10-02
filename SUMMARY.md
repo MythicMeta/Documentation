@@ -109,6 +109,7 @@
       * [File Hosting](customizing/c2-related-development/c2-profile-code/server-side-coding/file-hosting.md)
       * [C2 Docker Containers](customizing/c2-related-development/c2-profile-code/server-side-coding/c2-docker-containers.md)
       * [C2 Configuration Files](customizing/c2-related-development/c2-profile-code/server-side-coding/c2-configuration-files.md)
+      * [Push C2](customizing/c2-related-development/c2-profile-code/server-side-coding/push-c2.md)
 * [Mythic UI Development](customizing/mythic-ui-development.md)
 
 ## Common Questions and Answers <a href="#common-qa" id="common-qa"></a>
