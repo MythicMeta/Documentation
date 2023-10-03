@@ -65,6 +65,7 @@ Creating your own command requires extending this CommandBase class (i.e. `class
   * supported\_ui\_features = \["file\_browser:download"]
   * supported\_ui\_features = \["file\_browser:remove"]
   * supported\_ui\_features = \["file\_browser:upload"]
+  * supported\_ui\_features = \["task\_response:interactive"]
 * `version` - this is the version of the command you're creating/editing. This allows a helpful way to make sure your commands are up to date and tracking changes
 * `argument_class` - this correlates this command to a specific `TaskArguments` class for processing/validating arguments
 * `attackmapping` - this is a list of strings to indicate MITRE ATT\&CK mappings. These are in "T1113" format.

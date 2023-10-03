@@ -80,6 +80,7 @@
   * [Adding Commands](customizing/payload-type-development/adding-commands.md)
   * [Browser Scripting](customizing/payload-type-development/browser-scripting.md)
   * [Dynamic Parameter Values](customizing/payload-type-development/dynamic-parameter-values.md)
+  * [TypedArray Parse Function](customizing/payload-type-development/typedarray-parse-function.md)
   * [Create\_Tasking](customizing/payload-type-development/create\_tasking.md)
   * [MythicRPC](customizing/payload-type-development/mythicrpc.md)
   * [OPSEC Checking](customizing/payload-type-development/opsec-checking.md)
