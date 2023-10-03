@@ -30,15 +30,18 @@ When an agent is ready to transfer a file from agent to Mythic, it first needs t
         "task_id": "UUID here",
         "download": {
             "total_chunks": 4, 
-            "full_path": "/test/test2/test3.file" // full path to the file downloaded
-            "host": "hostname the file is downloaded from" // optional
+            "full_path": "/test/test2/test3.file", // optional full path to the file downloaded
+            "host": "hostname the file is downloaded from", // optional
+            "filename": "filename for Mythic/operator if full_path doesn't make sense", // optional
             "is_screenshot": false //indicate if this is a file or screenshot (default is false)
         }
     }
 ]}
 ```
 
-The `host` field allows us to track if you're downloading files on the current host or remotely. If you leave this out or leave it blank (`""`), then it'll automatically be populated with the callback's hostname. Because you can use this same process for downloading files _and_ downloading screenshots from the remote endpoint in a chunked fashion, the `is_screenshot` flag allows this distinction. This helps the UI track whether something should be shown in the screenshot pages or in the files pages. If this information is omitted, then the Mythic server assumes it's a file (i.e. `is_screenshot` is assumed to be `false`). This message is what's sent as an [Action: post\_response](../c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md) message.
+The `host` field allows us to track if you're downloading files on the current host or remotely. If you leave this out or leave it blank (`""`), then it'll automatically be populated with the callback's hostname. Because you can use this same process for downloading files _and_ downloading screenshots from the remote endpoint in a chunked fashion, the `is_screenshot` flag allows this distinction. This helps the UI track whether something should be shown in the screenshot pages or in the files pages. If this information is omitted, then the Mythic server assumes it's a file (i.e. `is_screenshot` is assumed to be `false`). This message is what's sent as an [Action: post\_response](../c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md) message.&#x20;
+
+The `full_path` can be reported in any of the chunks and is an optional value. For example, if you collected a screenshot into memory and want to "download" it to Mythic, then there is no `full_path` to report back. In cases like this, you can specify a `filename` value that might make more sense (ex: `screenshot 1`, `monitor 2`, `lsass memory dump`, etc).
 
 Mythic will respond with a file\_id:
 
