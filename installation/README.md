@@ -9,9 +9,7 @@ $ git clone https://github.com/its-a-feature/Mythic
 ```
 
 {% hint style="info" %}
-This is made to work with docker and docker-compose, so they both need to be installed. If docker is not installed on your ubuntu machine, you can use the `./install_docker_ubuntu.sh` script to install it for you.\
-If you're running on debian, use the `./install_docker_debian.sh` instead.
-{% endhint %}
+This is made to work with docker and docker-compose, so they both need to be installed. If docker is not installed on your machine, you can use the `./install_docker.sh` script to install it for you. Currently only Ubuntu, Debian and Kali are supported. {% endhint %}
 
 {% hint style="warning" %}
 You need to have Docker server version `20.10.22` or above (latest version is `23.0.1`) for Mythic and the docker containers to work properly. If you do `sudo apt upgrade` and `sudo apt install docker-compose-plugin` on a new version of Ubuntu or Debian, then you should be good. You can check your version with `sudo docker version`.
