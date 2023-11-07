@@ -61,7 +61,7 @@
   * [Operators](scripting/scripting-operators.md)
   * [Payload Types](scripting/scripting-payload-types.md)
   * [Payloads](scripting/scripting-payloads.md)
-  * [Tasking](scripting/script-tasking.md)
+  * [Tasking](scripting/scripting-tasking.md)
 * [Presentations / Webinars](presentations-webinars.md)
 * [Common Errors](common-errors.md)
 
