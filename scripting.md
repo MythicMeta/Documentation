@@ -23,3 +23,5 @@ From here, you need to authenticate to Hasura - run `sudo ./mythic-cli config ge
 The Jupyter container has a lot of examples of using the Mythic Scripting to do a variety of things. You can access the Jupyter container by clicking on the hamurber icon (three horizontal lines) in the top left of Mythic, select "Services", then "Jupyter Notebooks". This will open up a `/jupyter` in a new tab.
 
 From here, you need to authenticate to Jupyter - run `sudo ./mythic-cli config get jupyter_token` on the Mythic server to get the authentication token. By default, this is `mythic`, but can be changed at any time.
+
+You can also reference the Jupyter examples from the Mythic repo here: [https://github.com/its-a-feature/Mythic/tree/master/jupyter-docker/jupyter](https://github.com/its-a-feature/Mythic/tree/master/jupyter-docker/jupyter).
