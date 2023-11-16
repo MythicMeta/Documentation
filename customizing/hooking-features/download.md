@@ -63,8 +63,6 @@ The agent sends back each chunk sequentially and calls out the file\_id its refe
 The `chunk_num` field is 1-based. So, the first chunk you send is `"chunk_num": 1`.
 {% endhint %}
 
-Mythic tracks the size of chunks, but doesn't search via offsets to insert chunks out of order, so make sure you send the chunks in order.
-
 {% hint style="info" %}
 If your agent language is strongly typed or you need to supply all of the fields in every request, then for these additional file transfer messages, make sure the `total_chunks` field is set to `null`, otherwise Mythic will think you're trying to transfer another file.
 {% endhint %}
