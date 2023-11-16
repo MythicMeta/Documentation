@@ -42,6 +42,8 @@ When an agent is ready to transfer a file from agent to Mythic, it first needs t
 
 The `host` field allows us to track if you're downloading files on the current host or remotely. If you leave this out or leave it blank (`""`), then it'll automatically be populated with the callback's hostname. Because you can use this same process for downloading files _and_ downloading screenshots from the remote endpoint in a chunked fashion, the `is_screenshot` flag allows this distinction. This helps the UI track whether something should be shown in the screenshot pages or in the files pages. If this information is omitted, then the Mythic server assumes it's a file (i.e. `is_screenshot` is assumed to be `false`). This message is what's sent as an [Action: post\_response](../c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md) message.&#x20;
 
+What if you don't know the total number of chunks ahead of time? No worries - register as normal but for the `total_chunks` field put a negative value. Later on, when you're sending chunks, you can add in your `total_chunks` and Mythic will simply update it on the fly.&#x20;
+
 The `full_path` can be reported in any of the chunks and is an optional value. For example, if you collected a screenshot into memory and want to "download" it to Mythic, then there is no `full_path` to report back. In cases like this, you can specify a `filename` value that might make more sense (ex: `screenshot 1`, `monitor 2`, `lsass memory dump`, etc).
 
 Mythic will respond with a file\_id:
