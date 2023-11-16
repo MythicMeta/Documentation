@@ -33,7 +33,8 @@ When an agent is ready to transfer a file from agent to Mythic, it first needs t
             "full_path": "/test/test2/test3.file", // optional full path to the file downloaded
             "host": "hostname the file is downloaded from", // optional
             "filename": "filename for Mythic/operator if full_path doesn't make sense", // optional
-            "is_screenshot": false //indicate if this is a file or screenshot (default is false)
+            "is_screenshot": false, //indicate if this is a file or screenshot (default is false)
+            "chunk_size": 512000, // indicate chunk size if intending to send chunks out of order or paralellized
         }
     }
 ]}
@@ -76,6 +77,7 @@ If your agent language is strongly typed or you need to supply all of the fields
             "chunk_num": 1, 
             "file_id": "UUID From previous response", 
             "chunk_data": "base64_blob==",
+            "chunk_size": 512000, // this is optional, but required if you're not sending it with the initial registration message and planning on sending chunks out of order
         }
     }
 ]}
@@ -92,4 +94,4 @@ For each chunk, Mythic will respond with a success message if all went well:
 ]}
 ```
 
-Once all of the chunks have arrived, the file will be downloadable from the Mythic server.
+Once all of the chunks have arrived, the file will be downloadable from the Mythic server. Mythic can handle chunks out of order, but needs to know the `chunk_size` first. The `chunk_size` allows Mythic to seek the right spot in the file on disk before writing that chunk's data. `chunk_size` is **not** the size of the current chunk, Mythic can determine that much, but rather the size of every chunk the agent will try to read at a time. The last chunk is most likely not going to be the same size as the other chunks; because of this, Mythic needs to know the size of chunks in general in case it gets the last chunk first.
