@@ -63,6 +63,10 @@ The agent sends back each chunk sequentially and calls out the file\_id its refe
 The `chunk_num` field is 1-based. So, the first chunk you send is `"chunk_num": 1`.
 {% endhint %}
 
+"Why on earth is `chunk_num` 1 based", you might be wondering. It's a legacy situation from Mythic 1.0 where everything was written in Python without proper struct tracking. This meant Mythic was having to do a lot of guess work for if keys weren't there or if agents were simply supplying "empty" or null fields that they weren't using as part of a message. This made it tricky to determine if an agent was referring to `chunk 0` or if they were simply setting that value to `0` because it wasn't being used (especially if a user tried to download a file that was 0 bytes in size). Starting real chunk data at `1` made it much easier to determine the scenario.&#x20;
+
+Since then, Mythic was rewritten in Golang with stronger type checking, structs, and a slightly modified struct structure to help with all of this. Now it's a legacy thing so that everybody's agents don't have a breaking change.
+
 {% hint style="info" %}
 If your agent language is strongly typed or you need to supply all of the fields in every request, then for these additional file transfer messages, make sure the `total_chunks` field is set to `null`, otherwise Mythic will think you're trying to transfer another file.
 {% endhint %}
