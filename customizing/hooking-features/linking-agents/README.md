@@ -2,17 +2,17 @@
 
 ## What does it mean to link agents
 
-This refers to the act of connecting two agents together with a peer-to-peer protocol. The details here are agnostic of the actual implementation of the protocol (could be SSH, TCP, Named Pipes, etc), but the goal is to provide a way to give one agent the context it needs to `link` or establish some peer-to-peer connectivity to a running agent.&#x20;
+This refers to the act of connecting two agents together with a peer-to-peer protocol. The details here are agnostic of the actual implementation of the protocol (could be SSH, TCP, Named Pipes, etc), but the goal is to provide a way to give one agent the context it needs to `link` or establish some peer-to-peer connectivity to a running agent.
 
 {% hint style="info" %}
-This also comes into play when trying to connect to a new executed payload that hasn't gone through the checkin process with Mythic yet to get registered as a Callback.&#x20;
+This also comes into play when trying to connect to a new executed payload that hasn't gone through the checkin process with Mythic yet to get registered as a Callback.
 {% endhint %}
 
 ### Getting the Linking information
 
 When creating a command, give a parameter of type `ParameterType.ConnectionInfo`. Now, when you type your command without parameters, you'll get a popup like normal. However, for this type, there will be three dropdown menus for you to fill out:
 
-![](<../../.gitbook/assets/Screen Shot 2020-12-10 at 11.54.14 AM.png>)
+![](<../../../.gitbook/assets/Screen Shot 2020-12-10 at 11.54.14 AM.png>)
 
 #### Host:
 
@@ -34,14 +34,14 @@ This payload simply acts as a template of information so that you can select the
 
 Select the green `+` next to host, manually specify which host your payload lives on, then select from the dropdown the associated payload that was used. Then click add. Now Mythic is also tracking that the selected payload lives on the indicated host. You can continue with the host/payload/c2\_profile dropdowns like normal.
 
-![](<../../.gitbook/assets/Screen Shot 2020-12-10 at 11.54.59 AM.png>)
+![](<../../../.gitbook/assets/Screen Shot 2020-12-10 at 11.54.59 AM.png>)
 
 #### C2 Profile:
 
 When trying to connect to a new agent, you have to specify which specific profile you're wanting to connect to. This is because on any given host and for any given payload, there might be multiple c2 profiles within it (think HTTP, SMB, TCP, etc). This field will auto populate based on the C2 profiles that are in the payload selected in the drop down above it.
 
 {% hint style="info" %}
-You'll only be able to select C2 profiles that are marked as `is_p2p` for peer-to-peer profiles. This is because it doesn't make any sense to remotely link to an HTTP callback profile for example.&#x20;
+You'll only be able to select C2 profiles that are marked as `is_p2p` for peer-to-peer profiles. This is because it doesn't make any sense to remotely link to an HTTP callback profile for example.
 {% endhint %}
 
 ### Submitting the task:
@@ -50,7 +50,7 @@ Once you've selected all of the above pieces, the task will insert all of that s
 
 ### Shorthand:
 
-All of the above is to help an operator identify exactly which payload/callback they're trying to connect to and via which p2p protocol. As a developer, you have the freedom to instead allow operators to specify more generic information via the command-line such as: `link-command-name hostname` or `link-command-name hostname other-identifier`. The caveat is this now requires the operator to know more detailed information about the connection ahead of time.&#x20;
+All of the above is to help an operator identify exactly which payload/callback they're trying to connect to and via which p2p protocol. As a developer, you have the freedom to instead allow operators to specify more generic information via the command-line such as: `link-command-name hostname` or `link-command-name hostname other-identifier`. The caveat is this now requires the operator to know more detailed information about the connection ahead of time.
 
 ## Leveraging Current/Old Links
 

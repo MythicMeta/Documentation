@@ -28,7 +28,7 @@ The agent message to Mythic has the following form:
 }
 ```
 
-Just like other [post\_response](../c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md) messages, this message has the same UUID and encryption requirements found in [Agent Message Format](../c2-related-development/c2-profile-code/agent-side-coding/agent-message-format.md). Some things to note about the fields:
+Just like other [post\_response](../../c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md) messages, this message has the same UUID and encryption requirements found in [Agent Message Format](../../c2-related-development/c2-profile-code/agent-side-coding/agent-message-format.md). Some things to note about the fields:
 
 * `edges` is an array of JSON objects describing the state of the connections that the agent is adding/removing. Each edge in this array has the following fields:
   * `source` this is one end of the p2p connection (more often than not, this is the agent that's reporting this information)
@@ -53,11 +53,11 @@ This is very similar to most other response messages from the Mythic server.
 
 ### Automatic Connection Announcements
 
-When an agent sends a message to Mythic with a `delegate` component, Mythic will automatically add a route between the delegate and the agent that sent the message.&#x20;
+When an agent sends a message to Mythic with a `delegate` component, Mythic will automatically add a route between the delegate and the agent that sent the message.
 
 For example: If agentA is an egress agent sending messages to a C2 Docker container and it links to agentB, a p2p agent. There are now a few options:
 
 * If the p2p protocol involves sending messages back-and-forth between the two agents, then agentA can determine if agentB is a new payload, trying to stage, or a complete callback. When agentB is a complete callback, agentA can announce a new route to agentB.
-* When agentA sends a message to Mythic with a delegate message from agentB, Mythic will automatically create a route between the two agents.&#x20;
+* When agentA sends a message to Mythic with a delegate message from agentB, Mythic will automatically create a route between the two agents.
 
 This distinction is important due to how the p2p protocol might work. It could be the case that agentB never sends a `get_tasking` request and simply waits for messages to it. In this case, agentA would have to do some sort of p2p comms with agentB to determine who it is so it can announce the route or start the staging process for agentB.

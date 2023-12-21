@@ -14,7 +14,7 @@ This distinction between P2P and Egress for Mythic is made by a simple boolean i
 
 ### P2P Visualizations
 
-P2P profiles announce their connections to Mythic via [P2P Connections](../customizing/hooking-features/action-p2p\_info.md). When Mythic gets these messages, it can start mapping out what the internal mesh looks like. To help view this from an operator perspective, there is an additional views on the main Callbacks page.
+P2P profiles announce their connections to Mythic via [P2P Connections](../customizing/hooking-features/linking-agents/action-p2p\_info.md). When Mythic gets these messages, it can start mapping out what the internal mesh looks like. To help view this from an operator perspective, there is an additional views on the main Callbacks page.
 
 This view uses a D3 directed graph to illustrate the connections between the agents. There's a central "Mythic Server" node that all egress agents connect to. When a route is announced, the view is updated to move one of the callbacks to be a child of another callback.
 
