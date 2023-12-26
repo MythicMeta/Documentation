@@ -2,7 +2,7 @@
 
 ## What are comments?
 
-Comments are a single text description that can be added to any task in an operation. All members of the operation can see and modify the comment, but the last person that adds or modifies it will show up as the one that added it.
+Comments are a single text description that can be added to any task, file, credential, etc in an operation. All members of the operation can see and modify the comment, but the last person that adds or modifies it will show up as the one that added it.
 
 ## Where are they?
 

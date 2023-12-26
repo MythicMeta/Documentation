@@ -23,8 +23,8 @@ You'll notice a green checkmark for the `files` folder. The green checkmark mean
 On the right hand side, the table view has a few pieces along the top:
 
 * The text field is the `path` associated with the information below with the corresponding hostname right above it. If you haven't received any information from any agent yet or you haven't clicked on a path, this will default to the current directory `.`.
-* The first button is the `list` button. This looks at the far right hand side Callback number, finds the associated payload type, then looks for the command with `is_file_browse` set to `true`. Then issues that command with the `host` and `path` shown in the first two fields. If you want to list the contents of a directory that you can't see in the UI, just modify these two values and hit `list`.
-* The second button is the `upload` button. This will look for the `is_upload` field for the payload type associated with the identified Callback and execute that command. In most cases this will cause a popup dialog where you can upload your file.
+* The first button is the `list` button. This looks at the far right hand side Callback number, finds the associated payload type, then looks for the command with `file_browser:list` set in the command's supported\_ui\_features. Then issues that command with the `host` and `path` shown in the first two fields. If you want to list the contents of a directory that you can't see in the UI, just modify these two values and hit `list`.
+* The second button is the `upload` button. This will look for the `file_browser:upload` set in the supported\_ui\_features for a command and execute that command. In most cases this will cause a popup dialog where you can upload your file.
 * The last field allows you to toggle viewing deleted files or not.
 
 ## Actions

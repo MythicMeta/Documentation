@@ -14,13 +14,11 @@ This is in development to bring into the new user interface. This is still track
 
 ## How does this Task mapping happen?
 
-Commands can be automatically tagged with MITRE ATT\&CK Techniques (this is what populates the "Commands by ATT\&CK" output). To locate this, you just need to look at the associated python files for each command:
-
-`/Mythic/Payload_Types/[agent name]/mythic/agent_functions[cmd_name].py`
+Commands can be automatically tagged with MITRE ATT\&CK Techniques (this is what populates the "Commands by ATT\&CK" output). To locate this, you just need to look at the associated python/golang files for each command.
 
 In addition to this file defining the general properties of the command (such as parameters, description, help information, etc). There's a field called `attackmapping` that takes an array of MITRE's `T#` values. For example, looking at the `apfell` agent's `download` command:
 
-```
+```python
 class DownloadCommand(CommandBase):
     cmd = "download"
     needs_admin = False
@@ -38,8 +36,4 @@ When this command syncs to the Mythic server, those T numbers are stored and use
 
 ## How do I update this to add/remove mappings?
 
-As long as you're keeping with the _old_ MITRE ATT\&CK mappings, simply add your T# to the list like shown above, then run `sudo ./mythic-cli payload start [agent name]`. That'll restart the agent's container and trigger a re-sync of information.
-
-## MITRE Added Sub-Techniques, where are they?
-
-Good point. The current Mythic instance doesn't support the new sub technique view or mapping scheme. It's on the roadmap to incorporate now that MITRE finalized the structure.
+As long as you're keeping with the _old_ MITRE ATT\&CK mappings, simply add your T# to the list like shown above, then run `sudo ./mythic-cli start [agent name]`. That'll restart the agent's container and trigger a re-sync of information. If the container is using golang instead of python for its Mythic connectivity, then you need to run `sudo ./mythic-cli build [agent name]` instead.

@@ -16,10 +16,6 @@ Every user has the default browser scripts automatically imported upon user crea
 
 Anybody can create their own browser scripts and they'll be applied only to that operator. You can also deactivate your own script so that you don't have to delete it, but it will no longer be applied to your output. This deactivates it globally and takes affect when the task is toggled open/close. For individual tasking you can use the speed dial at the bottom of the task and select to "Toggle Browserscript".
 
-If you are an overall admin or the lead of this operation, then you can optionally `Apply` the script to the operation. This forces your script to apply to the output of everybody's command in the operation and will override anybody else's script that would otherwise be applied. If you are curious as to whether your script will be in effect or not, the `In Effect` column indicates this.
-
-The bottom table shows all of the scripts that are in effect for the current operation and will allow you to view the contents of the scripts even if you don't have permission to modify them.
-
 ### How are they created?
 
 Click `Register New Script` to create a new one. This is for one-off scripts you create. If you want to make it permanent across databases and for other operators, then you need to add the script to the corresponding Payload Type's container. More information about that process can be found here: [#what-is-browser-scripting](../customizing/payload-type-development/browser-scripting.md#what-is-browser-scripting "mention").

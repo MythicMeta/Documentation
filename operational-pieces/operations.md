@@ -6,7 +6,7 @@ Operations are collections of operators, payloads, tasks, artifacts, callbacks, 
 
 ## Where are operations?
 
-Operation information can be found via the hamburger icon in the top left, then selecting "Operations" -> "Modify Operations" page. If you're a global Mythic admin, you'll see _all_ operations here. Otherwise, you'll only see operations that are associated with your account. Only a global Mythic admin can create new operations.
+Operation information can be found via the hamburger icon in the top left, then selecting "Operations" -> "Modify Operations" page. If you're a global Mythic admin, you'll see _all_ operations here. Otherwise, you'll only see operations that are associated with your account.&#x20;
 
 ![](<../.gitbook/assets/Screen Shot 2021-12-02 at 3.27.10 PM.png>)
 
@@ -28,4 +28,4 @@ For the operators edit button, you can edit who is assigned to the operation, wh
 
 ## Current Operations
 
-Because many aspects of an assessment are tied to a specific operation (payloads, callbacks, tasks, files, artifacts, etc), there are many things that will appear empty within the Mythic UI until you have an operation selected as your current operation. This lets the Mythic back-end know which data to fetch for you. If you don't have an operation as your active one, then you'll see no operation name listed on the top center of your screen. Go to the operations page and, if you're assigned to an operation that you can see, you can select to "Make Current". This process will require you to log out and log back in for the effect to take place and the new data to be fetched.
+Because many aspects of an assessment are tied to a specific operation (payloads, callbacks, tasks, files, artifacts, etc), there are many things that will appear empty within the Mythic UI until you have an operation selected as your current operation. This lets the Mythic back-end know which data to fetch for you. If you don't have an operation as your active one, then you'll see no operation name listed on the top center of your screen. Go to the operations page and, if you're assigned to an operation that you can see, you can select to "Make Current".&#x20;

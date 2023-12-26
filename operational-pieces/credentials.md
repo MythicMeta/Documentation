@@ -22,7 +22,7 @@ On this page you can also see the task that created credentials (which can be `M
 
 ### Integration into issuing commands
 
-Command parameters can hook into this for auto populating by selecting which data they're interested in and then further manipulating it if they want.&#x20;
+Command parameters can hook into this by having a parameter type of `CredentialJson` - the tasking UI will get a dropdown for the various credentials to choose from and your `create_go_tasking` function will get a dictionary of all the credential's information.&#x20;
 
 ### Autopopulation
 
