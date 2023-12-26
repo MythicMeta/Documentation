@@ -11,7 +11,7 @@ You want to create a new agent that fully integrates with Mythic. Since everythi
 * Optionally: You can also have a custom C2 profile that this agent supports, see [C2 Profile Development](../c2-related-development/) for that piece though
 
 {% hint style="info" %}
-The first step is to look into the [First Steps](first-steps.md) page to get everything generally squared away and look at the order of things that need your attention. The goal is to get you up and going as fast as possible!
+The first step is to look into the [First Steps](first-steps/) page to get everything generally squared away and look at the order of things that need your attention. The goal is to get you up and going as fast as possible!
 {% endhint %}
 
 ## Payload/C2 Development Resources
@@ -66,7 +66,7 @@ RUN apt-get install -y tool_name
 This happens all in a script for docker, so if a command might make a prompt for something (like apt-get), make sure to auto handle that or your stuff won't get installed properly
 {% endhint %}
 
-The latest container versions and their associated `mythic_container` PyPi versions can be found here: [#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention").
+The latest container versions and their associated `mythic_container` PyPi versions can be found here: [#current-payloadtype-versions](first-steps/container-syncing.md#current-payloadtype-versions "mention").
 
 If you're curious what else goes into these containers, look in the `docker-templates` folder within the Mythic repository.
 
@@ -212,7 +212,7 @@ External agents need to connect to `mythic_rabbitmq` in order to send/receive me
 {% endhint %}
 
 1. Install python 3.10+ (or Golang 1.20) in the VM  or on the computer
-2. `pip3 install mythic-container` (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention")). Alternatively, `go get -u github.com/MythicMeta/MythicContainer` for golang.
+2. `pip3 install mythic-container` (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](first-steps/container-syncing.md#current-payloadtype-versions "mention")). Alternatively, `go get -u github.com/MythicMeta/MythicContainer` for golang.
 3. Create a folder on the computer or VM (let's call it path `/pathA`). Essentially, your `/pathA` path will be the new `InstalledServices/[agent name]` folder. Create a sub folder for your actual agent's code to live, like `/pathA/agent_code`. You can create a Visual Studio project here and simply configure it however you need.
 4. Your command function definitions and payload definition are also helpful to have in a folder, like `/pathA/agent_functions`.
 5.  Edit the `/pathA/rabbitmq_config.json` with the parameters you need\

@@ -75,8 +75,8 @@
   * [Interactive Tasking](customizing/hooking-features/interactive-tasking.md)
   * [Task Status](customizing/hooking-features/task-status.md)
 * [Payload Type Development](customizing/payload-type-development/README.md)
-  * [First Steps](customizing/payload-type-development/first-steps.md)
-  * [Container Syncing](customizing/payload-type-development/container-syncing.md)
+  * [First Steps](customizing/payload-type-development/first-steps/README.md)
+    * [Container Syncing](customizing/payload-type-development/first-steps/container-syncing.md)
   * [Payload Type Info](customizing/payload-type-development/payload-type-info.md)
   * [Commands](customizing/payload-type-development/commands.md)
   * [Adding Commands](customizing/payload-type-development/adding-commands.md)
@@ -119,7 +119,6 @@
 
 * [FAQ / Troubleshooting Tips](common-qa/faq-troubleshooting-tips.md)
 * [Change Log](common-qa/change-log.md)
-* [Next Release](common-qa/next\_release.md)
 * [Tip of the Week](common-qa/tip-of-the-week.md)
 
 ## Updating

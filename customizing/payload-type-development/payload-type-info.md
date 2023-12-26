@@ -1,6 +1,6 @@
 # Payload Type Info
 
-Payload Type information must be set and pulled from a definition either in Python or in GoLang. Below are basic examples in Python and Golang:
+Payload Type information must be set and pulled from a definition either in Python or in GoLang. Below are basic examples in Python and GoLang:
 
 {% tabs %}
 {% tab title="Python" %}
@@ -57,7 +57,86 @@ The `PayloadType` base class is in the `PayloadBuilder.py` file. This is an abst
 {% endtab %}
 
 {% tab title="Golang" %}
+```go
+package agentfunctions
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	agentstructs "github.com/MythicMeta/MythicContainer/agent_structs"
+	"github.com/MythicMeta/MythicContainer/mythicrpc"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+)
+
+var payloadDefinition = agentstructs.PayloadType{
+	Name:                                   "basicAgent",
+	FileExtension:                          "bin",
+	Author:                                 "@xorrior, @djhohnstein, @Ne0nd0g, @its_a_feature_",
+	SupportedOS:                            []string{agentstructs.SUPPORTED_OS_LINUX, agentstructs.SUPPORTED_OS_MACOS},
+	Wrapper:                                false,
+	CanBeWrappedByTheFollowingPayloadTypes: []string{},
+	SupportsDynamicLoading:                 false,
+	Description:                            "A fully featured macOS and Linux Golang agent",
+	SupportedC2Profiles:                    []string{"http", "websocket", "poseidon_tcp"},
+	MythicEncryptsData:                     true,
+	BuildParameters: []agentstructs.BuildParameter{
+		{
+			Name:          "mode",
+			Description:   "Choose the build mode option. Select default for executables, c-shared for a .dylib or .so file, or c-archive for a .Zip containing C source code with an archive and header file",
+			Required:      false,
+			DefaultValue:  "default",
+			Choices:       []string{"default", "c-archive", "c-shared"},
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_CHOOSE_ONE,
+		},
+		{
+			Name:          "architecture",
+			Description:   "Choose the agent's architecture",
+			Required:      false,
+			DefaultValue:  "AMD_x64",
+			Choices:       []string{"AMD_x64", "ARM_x64"},
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_CHOOSE_ONE,
+		},
+		{
+			Name:          "proxy_bypass",
+			Description:   "Ignore HTTP proxy environment settings configured on the target host?",
+			Required:      false,
+			DefaultValue:  false,
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_BOOLEAN,
+		},
+		{
+			Name:          "garble",
+			Description:   "Use Garble to obfuscate the output Go executable.\nWARNING - This significantly slows the agent build time.",
+			Required:      false,
+			DefaultValue:  false,
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_BOOLEAN,
+		},
+	},
+	BuildSteps: []agentstructs.BuildStep{
+		{
+			Name:        "Configuring",
+			Description: "Cleaning up configuration values and generating the golang build command",
+		},
+
+		{
+			Name:        "Compiling",
+			Description: "Compiling the golang agent (maybe with obfuscation via garble)",
+		},
+	},
+}
+
+func build(payloadBuildMsg agentstructs.PayloadBuildMessage) agentstructs.PayloadBuildResponse {
+	payloadBuildResponse := agentstructs.PayloadBuildResponse{
+		PayloadUUID:        payloadBuildMsg.PayloadUUID,
+		Success:            true,
+		UpdatedCommandList: &payloadBuildMsg.CommandList,
+	}
+	return payloadBuildResponse
+}
+```
 {% endtab %}
 {% endtabs %}
 
@@ -260,12 +339,8 @@ type BuildStep struct {
 
 As a recap, where does this come into play? In the first section, we showed a section like:
 
-
-
 {% tabs %}
 {% tab title="Python" %}
-
-
 ```python
 build_parameters = [
         BuildParameter(name="string", parameter_type=BuildParameterType.String, 
@@ -299,7 +374,40 @@ build_parameters = [
 {% endtab %}
 
 {% tab title="Golang" %}
-
+```go
+BuildParameters: []agentstructs.BuildParameter{
+		{
+			Name:          "mode",
+			Description:   "Choose the build mode option. Select default for executables, c-shared for a .dylib or .so file, or c-archive for a .Zip containing C source code with an archive and header file",
+			Required:      false,
+			DefaultValue:  "default",
+			Choices:       []string{"default", "c-archive", "c-shared"},
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_CHOOSE_ONE,
+		},
+		{
+			Name:          "architecture",
+			Description:   "Choose the agent's architecture",
+			Required:      false,
+			DefaultValue:  "AMD_x64",
+			Choices:       []string{"AMD_x64", "ARM_x64"},
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_CHOOSE_ONE,
+		},
+		{
+			Name:          "proxy_bypass",
+			Description:   "Ignore HTTP proxy environment settings configured on the target host?",
+			Required:      false,
+			DefaultValue:  false,
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_BOOLEAN,
+		},
+		{
+			Name:          "garble",
+			Description:   "Use Garble to obfuscate the output Go executable.\nWARNING - This significantly slows the agent build time.",
+			Required:      false,
+			DefaultValue:  false,
+			ParameterType: agentstructs.BUILD_PARAMETER_TYPE_BOOLEAN,
+		},
+	},
+```
 {% endtab %}
 {% endtabs %}
 
@@ -319,8 +427,6 @@ The most basic version of the build function would be:
 
 {% tabs %}
 {% tab title="Python" %}
-
-
 ```python
 async def build(self) -> BuildResponse:
         # this function gets called to create an instance of your payload
@@ -329,7 +435,16 @@ async def build(self) -> BuildResponse:
 {% endtab %}
 
 {% tab title="Golang" %}
-
+```go
+func build(payloadBuildMsg agentstructs.PayloadBuildMessage) agentstructs.PayloadBuildResponse {
+	payloadBuildResponse := agentstructs.PayloadBuildResponse{
+		PayloadUUID:        payloadBuildMsg.PayloadUUID,
+		Success:            true,
+		UpdatedCommandList: &payloadBuildMsg.CommandList,
+	}
+	return payloadBuildResponse
+}
+```
 {% endtab %}
 {% endtabs %}
 
@@ -359,19 +474,18 @@ for cmd in self.commands.get_commands():
   * The build parameters that are validated from the user. If you have a build\_parameter with a name of "version", you can access the user supplied or default value with `self.get_parameter("version")`
 * `self.selected_os` - This is the OS that was selected on the first step of creating a payload
 * `self.c2info` - this holds a list of dictionaries of the c2 parameters and c2 class information supplied by the user. This is a list because the user can select multiple c2 profiles (maybe they want HTTP and SMB in the payload for example). For each element in self.c2info, you can access the information about the c2 profile with `get_c2profile()` and access to the parameters via `get_parameters_dict()`. Both of these return a dictionary of key-value pairs.
-*
   * the dictionary returned by `self.c2info[0].get_c2profile()` contains the following:
     * `name` - name of the c2 profile
     * `description` - description of the profile
     * `is_p2p` - boolean of if the profile is marked as a p2p profile or not
   * the dictionary returned by `self.c2info[0].get_parameters_dict()`contains the following:
     * `key` - value
-    * where each `key` is the `key` value defined for the c2 profile's parameters and `value` is what the user supplied. You might be wondering where to get these keys? Well, it's not too crazy and you can view them right in the UI - [Name Fields](broken-reference).
-    * If the C2 parameter has a value of `crypto_type=True`, then the "value" here will be a bit more than just a string that the user supplied. Instead, it'll be a dictionary with three pieces of information: `value` - the value that the user supplied, `enc_key` - a base64 string (or None) of the encryption key to be used, `dec_key` - a base64 string (or None) of the decryption key to be used. This gives you more flexibility in automatically generating encryption/decryption keys and supporting crypto types/schemas that Mythic isn't aware of. In the HTTP profile, the key `AESPSK` has this type set to True, so you'd expect that dictionary.
-    * If the C2 parameter has a type of "Dictionary", then things are a little different.&#x20;
-      * Let's take the "headers" parameter in the `http` profile for example. This allows you to set header values for your `http` traffic such as User-Agent, Host, and more. When you get this value on the agent side, you get an array of values that look like the following:\
-        `{"User-Agent": "the user agent the user supplied", "MyCustomHeader": "my custom value"}`. You get the final "dictionary" that's created from the user supplied fields.
-  * One way to leverage this could be:
+      * where each `key` is the `key` value defined for the c2 profile's parameters and `value` is what the user supplied. You might be wondering where to get these keys? Well, it's not too crazy and you can view them right in the UI - [Name Fields](broken-reference).
+      * If the C2 parameter has a value of `crypto_type=True`, then the "value" here will be a bit more than just a string that the user supplied. Instead, it'll be a dictionary with three pieces of information: `value` - the value that the user supplied, `enc_key` - a base64 string (or None) of the encryption key to be used, `dec_key` - a base64 string (or None) of the decryption key to be used. This gives you more flexibility in automatically generating encryption/decryption keys and supporting crypto types/schemas that Mythic isn't aware of. In the HTTP profile, the key `AESPSK` has this type set to True, so you'd expect that dictionary.
+      * If the C2 parameter has a type of "Dictionary", then things are a little different.&#x20;
+        * Let's take the "headers" parameter in the `http` profile for example. This allows you to set header values for your `http` traffic such as User-Agent, Host, and more. When you get this value on the agent side, you get an array of values that look like the following:\
+          `{"User-Agent": "the user agent the user supplied", "MyCustomHeader": "my custom value"}`. You get the final "dictionary" that's created from the user supplied fields.
+* One way to leverage this could be:
 
 ```python
 for c2 in self.c2info:
@@ -402,7 +516,7 @@ for c2 in self.c2info:
 {% endtab %}
 {% endtabs %}
 
-Finally, when building a payload, it can often be helpful to have both stdout and stderr information captured, especially if you're compiling code. Because of this, you can set the `build_essage` ,`build_stderr` , and `build_stdout` fields of the `BuildResponse` to have this data. For example:
+Finally, when building a payload, it can often be helpful to have both stdout and stderr information captured, especially if you're compiling code. Because of this, you can set the `build_message` ,`build_stderr` , and `build_stdout` fields of the `BuildResponse` to have this data. For example:
 
 
 

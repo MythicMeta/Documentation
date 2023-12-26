@@ -2,7 +2,7 @@
 
 ## PyPi Version
 
-To update for Mythic version 2.3.7, you need to have the `mythic_payloadtype_container==0.1.7` PyPi version installed. This will report to Mythic as container version 12. After that, you'll need to perform the following updates so that your agent can successfully sync with Mythic and appear in the user interface. If you're using one of the `itsafeaturemythic` Docker images, check [this page](../../customizing/payload-type-development/container-syncing.md#current-payloadtype-versions) for the appropriate Docker image to use.
+To update for Mythic version 2.3.7, you need to have the `mythic_payloadtype_container==0.1.7` PyPi version installed. This will report to Mythic as container version 12. After that, you'll need to perform the following updates so that your agent can successfully sync with Mythic and appear in the user interface. If you're using one of the `itsafeaturemythic` Docker images, check [this page](../../customizing/payload-type-development/first-steps/container-syncing.md#current-payloadtype-versions) for the appropriate Docker image to use.
 
 ## Build Parameters
 
