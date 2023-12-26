@@ -53,8 +53,6 @@ When something is coming from Mythic -> Agent, you'll typically see `Input`, `Ex
 
 You'll probably notice that some letters are missing from the control codes above. There's no need to send along a special control code for `\n` or `\r` because we can send those down as part of our input. Similarly, clearing the screen isn't useful through the web UI because it doesn't quite match up as a full TTY.
 
-
-
 ## Message Location
 
 This data is located in a similar way to SOCKS and RPFWD:
@@ -67,3 +65,5 @@ This data is located in a similar way to SOCKS and RPFWD:
 ```
 
 the `interactive` keyword takes an array of these sorts of messages to/from the agent. This keyword is at the same level in the JSON structure as `action`, `socks`, `responses`, etc.
+
+When sending responses back for interactive tasking, you send back an array in the `interactive` keyword just like you got the data in the first place.&#x20;

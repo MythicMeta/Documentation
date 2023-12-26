@@ -1,6 +1,10 @@
 # Change Log
 
-## What's new for 2.3?
+{% @github-files/github-code-block fullWidth="true" %}
+
+
+
+What's new for 2.3?
 
 * [x] New React-based User Interface
 * [x] New Parameter group based command parsing when tasking
