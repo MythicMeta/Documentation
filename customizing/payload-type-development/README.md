@@ -30,7 +30,16 @@ The rest of these sections talk about specifics for the docker container for you
 
 ### Creating a docker container for your new agent
 
-There is one docker container base image, `itsafeaturemythic/mythic_base_image`, that contains general environments for Python, Golang, .NET, and even includes a macOS SDK. This allows two payload types that might share the same language to still have different environment variables, build paths, tools installed, etc. Docker containers come into play for a few things:
+There are base docker images for the various kinds of environments you're likely to need:
+
+* `itsafeaturemythic/mythic_go_base` has GoLang 1.21 installed
+* `itsafeaturemythic/mythic_go_dotnet` has GoLang 1.21 and .NET
+* `itsafeaturemythic/mythic_go_macos` has GoLang 1.21 and the macOS SDK
+* `itsafeaturemythic/mythic_python_base` has Python 3.11 and the `mythic_container` pypi package
+* `itsafeaturemythic/mythic_python_go` has Python 3.11, the `mythic_container` pypi package, and GoLang v1.21
+* `itsafeaturemythic/mythic_python_macos` has Python 3.11, the `mythic_container` pypi package, and the macOS SDK
+
+This allows two payload types that might share the same language to still have different environment variables, build paths, tools installed, etc. Docker containers come into play for a few things:
 
 * Metadata about the payload type (this is in the form of python classes or Golang structs)
 * The payload type code base (whatever language your agent is in)
@@ -48,10 +57,10 @@ Within `Mythic/InstalledServices/` make a new folder that matches the name of yo
 
 #### Using the default container base
 
-The default container has the core pieces for many different languages. Start your `Dockerfile` off with:
+&#x20;Start your `Dockerfile` off with one of the above images:
 
 ```
-From itsafeaturemythic/mythic_base_image:0.0.2
+From itsafeaturemythic/mythic_python_base:latest
 ```
 
 On the next lines, just add in any extra things you need for your agent to properly build, such as:
@@ -84,14 +93,13 @@ Technically, that's all that's required. Within the `Dockerfile` you will then n
 
 #### Python:
 
-1. `Mythic/InstalledServices/[agent name]/main.py` <-- if you plan on using Python as your definition language, this `main.py` file is what will get executed by Python 3.10.
+1. `Mythic/InstalledServices/[agent name]/main.py` <-- if you plan on using Python as your definition language, this `main.py` file is what will get executed by Python 3.11 assuming you use the Dockerfile shown below. If you want a different structure, just change the `CMD` line to execute whatever it is you want.
 
 At that point, your `main.py` file will import any other folders/files needed to define your agent/commands and import the `mythic_container` pypi package. Here's an example from Apollo:
 
 ```
-FROM itsafeaturemythic/mythic_base_image:0.0.2
+FROM itsafeaturemythic/mythic_python_base:latest
 
-RUN python3 -m pip install mythic-container==0.2.3rc03
 RUN python3 -m pip install donut-shellcode
 
 WORKDIR /Mythic/
@@ -153,7 +161,7 @@ Pay attention to the `build` and `run` commands - once you're done building your
 To go along with that, a sample Docker file for Golang is as follows:
 
 ```
-FROM itsafeaturemythic/mythic_base_image:0.0.2
+FROM itsafeaturemythic/mythic_go_base:latest
 
 WORKDIR /Mythic/
 
@@ -168,10 +176,10 @@ It's very similar to the Python version, except it runs `make build` when buildi
 
 #### Custom container
 
-There isn't _too_ much that's different if you're going to use your own container, it's just on you to make sure that python3.10/Golang 1.20 is up and running and the entrypoint is set properly.&#x20;
+There isn't _too_ much that's different if you're going to use your own container, it's just on you to make sure that python3.11/Golang 1.21 is up and running and the entrypoint is set properly.&#x20;
 
 {% hint style="info" %}
-If you're having this hook up through Mythic via `mythic-cli` and the one `docker-compose` file, the `dynaconf` and `mythic-container` (or MythicContainer golang package) are the ones responsible for the `Mythic/.env` configuration being applied to your container.
+If you're having this hook up through Mythic via `mythic-cli` and the one `docker-compose` file, the `dynaconf` and `mythic-container` (or MythicContainer GoLang package) are the ones responsible for the `Mythic/.env` configuration being applied to your container.
 {% endhint %}
 
 {% hint style="warning" %}
@@ -211,7 +219,7 @@ So, to leverage your own custom VM or physical computer into a Mythic recognized
 External agents need to connect to `mythic_rabbitmq` in order to send/receive messages. They also need to connect to the `mythic_server` to transfer files and potentially use gRPC. By default, these container is bound on localhost only. In order to have an external agent connect up, you will need to adjust this in the `Mythic/.env` file to have `RABBITMQ_BIND_LOCALHOST_ONLY=false` and `MYTHIC_SERVER_BIND_LOCALHOST_ONLY=false` and restart Mythic (`sudo ./mythic-cli restart`).&#x20;
 {% endhint %}
 
-1. Install python 3.10+ (or Golang 1.20) in the VM  or on the computer
+1. Install python 3.10+ (or Golang 1.21) in the VM  or on the computer
 2. `pip3 install mythic-container` (this has all of the definitions and functions for the container to sync with Mythic and issue RPC commands). Make sure you get the right version of this PyPi package for the version of Mythic you're using ([#current-payloadtype-versions](first-steps/container-syncing.md#current-payloadtype-versions "mention")). Alternatively, `go get -u github.com/MythicMeta/MythicContainer` for golang.
 3. Create a folder on the computer or VM (let's call it path `/pathA`). Essentially, your `/pathA` path will be the new `InstalledServices/[agent name]` folder. Create a sub folder for your actual agent's code to live, like `/pathA/agent_code`. You can create a Visual Studio project here and simply configure it however you need.
 4. Your command function definitions and payload definition are also helpful to have in a folder, like `/pathA/agent_functions`.
