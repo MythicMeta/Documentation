@@ -22,7 +22,7 @@ There are a few different ways to leverage this information.
 
 ### Commands by ATT\&CK
 
-Clicking the "Fetch All Commands Mapped to MITRE" action will highlight all of the matrix cells that have a command registered to that ATT\&CK technique. Clicking on a specific cell will bring up more specific information on which payload type and which command is mapped to that technique. All of this information comes from the [MITRE ATT\&CK](../understanding-commands/mitre-att-and-ck.md) portion of commands.
+Clicking the "Fetch All Commands Mapped to MITRE" action will highlight all of the matrix cells that have a command registered to that ATT\&CK technique. Clicking on a specific cell will bring up more specific information on which payload type and which command is mapped to that technique. All of this information comes from the [MITRE ATT\&CK](../operational-pieces/understanding-commands/mitre-att-and-ck.md) portion of commands.
 
 ![](<../.gitbook/assets/Screen Shot 2022-03-10 at 12.48.03 PM.png>)
 

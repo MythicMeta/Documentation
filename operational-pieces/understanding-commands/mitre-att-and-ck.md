@@ -4,7 +4,7 @@ MITRE ATT\&CK is a great way to track what both offense and defense are doing in
 
 There can be as many or as few mappings as desired for each command. This information is used in two different ways, but both located in the MITRE ATT\&CK button at the top.
 
-<figure><img src="../.gitbook/assets/Screenshot 2023-03-06 at 9.51.32 AM.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Screenshot 2023-03-06 at 9.51.32 AM.png" alt=""><figcaption></figcaption></figure>
 
 The "Fetch All Commands Mapped to MITRE" button takes this information to populate out what is the realm of `possible` with all of the payload types and commands registered within Mythic. This gives a coverage map of what could be done. Clicking each matrix cell gives a breakdown of which commands from which payload types achieve that objective:
 

@@ -1,13 +1,13 @@
 # Mythic 2.1 -> 2.2 Updates
 
-If you want to look into all the new features available to you as a payload developer from an agent perspective, check out [Agents 2.1.\* -> 2.2.2](agents-2.1.-greater-than-2.2.2/). The rest of this page is for higher-level updates and UI changes. Either way, to leverage these updates and to upgrade your Mythic instance, you will need to delete your current database `sudo ./mythic-cli database reset` and then pull in the updates and `sudo ./mythic-cli mythic start` again.&#x20;
+If you want to look into all the new features available to you as a payload developer from an agent perspective, check out [Agents 2.1.\* -> 2.2.2](agents-2.1.-greater-than-2.2.2). The rest of this page is for higher-level updates and UI changes. Either way, to leverage these updates and to upgrade your Mythic instance, you will need to delete your current database `sudo ./mythic-cli database reset` and then pull in the updates and `sudo ./mythic-cli mythic start` again.
 
 {% hint style="danger" %}
 If you're coming from the 2.1.\* Mythic instances, your current agents and c2 profiles will NOT work. They will NOT work. This update changed a lot of the underlying ways those agents/c2 profiles communicated and synced with mythic, so you'll need to update those. In most cases, once the developer has announced their stuff is updated, you can use the `./mythic-cli install github <url> [branch] [-f]` command to remove the old version and pull in the new version.
 {% endhint %}
 
 {% hint style="warning" %}
-When updating minor versions (2.1 to 2.2), make sure you drop your database with `sudo ./mythic-cli database reset` and delete your `Mythic/.env` file.&#x20;
+When updating minor versions (2.1 to 2.2), make sure you drop your database with `sudo ./mythic-cli database reset` and delete your `Mythic/.env` file.
 {% endhint %}
 
 ## Split out C2 / PayloadTypes
@@ -39,13 +39,13 @@ Inside this organization you'll find the code for:
 * [Payload Type PyPi Container](https://github.com/MythicMeta/Mythic\_PayloadType\_Container) - This is the code that's in the `mythic_payloadtype_container` PyPi package hosted on PyPi.
 * [C2 Profile PyPi Container](https://github.com/MythicMeta/Mythic\_C2\_Container) - This is the code that's in the `mythic_c2_container` PyPi package hosted on PyPi.
 * [Translator PyPi Container](https://github.com/MythicMeta/Mythic\_Translator\_Container) - This is the code that's in the `mythic_translator_container` PyPi package hosted on PyPi.
-* [Mythic Scripting](https://github.com/MythicMeta/Mythic\_Scripting) - This is the code that's used for the `mythic` (and right now specifically the `mythic_rest`) scripting capabilities and hosted on PyPi.&#x20;
+* [Mythic Scripting](https://github.com/MythicMeta/Mythic\_Scripting) - This is the code that's used for the `mythic` (and right now specifically the `mythic_rest`) scripting capabilities and hosted on PyPi.
 
 For any of these, if you don't want to leverage the standard Docker images, or if you want to turn your own VM into a supported container, feel free to leverage this code.
 
 ## Mythic-cli
 
-Mythic used to leverage a large number of bash scripts to accomplish the task of start/stoping docker-compose and the agent/c2 profiles, resetting the database, processing various configuration files, and more. While bash is on all Linux systems where Mythic can run, that doesn't mean that all of the additional support binaries exist (jq, realpath, openssl, docker, etc). This can result in a bit of a headache; plus, maintaining bash scripts is a nightmare. To get around this, Mythic now comes with a pre-compiled Golang binary, `mythic-cli`, with the source code available to all at the [Mythic\_CLI](https://github.com/MythicMeta/Mythic\_CLI) repository.&#x20;
+Mythic used to leverage a large number of bash scripts to accomplish the task of start/stoping docker-compose and the agent/c2 profiles, resetting the database, processing various configuration files, and more. While bash is on all Linux systems where Mythic can run, that doesn't mean that all of the additional support binaries exist (jq, realpath, openssl, docker, etc). This can result in a bit of a headache; plus, maintaining bash scripts is a nightmare. To get around this, Mythic now comes with a pre-compiled Golang binary, `mythic-cli`, with the source code available to all at the [Mythic\_CLI](https://github.com/MythicMeta/Mythic\_CLI) repository.
 
 All of the documentation on this website should already be updated to show how to use the `mythic-cli` binary instead of the support scripts, but if you find a place that doesn't, be sure to report it.
 
@@ -55,7 +55,7 @@ This will take a little bit of time to get used to, but it will be easier for ma
 
 ## C2 Profile Updates
 
-C2 profiles gained a new function, `opsec`, where they can take in all of the parameters an operator supplies when creating a payload and determine if they're safe or not. This is an optional function with more detail on the [OPSEC](../../customizing/c2-related-development/c2-profile-code/server-side-coding/opsec-checks-for-c2-profiles.md) page for C2 Profiles and general [overview](../../c2-profiles/opsec-checks.md).&#x20;
+C2 profiles gained a new function, `opsec`, where they can take in all of the parameters an operator supplies when creating a payload and determine if they're safe or not. This is an optional function with more detail on the [OPSEC](../../customizing/c2-related-development/c2-profile-code/server-side-coding/opsec-checks-for-c2-profiles.md) page for C2 Profiles and general [overview](../../operational-pieces/c2-profiles/opsec-checks.md).
 
 ## Payload Updates
 
@@ -122,7 +122,7 @@ async def scripting():
 
 ### Multiple Workers
 
-One of the big issues we found for Mythic over time has been that with a large number of callbacks (200+) or with a medium number with a low sleep (like 15 agents at sleep 0), then the performance for Mythic (server and the UI) is pretty noticeably deteriorated. After digging into it, it turns out that Mythic was only ever using a single core due to how the event loop was leveraged. Mythic now spawns multiple worker processes and shares the load across the available CPUs.&#x20;
+One of the big issues we found for Mythic over time has been that with a large number of callbacks (200+) or with a medium number with a low sleep (like 15 agents at sleep 0), then the performance for Mythic (server and the UI) is pretty noticeably deteriorated. After digging into it, it turns out that Mythic was only ever using a single core due to how the event loop was leveraged. Mythic now spawns multiple worker processes and shares the load across the available CPUs.
 
 This presents a different set of problems from what we were doing before - for example, you can't cache requests or data in memory because that's not shared amongst the worker processes. So, to help with this, we added a small Redis database. This might seem weird that we now have two databases within Mythic - Redis and Postgres. The use cases and data stored on them is wildly different though.
 
@@ -141,7 +141,7 @@ There have been issues with the current SOCKS implementation within Mythic, so w
 
 ## Translation Containers
 
-One of the things Mythic strives to do is allowing an extensible and customizable framework for you to create an agent that functions however you want. While the current Mythic format allows you to generate an agent however you want, the messages that you use are still pretty heavily tied to Mythic's JSON format. Depending on your agent and language of choice, JSON might not be feasible. Even if JSON is feasible, you might not want to use  Mythic's JSON messages. So, to help make it easier for your agents to do their own thing, we're introducing the idea of "Translation" containers.
+One of the things Mythic strives to do is allowing an extensible and customizable framework for you to create an agent that functions however you want. While the current Mythic format allows you to generate an agent however you want, the messages that you use are still pretty heavily tied to Mythic's JSON format. Depending on your agent and language of choice, JSON might not be feasible. Even if JSON is feasible, you might not want to use Mythic's JSON messages. So, to help make it easier for your agents to do their own thing, we're introducing the idea of "Translation" containers.
 
 These containers simply act as a way to "translate" between your custom format and the JSON that Mythic needs. In addition to just doing a translation of messages, this container can also handle encryption, decryption, and generation of crypto keys.
 

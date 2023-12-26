@@ -8,7 +8,7 @@ description: This page describes how the HTTP profile works and configuration op
 
 This profile uses HTTP Get and Post messages to communicate with the main Mythic server. Unlike the default HTTP though, this profile allows a lot of customization from both the client and server. There are two pieces to this as with most C2 profiles - Server side code and Agent side code. In general, the flow looks like:
 
-![](<../.gitbook/assets/Screen Shot 2020-08-11 at 9.16.56 PM.png>)
+![](<../../.gitbook/assets/Screen Shot 2020-08-11 at 9.16.56 PM.png>)
 
 ## Agent Configuration
 
@@ -332,7 +332,7 @@ The docker container just abstracts all of the C2 features out from the actual M
 
 There is only _ONE_ HTTP docker container per Mythic instance though, not one per operation. Because of this, the HTTP profile's server-side configuration will have to do that multiplexing for you. Below is an example of the setup:
 
-![HTTP Comms from Agent to Server](<../.gitbook/assets/Screen Shot 2020-01-02 at 1.12.01 PM.png>)
+![HTTP Comms from Agent to Server](<../../.gitbook/assets/Screen Shot 2020-01-02 at 1.12.01 PM.png>)
 
 Let's look into what this sort of configuration entails. We already discussed the agent side configuration above, so now let's look into what's going on in the HTTP C2 Docker container. The Server configuration has the following general format:
 

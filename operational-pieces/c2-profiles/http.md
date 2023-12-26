@@ -24,7 +24,7 @@ The name of a C2 profile cannot be changed once it's created, but everything els
 
 This dialog displays the current parameters associated with the C2 profile. These are the values you must supply when using the C2 profile to create an agent.
 
-![Default C2 Profile parameters](<../.gitbook/assets/Screen Shot 2022-03-10 at 12.41.52 PM.png>)
+![Default C2 Profile parameters](<../../.gitbook/assets/Screen Shot 2022-03-10 at 12.41.52 PM.png>)
 
 There are a few things to note here:
 

@@ -47,3 +47,11 @@ If you are going back-and-forth between windows and linux doing edits on files, 
 ### How do I fix this?
 
 Running `dos2unix` on your files will convert the line endings to the standard linux `\n` characters and you should then be able to restart your agent `sudo ./mythic-cli start [agent name]`. At that point everything should come back up.
+
+## I installed an agent, but it's not showing up
+
+If you use `mythic-cli` to install an agent, but you're not seeing it show up in the UI, it means that something is going wrong with booting up the agent and syncing to Mythic.
+
+### How do I fix this?
+
+Run `sudo ./mythic-cli logs [agent name]` to look at the output of the container. Usually you'll see some sort of error here about why things aren't working. This is typically the result of an agent/c2 profile being too far out of date from the rest of the Mythic instance that it can't properly sync up anymore.
