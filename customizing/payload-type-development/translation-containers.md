@@ -16,6 +16,12 @@ You then need to get the new container associated with the docker-compose file t
 
 Additionally, if you're leveraging a payload type that has `mythic_encrypts = False` and you're doing any cryptography, then you should use this same process and perform your encryption and decryption routines here. This is why Mythic provides you with the associated keys you generated for encryption, decryption, and which profile you're getting a message from.
 
+{% hint style="info" %}
+Mythic will base64 decode the message it gets, pull out the payload/staging/callback UUID in front, and look up information on it. When Mythic determines the backing payload type has a translation container, Mythic will send the UUID, encryption information, and encrypted blob to your translation container. When Mythic is done processing the message from your agent and it's time to send a response back, it'll send the message to your translation container and then forward the response back to the C2 Profile.&#x20;
+
+**NOTE:** If your translation container is doing the encryption, then Mythic will expect that the message coming back from your translation container (mythic c2 to custom) will be encrypted, have the UUID attached, and be base64 encoded. Mythic will do **NOTHING** with the message it gets back. If Mythic is handling the encryption, then you will simply return the custom c2 bytes of your message and **MYTHIC** will be the one to add the UUID and base64 encode the response.
+{% endhint %}
+
 ### Python
 
 For the Python version, we simply instantiate our own subclass of the TranslationContainer class and provide three functions. In our `main.py` file, simply import the file with this definition and then start the service:&#x20;
