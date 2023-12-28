@@ -620,12 +620,12 @@ The last thing to mention are build steps. These are defined as part of the agen
 So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../message-flow/#what-happens-for-building-payloads "mention").
 
 1. PayloadType container is started, it connects to Mythic and sends over its data (by parsing all these python files or GoLang structs)
-2. An operator wants to create a payload from it, so they go to "Create Components" -> "Create Payload"
+2. An operator wants to create a payload from it, so they click the hazard icon at the top of Mythic, click the "Actions" dropdown and select "Generate New Payload".
 3. The operator selects an OS type that the agent supports (ex. Linux, macOS, Windows)
-4. The operator selects all c2 profiles they want included
+4. The operator selects the payload type they want to build (this one)
+   1. edits all build parameters as needed
+5. The operator selects all commands they want included in the payload
+6. The operator selects all c2 profiles they want included
    1. and for each c2 selected, provides any c2 required parameters
-5. The operator selects this payload type
-6. The operator fills out/selects all of the payload type's build parameters
-7. The operator selects all commands they want included in the payload
-8. Mythic takes all of this information and sends it to the payload type container
-9. The container sends the `BuildResponse` message back to the Mythic server.
+7. Mythic takes all of this information and sends it to the payload type container
+8. The container sends the `BuildResponse` message back to the Mythic server.
