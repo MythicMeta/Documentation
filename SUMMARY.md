@@ -75,7 +75,7 @@
   * [Interactive Tasking](customizing/hooking-features/interactive-tasking.md)
   * [Task Status](customizing/hooking-features/task-status.md)
 * [Payload Type Development](customizing/payload-type-development/README.md)
-  * [Payload Type](customizing/payload-type-development/payload-type-info.md)
+  * [Payload Type Definition](customizing/payload-type-development/payload-type-info.md)
   * [Container Syncing](customizing/payload-type-development/container-syncing.md)
   * [Commands](customizing/payload-type-development/commands.md)
   * [Adding Commands](customizing/payload-type-development/adding-commands.md)

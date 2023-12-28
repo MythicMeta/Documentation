@@ -1,4 +1,6 @@
-# Payload Type Info
+# Payload Type Definition
+
+## 1.0 Payload Type Definition
 
 Payload Type information must be set and pulled from a definition either in Python or in GoLang. Below are basic examples in Python and GoLang:
 
@@ -140,7 +142,7 @@ func build(payloadBuildMsg agentstructs.PayloadBuildMessage) agentstructs.Payloa
 {% endtab %}
 {% endtabs %}
 
-### Wrapper Payloads
+### 1.1 Wrapper Payloads
 
 A quick note about wrapper payload types - there's only a few differences between a wrapper payload type and a normal payload type. A configuration variable, `wrapper`, determines if something is a wrapper or not. A wrapper payload type takes as input the output of a previous build (normal payload type or wrapper payload type) along with build parameters and generates a new payload. A wrapper payload type does NOT have any c2 profiles associated with it because it's simply wrapping an existing payload.&#x20;
 
@@ -152,13 +154,13 @@ To access the payload that you're going to wrap, use the `self.wrapped_payload` 
 {% endtab %}
 
 {% tab title="Golang" %}
-
+To access the payload that you're going to wrap, use the `payloadBuildMsg.WrappedPayload` attribute during your `build` execution. This will be the raw bytes of the payload you're going to wrap.
 {% endtab %}
 {% endtabs %}
 
-When you're done generating the payload, you'll return your new result the exact same way as normal payloads.&#x20;
+When you're done generating the payload, you'll return your new result the exact same way as normal payloads (as part of the [build](payload-type-info.md#building) process).
 
-## Build Parameters
+## 2.0 Build Parameters
 
 Build parameters define the components shown to the user when creating a payload.
 
@@ -171,87 +173,38 @@ The `BuildParameter` class has a couple of pieces of information that you can us
 The most up-to-date code is available in the `https://github.com/MythicMeta/MythicContainerPyPi` repository.
 
 ```python
-class BuildParameter:
-    """Build Parameter Definition for use when generating payloads
+class BuildParameterType(str, Enum):
+    """Types of parameters available for building payloads
 
     Attributes:
-        name (str):
-            Name of the parameter for scripting and for when building payloads
-        description (str):
-            Informative description displayed when building a payload
-        default_value (any):
-            Default value to pre-populate
-        randomize (bool):
-            Should this value be randomized (requires format_string)
-        format_string (str):
-            A regex used for randomizing values if randomize is true
-        parameter_type (BuildParameterType):
-            The type of parameter this is
-        required (bool):
-            Is this parameter required to have a non-empty value or not
-        verifier_regex (str):
-            Regex used to verify that the user typed something appropriate
-        choices (list[str]):
-            Choices for ChooseOne parameter type
-        dictionary_choices (list[DictionaryChoice]):
-            Configuration options for the Dictionary parameter type
-        crypto_type (bool):
-            Indicate if this value should be used to generate a crypto key or not
-
+        String:
+            A string value
+        ChooseOne:
+            A list of choices for the user to select exactly one
+        ChooseMultiple:
+            A list of choices for the user to select 0 or more
+        Array:
+            The user can supply multiple values in an Array format
+        Date:
+            The user can select a Date in YYYY-MM-DD format
+        Dictionary:
+            The user can supply a dictionary of values
+        Boolean:
+            The user can toggle a switch for True/False
+        File:
+            The user can select a file that gets uploaded - a file UUID gets passed in during build
+        TypedArray:
+            The user can supply an array where each element also has a drop-down option of choices
     """
-    def __init__(
-            self,
-            name: str,
-            parameter_type: BuildParameterType = None,
-            description: str = None,
-            required: bool = None,
-            randomize: bool = None,
-            format_string: str = "",
-            crypto_type: bool = False,
-            verifier_regex: str = None,
-            default_value: any = None,
-            choices: list[str] = None,
-            dictionary_choices: list[DictionaryChoice] = None,
-            value: any = None,
-            verifier_func: callable = None,
-    ):
-        self.name = name
-        self.verifier_func = verifier_func
-        self.parameter_type = (
-            parameter_type if parameter_type is not None else BuildParameterType.String
-        )
-        self.description = description if description is not None else ""
-        self.required = required if required is not None else True
-        self.verifier_regex = verifier_regex if verifier_regex is not None else ""
-        self.default_value = default_value
-        if value is None:
-            self.value = default_value
-        else:
-            self.value = value
-        self.choices = choices
-        self.dictionary_choices = dictionary_choices
-        self.crypto_type = crypto_type
-        self.randomize = randomize
-        self.format_string = format_string
-
-    def to_json(self):
-        return {
-            "name": self.name,
-            "description": self.description,
-            "default_value": self.default_value,
-            "randomize": self.randomize,
-            "format_string": self.format_string,
-            "required": self.required,
-            "parameter_type": self.parameter_type.value,
-            "verifier_regex": self.verifier_regex,
-            "crypto_type": self.crypto_type,
-            "choices": self.choices,
-            "dictionary_choices": [x.to_json() for x in
-                                   self.dictionary_choices] if self.dictionary_choices is not None else None
-        }
-
-    def __str__(self):
-        return json.dumps(self.to_json(), sort_keys=True, indent=2)
+    String = "String"
+    ChooseOne = "ChooseOne"
+    ChooseMultiple = "ChooseMultiple"
+    Array = "Array"
+    Date = "Date"
+    Dictionary = "Dictionary"
+    Boolean = "Boolean"
+    File = "File"
+    TypedArray = "TypedArray"
 ```
 {% endtab %}
 
@@ -309,25 +262,25 @@ type BuildStep struct {
 {% endtab %}
 {% endtabs %}
 
-* name is the name of the parameter, if you don't provide a longer description, then this is what's presented to the user when building your payload
-* parameter\_type describes what is presented to the user - valid types are:
-  * BuildParameterType.String
+* `name` is the name of the parameter, if you don't provide a longer description, then this is what's presented to the user when building your payload
+* `parameter_type` describes what is presented to the user - valid types are:
+  * `BuildParameterType.String`
     * During build, this is a string
-  * BuildParameterType.ChooseOne
+  * `BuildParameterType.ChooseOne`
     * During build, this is a string
-  * BuildParameterType.ChooseMultiple
-  * During build, this is an array of strings
-  * BuildParameterType.Array
+  * `BuildParameterType.ChooseMultiple`
     * During build, this is an array of strings
-  * BuildParameterType.Date
-    * During build, this is a string of the format YYYY-MM-DD
-  * BuildParameterType.Dictionary
+  * `BuildParameterType.Array`
+    * During build, this is an array of strings
+  * `BuildParameterType.Date`
+    * During build, this is a string of the format `YYYY-MM-DD`
+  * `BuildParameterType.Dictionary`
     * During build, this is a dictionary
-  * BuildParameterType.Boolean
+  * `BuildParameterType.Boolean`
     * During build, this is a boolean
-  * BuildParameterType.File
+  * `BuildParameterType.File`
     * During build, this is a string UUID of the file (so that you can use a MythicRPC call to fetch the contents of the file)
-  * BuildParameterType.TypedArray
+  * `BuildParameterType.TypedArray`
     * During build, this is an arrray of arrays, always in the format `[ [ type, value], [type value], [type, value] ...]`
 * `required` indicates if there must be a value supplied. If no value is supplied by the user and no default value supplied here, then an exception is thrown before execution gets to the `build` function.&#x20;
 * `verifier_regex` is a regex the web UI can use to provide some information to the user about if they're providing a valid value or not
@@ -411,17 +364,18 @@ BuildParameters: []agentstructs.BuildParameter{
 {% endtab %}
 {% endtabs %}
 
-## Building
+## 3.0 Building
 
 You have to implement the `build` function and return an instance of the `BuildResponse` class. This response has these fields:
 
-* status - an instance of BuildStatus (Success or Error)
+* `status` - an instance of BuildStatus (Success or Error)
   * Specifically, `BuildStatus.Success` or `BuildStatus.Error`
-* payload - the raw bytes of the finished payload (if you failed to build, set this to `None` or empty bytes like `b''` in Python.
-* build\_message - any stdout data you want the user to see
-* build\_stderr - any stderr data you want the user to see
-* build\_stdout - any stdout data you want the user to see
-* updated\_filename - if you want to update the filename to something more appropriate, set it here. For example: the user supplied a filename of `apollo.exe` but based on the build parameters, you're actually generating a dll, so you can update the filename to be `apollo.dll`. This is particularly useful if you're optionally returning a zip of information so that the user doesn't have to change the filename before downloading. If you plan on doing this to update the filename for a wide variety of options, then it might be best to leave the file extension field in your payload type definition blank `""` so that you can more easily adjust the extension.
+* `payload` - the raw bytes of the finished payload (if you failed to build, set this to `None` or empty bytes like `b''` in Python.
+* `build_message` - any stdout data you want the user to see
+* `build_stderr` - any stderr data you want the user to see
+* `build_stdout` - any stdout data you want the user to see
+* `updated_filename` - if you want to update the filename to something more appropriate, set it here.&#x20;
+  * For example: the user supplied a filename of `apollo.exe` but based on the build parameters, you're actually generating a dll, so you can update the filename to be `apollo.dll`. This is particularly useful if you're optionally returning a zip of information so that the user doesn't have to change the filename before downloading. If you plan on doing this to update the filename for a wide variety of options, then it might be best to leave the file extension field in your payload type definition blank `""` so that you can more easily adjust the extension.
 
 The most basic version of the build function would be:
 
@@ -440,7 +394,6 @@ func build(payloadBuildMsg agentstructs.PayloadBuildMessage) agentstructs.Payloa
 	payloadBuildResponse := agentstructs.PayloadBuildResponse{
 		PayloadUUID:        payloadBuildMsg.PayloadUUID,
 		Success:            true,
-		UpdatedCommandList: &payloadBuildMsg.CommandList,
 	}
 	return payloadBuildResponse
 }
@@ -512,7 +465,51 @@ for c2 in self.c2info:
 {% endtab %}
 
 {% tab title="Golang" %}
+```go
+// PayloadBuildMessage - A structure of the build information the user provided to generate an instance of the payload type.
+// This information gets passed to your payload type's build function.
+type PayloadBuildMessage struct {
+	// PayloadType - the name of the payload type for the build
+	PayloadType string `json:"payload_type" mapstructure:"payload_type"`
+	// Filename - the name of the file the user originally supplied for this build
+	Filename string `json:"filename" mapstructure:"filename"`
+	// CommandList - the list of commands the user selected to include in the build
+	CommandList []string `json:"commands" mapstructure:"commands"`
+	// build param name : build value
+	// BuildParameters - map of param name -> build value from the user for the build parameters defined
+	// File type build parameters are supplied as a string UUID to use with MythicRPC for fetching file contents
+	// Array type build parameters are supplied as []string{}
+	BuildParameters PayloadBuildArguments `json:"build_parameters" mapstructure:"build_parameters"`
+	// C2Profiles - list of C2 profiles selected to include in the payload and their associated parameters
+	C2Profiles []PayloadBuildC2Profile `json:"c2profiles" mapstructure:"c2profiles"`
+	// WrappedPayload - bytes of the wrapped payload if one exists
+	WrappedPayload *[]byte `json:"wrapped_payload,omitempty" mapstructure:"wrapped_payload"`
+	// WrappedPayloadUUID - the UUID of the wrapped payload if one exists
+	WrappedPayloadUUID *string `json:"wrapped_payload_uuid,omitempty" mapstructure:"wrapped_payload_uuid"`
+	// SelectedOS - the operating system the user selected when building the agent
+	SelectedOS string `json:"selected_os" mapstructure:"selected_os"`
+	// PayloadUUID - the Mythic generated UUID for this payload instance
+	PayloadUUID string `json:"uuid" mapstructure:"uuid"`
+	// PayloadFileUUID - The Mythic generated File UUID associated with this payload
+	PayloadFileUUID string `json:"payload_file_uuid" mapstructure:"payload_file_uuid"`
+}
 
+// PayloadBuildC2Profile - A structure of the selected C2 Profile information the user selected to build into a payload.
+type PayloadBuildC2Profile struct {
+	Name  string `json:"name" mapstructure:"name"`
+	IsP2P bool   `json:"is_p2p" mapstructure:"is_p2p"`
+	// parameter name: parameter value
+	// Parameters - this is an interface of parameter name -> parameter value from the associated C2 profile.
+	// The types for the various parameter names can be found by looking at the build parameters in the Mythic UI.
+	Parameters map[string]interface{} `json:"parameters" mapstructure:"parameters"`
+}
+
+type CryptoArg struct {
+	Value  string `json:"value" mapstructure:"value"`
+	EncKey string `json:"enc_key" mapstructure:"enc_key"`
+	DecKey string `json:"dec_key" mapstructure:"dec_key"`
+}
+```
 {% endtab %}
 {% endtabs %}
 
@@ -597,7 +594,7 @@ Finally, when building a payload, it can often be helpful to have both stdout an
 {% endtab %}
 
 {% tab title="Golang" %}
-
+{% @github-files/github-code-block %}
 {% endtab %}
 {% endtabs %}
 

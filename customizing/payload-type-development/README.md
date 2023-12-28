@@ -52,6 +52,10 @@ Again, all of this happens automatically as part the normal installation process
 
 At this point, your new example agent should be visible within Mythic. If it's not, we can check logs to see what the issue might be with `sudo ./mythic-cli logs python-services` (this is a wrapper around `sudo docker logs python-services` and truncates to the latest 500 lines).&#x20;
 
+### 2.5 Reminder
+
+Steps 2.1-2.4 all happen automatically when you install a service via `mythic-cli`. If you don't want to install via `mythic-cli` then you can do these steps manually like we did here.&#x20;
+
 ## 3.0 Examining the pieces
 
 Now that you've seen the pieces and steps for installing an existing agent, it's time to start diving into what's going on within that `python_services` folder.
@@ -70,11 +74,11 @@ The only thing that absolutely **MUST** exist within this folder is a `Dockerfil
 This allows two payload types that might share the same language to still have different environment variables, build paths, tools installed, etc. Docker containers come into play for a few things:
 
 * Sync metadata about the payload type (this is in the form of python classes or GoLang structs)
-* Hold the payload type code base (whatever language your agent is in)
+* Contains the payload type code base (whatever language your agent is in)
 * The code to create the payload based on all of the user supplied input (builder function)
-* Metadata about all of the commands associated with that payload type
+* Sync metadata about all of the commands associated with that payload type
 * The code for all of those commands (whatever language your agent is in)
-* Browser scripts for commands and support scripts for the payload type as a whole (JavaScript)
+* Browser scripts for commands (JavaScript)
 * The code to take user supplied tasking and turn it into tasking for your agent
 
 #### Using the default container base
