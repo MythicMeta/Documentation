@@ -611,15 +611,15 @@ copy_tree(self.agent_code_path, agent_build_path.name)
 ```
 {% endhint %}
 
-### Build Steps
+### 3.1 Build Steps
 
 The last thing to mention are build steps. These are defined as part of the agent and are simply descriptions of what is happening during your build process. The above example makes some RPC calls for `SendMythicRPCPayloadUpdatebuildStep` to update the build steps back to Mythic while the build process is happening. For something as fast as the `apfell` agent, it'll appear as though all of these happen at the same time. For something that's more computationally intensive though, it's helpful to provide information back to the user about what's going on - stamping in values? obfuscating? compiling? more obfuscation? opsec checks? etc. Whatever it is that's going on, you can provide this data back to the operator complete with stdout and stderr.
 
-## Execution flow
+### 3.2 Execution flow
 
 So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../message-flow/#what-happens-for-building-payloads "mention").
 
-1. PayloadType container is started, it connects to Mythic and sends over its data (by parsing all these python files)
+1. PayloadType container is started, it connects to Mythic and sends over its data (by parsing all these python files or GoLang structs)
 2. An operator wants to create a payload from it, so they go to "Create Components" -> "Create Payload"
 3. The operator selects an OS type that the agent supports (ex. Linux, macOS, Windows)
 4. The operator selects all c2 profiles they want included
