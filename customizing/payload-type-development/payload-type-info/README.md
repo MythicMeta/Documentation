@@ -1,4 +1,4 @@
-# Payload Type Definition
+# 2. Payload Type Definition
 
 ## 1.0 Payload Type Definition
 
@@ -158,13 +158,13 @@ To access the payload that you're going to wrap, use the `payloadBuildMsg.Wrappe
 {% endtab %}
 {% endtabs %}
 
-When you're done generating the payload, you'll return your new result the exact same way as normal payloads (as part of the [build](payload-type-info.md#building) process).
+When you're done generating the payload, you'll return your new result the exact same way as normal payloads (as part of the [build](./#building) process).
 
 ## 2.0 Build Parameters
 
 Build parameters define the components shown to the user when creating a payload.
 
-![](<../../.gitbook/assets/Screen Shot 2021-12-02 at 11.38.16 AM.png>)
+![](<../../../.gitbook/assets/Screen Shot 2021-12-02 at 11.38.16 AM.png>)
 
 The `BuildParameter` class has a couple of pieces of information that you can use to customize and validate the parameters supplied to your build:
 
@@ -617,7 +617,7 @@ The last thing to mention are build steps. These are defined as part of the agen
 
 ### 3.2 Execution flow
 
-So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../message-flow/#what-happens-for-building-payloads "mention").
+So, what's the actual, end-to-end execution flow that goes on? A diagram can be found here: [#what-happens-for-building-payloads](../../../message-flow/#what-happens-for-building-payloads "mention").
 
 1. PayloadType container is started, it connects to Mythic and sends over its data (by parsing all these python files or GoLang structs)
 2. An operator wants to create a payload from it, so they click the hazard icon at the top of Mythic, click the "Actions" dropdown and select "Generate New Payload".

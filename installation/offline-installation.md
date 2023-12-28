@@ -60,7 +60,7 @@ tar xfz mythic.tar.gz
 cd mythic
 ```
 
-9\. Update Apollo's Dockerfile (at the time of use, it might not be 0.1.1 anymore, check [#current-payloadtype-versions](../customizing/payload-type-development/container-syncing.md#current-payloadtype-versions "mention") the latest). This is apollo specific, so you might need to copy in pieces for other agents/c2 profiles depending on what components they dynamically try to install.
+9\. Update Apollo's Dockerfile (at the time of use, it might not be 0.1.1 anymore, check [#current-payloadtype-versions](../customizing/payload-type-development/payload-type-info/container-syncing.md#current-payloadtype-versions "mention") the latest). This is apollo specific, so you might need to copy in pieces for other agents/c2 profiles depending on what components they dynamically try to install.
 
 ```
 from itsafeaturemythic/csharp_payload:0.1.1

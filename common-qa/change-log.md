@@ -83,7 +83,7 @@ The following are the breaking changes for this version
     * python38\_payload==0.0.4
     * xgolang\_payload==0.0.9
     * leviathan\_payload==0.0.4
-* Updating to using a PyPi package instead of local files means that you need to adjust the imports for all of the Python files for your agents. It's nothing too crazy, but you'll update like so: [Payload Type Info](../customizing/payload-type-development/payload-type-info.md#building)
+* Updating to using a PyPi package instead of local files means that you need to adjust the imports for all of the Python files for your agents. It's nothing too crazy, but you'll update like so: [Payload Type Info](../customizing/payload-type-development/payload-type-info/#building)
 * All C2 Profiles need to do the following:
   * Control for container files has been moved into PyPi packages rather than just raw files on disk so that updating them will be easier going forward. The current version needed for this is version 22: `pip install mythic_c2`\_container`==0.0.22`
 * Updating to using a PyPi packages instead of local files means that you need to adjust the imports for all of the Python files for your C2 profiles. It's nothing too crazy, but you'll need to update like so if you've created your own C2 profiles: [C2 Docker Containers](../customizing/c2-related-development/c2-profile-code/server-side-coding/c2-docker-containers.md#c-2-profile-class).

@@ -2,7 +2,7 @@
 description: This section describes new Payload Types
 ---
 
-# Payload Type Development
+# 1. Payload Type Development
 
 ## Creating a new Mythic agent
 
@@ -101,7 +101,7 @@ RUN apt-get install -y tool_name
 This happens all in a script for docker, so if a command might make a prompt for something (like apt-get), make sure to auto handle that or your stuff won't get installed properly
 {% endhint %}
 
-The latest container versions and their associated `mythic_container` PyPi versions can be found here: [#current-payloadtype-versions](container-syncing.md#current-payloadtype-versions "mention"). The `mythic_python_*` containers will always have the latest `PyPi` version installed if you're using the `:latest` version.
+The latest container versions and their associated `mythic_container` PyPi versions can be found here: [#current-payloadtype-versions](payload-type-info/container-syncing.md#current-payloadtype-versions "mention"). The `mythic_python_*` containers will always have the latest `PyPi` version installed if you're using the `:latest` version.
 
 If you're curious what else goes into these containers, look in the `docker-templates` folder within the Mythic repository.
 
@@ -289,4 +289,4 @@ func main() {
 
 ### 3.5 Agent Definition
 
-Check out the [Payload Type](payload-type-info.md) page for information on what the various components in the agent definition means and how to start customizing how your agent looks within Mythic.
+Check out the [Payload Type](payload-type-info/) page for information on what the various components in the agent definition means and how to start customizing how your agent looks within Mythic.

@@ -4,7 +4,7 @@
 
 Command information is tracked in your Payload Type's container. Each command has its own Python class or GoLang struct. In Python, you leverage `CommandBase` and `TaskArguments` to define information about the command and information about the command's arguments.
 
-**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_go_tasking` ([Create\_Tasking](create\_tasking.md)) and `process_response` ([Process Response](process-response.md)) functions.
+**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_go_tasking` ([Create\_Tasking](../create\_tasking.md)) and `process_response` ([Process Response](../process-response.md)) functions.
 
 \*\*\*\*[**TaskArguments**](commands.md#taskarguments) does two things:
 
@@ -13,7 +13,7 @@ Command information is tracked in your Payload Type's container. Each command ha
    * this includes taking user supplied free-form input (like arguments to a sleep command - `10 4`) and parsing it into well-defined JSON that's easier for the agent to handle (like `{"interval": 10, "jitter": 4}`). This can also take user-supplied dictionary input and parse it out into the rightful CommandParameter objects.
    * This also includes verifying all the necessary pieces are present. Maybe your command requires a source and destination, but the user only supplied a source. This is where that would be determined and error out for the user. This prevents you from requiring your agent to do that sort of parsing in the agent.
 
-If you're curious how this all plays out in a diagram, you can find one here: [#operator-submits-tasking](../../message-flow/#operator-submits-tasking "mention").
+If you're curious how this all plays out in a diagram, you can find one here: [#operator-submits-tasking](../../../message-flow/#operator-submits-tasking "mention").
 
 ## CommandBase
 
@@ -80,9 +80,9 @@ Creating your own command requires extending this CommandBase class (i.e. `class
     * `filter_by_build_parameter` is a dictionary of `parameter_name:value` for what's required of the agent's build parameters. This is useful for when some commands are only available depending on certain values when building your agent (such as agent version).
     * You can also add in any other values you want for your own processing. These are simply `key=value` pairs of data that are stored. Some people use this to identify if a command has a dependency on another command. This data can be fetched via RPC calls for things like a `load` command to see what additional commands might need to be included.
   * This ties into the CommandParameter fields `choice_filter_by_command_attributes`, `choices_are_all_commands`, and `choices_are_loaded_commands`.
-* The `create_go_tasking` function is very broad and covered in [Create\_Tasking](create\_tasking.md#create\_tasking)
-* The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processing and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](process-response.md)).
-* The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](create\_tasking.md) scenario (complete with subtasks and full RPC functionality) and then go into a completed state.
+* The `create_go_tasking` function is very broad and covered in [Create\_Tasking](../create\_tasking.md#create\_tasking)
+* The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processing and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](../process-response.md)).
+* The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](../sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](../create\_tasking.md) scenario (complete with subtasks and full RPC functionality) and then go into a completed state.
 
 ## TaskArguments
 
@@ -249,7 +249,7 @@ CommandParameter(name="test name",
 * `default_value` - this is a value that'll be set if the user doesn't supply a value
 * `supported_agents` - If your parameter type is `Payload` then you're expecting to choose from a list of already created payloads so that you can generate a new one. The `supported_agents` list allows you to narrow down that dropdown field for the user. For example, if you only want to see agents related to the `apfell` payload type in the dropdown for this parameter of your command, then set `supported_agents=["apfell"]` when declaring the parameter.
 * `supported_agent_build_parameters` - allows you to get a bit more granular in specifying which agents you want to show up when you select the `Payload` parameter type. It might be the case that a command doesn't _just_ need instance of the `atlas` payload type, but maybe it only works with the `Atlas` payload type when it's compiled into .NET 3.5. This parameter value could then be `supported_agent_build_parameters={"atlas": {"version":"3.5"}}` . This value is a dictionary where the key is the name of the payload type and the value is a dictionary of what you want the build parameters to be.
-* `dynamic_query_function` - More information can be found [here](dynamic-parameter-values.md), but you can provide a function here for ONLY parameters of type ChooseOne or ChooseMultiple where you dynamically generate the array of choices you want to provide the user when they try to issue a task of this type.
+* `dynamic_query_function` - More information can be found [here](../dynamic-parameter-values.md), but you can provide a function here for ONLY parameters of type ChooseOne or ChooseMultiple where you dynamically generate the array of choices you want to provide the user when they try to issue a task of this type.
 
 Most command parameters are pretty straight forward - the one that's a bit unique is the File type (where a user is uploading a file as part of the tasking). When you're doing your tasking, this `value` will be the base64 string of the file uploaded.
 

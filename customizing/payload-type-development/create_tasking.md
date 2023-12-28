@@ -2,12 +2,16 @@
 description: Manipulate tasking before it's sent to the agent
 ---
 
-# Create\_Tasking
+# 4. Create Tasking
 
-## create\_tasking
+## Create Tasking
 
 All commands must have a create\_go\_tasking function with a base case like:
 
+
+
+{% tabs %}
+{% tab title="Python" %}
 ```python
 async def create_go_tasking(self, taskData: MythicCommandBase.PTTaskMessageAllData) -> MythicCommandBase.PTTaskCreateTaskingMessageResponse:
     response = MythicCommandBase.PTTaskCreateTaskingMessageResponse(
@@ -20,14 +24,32 @@ async def create_go_tasking(self, taskData: MythicCommandBase.PTTaskMessageAllDa
 {% hint style="info" %}
 `create_go_tasking` is new in Mythic v3.0.0. Prior to this, there was the `create_tasking` function. The new change supports backwards compatibility, but the new function provides a lot more information and structured context that's not available in the `create_tasking` function. The `create_go_tasking` function also mirrors the GoLang's `create_tasking` function.
 {% endhint %}
+{% endtab %}
 
-When an operator types a command in the UI, whatever the operator types (or whatever is populated based on the popup modal) gets sent to this function after the input is parsed and validated by the TaskArguments and CommandParameters functions mentioned in [Commands](commands.md).
+{% tab title="Golang" %}
+```go
+TaskFunctionCreateTasking: func(taskData *agentstructs.PTTaskMessageAllData) agentstructs.PTTaskCreateTaskingMessageResponse {
+	response := agentstructs.PTTaskCreateTaskingMessageResponse{
+		Success: true,
+		TaskID:  taskData.Task.ID,
+	}
+	return response
+},
+```
+{% endtab %}
+{% endtabs %}
+
+When an operator types a command in the UI, whatever the operator types (or whatever is populated based on the popup modal) gets sent to this function after the input is parsed and validated by the TaskArguments and CommandParameters functions mentioned in [Commands](adding-commands/commands.md).
 
 It's here that the operator has full control of the task before it gets sent down to an agent. The task is currently in the "preprocessing" stage when this function is executed and allows you to do many things via Remote Procedure Calls (RPC) back to the Mythic server.
 
+{% hint style="info" %}
+A graphical flow of what goes on is here: [tasking flow](../../message-flow/operator-submits-tasking.md).
+{% endhint %}
+
 ### Available Context
 
-So, from this create\_tasking function, what information do you immediately have available? [https://github.com/MythicMeta/MythicContainerPyPi/blob/main/mythic\_container/MythicCommandBase.py#L1071-L1088](https://github.com/MythicMeta/MythicContainerPyPi/blob/main/mythic\_container/MythicCommandBase.py#L1071-L1088) <-- this class definition provides the basis for what's available.&#x20;
+So, from this create tasking function, what information do you immediately have available? [https://github.com/MythicMeta/MythicContainerPyPi/blob/main/mythic\_container/MythicCommandBase.py#L1071-L1088](https://github.com/MythicMeta/MythicContainerPyPi/blob/main/mythic\_container/MythicCommandBase.py#L1071-L1088) <-- this class definition provides the basis for what's available.&#x20;
 
 * `taskData.Task` - Information about the Task that's issued
 * `taskData.Callback` - Information about the Callback for this task
