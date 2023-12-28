@@ -6,9 +6,9 @@ description: What are the first things to do when creating a new payload type in
 
 ## So you want to make a new Payload Type
 
-The first step is to copy down the example repository [https://github.com/MythicMeta/ExampleContainers](https://github.com/MythicMeta/ExampleContainers).&#x20;
 
-Inside of the `Payload_Type` folder, there are two projects - one for GoLang and one for Python depending on which language you prefer to code your agent definitions in (this has nothing to do with the language of your agent itself, it's simply the language to define commands and parameters). Pick whichever service you're interested in and copy that folder into your `Mythic/InstalledServices` folder. If you want your new container to be referenced as `my_agent` via `mythic-cli`, then copy the folder over to `Mythic/InstalledServices/my_agent` (**note**: this is simply how `mythic-cli` will reference your container).
+
+&#x20;If you want your new container to be referenced as `my_agent` via `mythic-cli`, then copy the folder over to `Mythic/InstalledServices/my_agent` (**note**: this is simply how `mythic-cli` will reference your container).
 
 {% hint style="warning" %}
 Docker does not allow capital letters in container names. So, if you plan on using Mythic's `mythic-cli` to control and install your agent, then your agent's name can't have any capital letters in it. Only lowercase, numbers, and \_. It's a silly limitation by Docker, but it's what we're working with.

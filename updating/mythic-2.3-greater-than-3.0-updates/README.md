@@ -134,7 +134,7 @@ For payloads, you can select the blue "info" icon next to your payload and scrol
 
 Clicking on that will open up a new dialog box where you can select which commands to add and remove:
 
-<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 

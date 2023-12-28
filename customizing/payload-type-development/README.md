@@ -6,23 +6,51 @@ description: This section describes new Payload Types
 
 ## Creating a new Mythic agent
 
-You want to create a new agent that fully integrates with Mythic. Since everything in Mythic revolves around Docker containers, you will need to ultimately create one for your payload type along with some specific files/folder structures. This can be done with docker containers on the same host as the Mythic server or with an [external VM/host machine](./#turning-a-vm-into-an-apfell-container).
+You want to create a new agent that fully integrates with Mythic. Since everything in Mythic revolves around Docker containers, you will need to ultimately create one for your payload type. This can be done with docker containers on the same host as the Mythic server or with an [external VM/host machine](./#turning-a-vm-into-an-apfell-container).
 
-* Optionally: You can also have a custom C2 profile that this agent supports, see [C2 Profile Development](../c2-related-development/) for that piece though
+## 1.0 - What are we creating and how does it fit in?
 
-{% hint style="info" %}
-The first step is to look into the [First Steps](first-steps/) page to get everything generally squared away and look at the order of things that need your attention. The goal is to get you up and going as fast as possible!
-{% endhint %}
+What does Mythic's setup look like? We'll use the diagram below - don't worry though, it looks complicated but isn't too bad really:
 
-## Payload/C2 Development Resources
+<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
-There are a lot of things involved in making your own agent, c2 profile, or translation container. For the bare-bones implementations, you'll have to do very little, but Mythic tries to allow a lot of customizability. To help with this, Mythic uses PyPi packages for a lot of its configuration/connections and Docker images for distribution. This makes it easy for somebody to just kind of "hook up" and get going. If you don't want to do that though, all of this code is available to you within the MythicMeta organization on GitHub ([https://github.com/MythicMeta](https://github.com/MythicMeta)).
+Mythic itself is a `docker-compose` file that stands up a bunch of microservices. These services expose various pieces of functionality like a database (`PostgreSQL`), the web UI (`React Web UI`), internal documentation (`Hugo Documentation`), and a way for the various services to communicate with each other (`RabbitMQ`). Don't worry though, you don't worry about 99% of this.
 
-This organization is broken out in five main repos:
+Mythic by itself doesn't have any agents or command-and-control profiles - these all are their own Docker containers that connect up via `RabbitMQ` and `gRPC`. This is what you're going to create - a separate container that connects in (the far right hand side set of containers in the above diagram).
 
-* `Mythic_Scripting` - This holds all of the code for the PyPi package, `mythic`, that you can use to script up actions.
-* `MythicContainerPyPi` - This holds all of the code for the PyPi package
-* `MythicContainer` - This holds all of the same sort of code as the PyPi package, but is for agents that wish to define commands in Golang instead of Python.
+### 1.1 Where do things live?
+
+When you clone down the Mythic repo, run `make` to generate the `mythic-cli` binary, and then run `sudo ./mythic-cli start`, you are creating a `docker-compose` file automatically that references a bunch of `Dockerfile` in the various folders within the `Mythic` folder. These folders within `Mythic` are generally self-explanatory for their purpose, such as `postgres-docker` , `rabbitmq-docker`, `mythic-docker`, and `MythicReactUI`.&#x20;
+
+When you use the `mythic-cli` to install an agent or c2 profile, these all go in the `Mythic/InstalledServices` folder. This makes it super easy to see what you have installed.
+
+Throughout development you'll have a choice - do development remotely from the Mythic server and hook in manually, or do development locally on the Mythic server. After all, everything boils down to code that connects to `RabbitMQ` and `gRPC` - Mythic doesn't really know if the connection is locally from Docker or remotely from somewhere else.
+
+### 1.2 Starting with an example
+
+The first step is to clone down the example repository [https://github.com/MythicMeta/ExampleContainers](https://github.com/MythicMeta/ExampleContainers). The format of the repository is that of the [External Agent](https://github.com/MythicMeta/Mythic\_External\_Agent) template. This is the format you'll see for all of the agents and c2 profiles on the [overview](https://mythicmeta.github.io/overview/) page.
+
+Inside of the `Payload_Type` folder, there are two folders - one for GoLang and one for Python depending on which language you prefer to code your agent definitions in (this has nothing to do with the language of your agent itself, it's simply the language to define commands and parameters). We're going to go step-by-step and see what happens when you install something via `mythic-cli`, but doing it manually.
+
+#### 1.2.1 Copy the folder
+
+Pick whichever service you're interested in and copy that folder into your `Mythic/InstalledServices` folder. When you normally install via `mythic-cli`, it clones down your repository and does the same thing - it copies what's in that repository's `Payload_Type` and `C2_Profiles` folders into the `Mythic/InstalledServices` folder.
+
+#### 1.2.2 Update the docker-compose
+
+Now that a folder is in the `Mythic/InstalledServices` folder, we need to let the `docker-compose` file _know_ that it's there. Assuming you copied over `python_services`, you then need to run `sudo ./mythic-cli add python_services`. This adds that `python_services` folder to the `docker-compose`. This is automatically done normally as part of the install process.
+
+As part of updating `docker-compose`, this process adds a bunch of environment variables to what will be the new container.
+
+#### 1.2.3 Building the image and running the container
+
+Now that `docker-compose` knows about the new service, we need to build the image that will be used to make the agent's container. We can use `sudo ./mythic-cli build python_services`. This tells `docker` to look in the `Mythic/InstalledServices/python_services` folder for a `Dockerfile` and use it to build a new image called `python_services`. As part of this, Mythic will automatically then use that new image to create a container and run it. If it doesn't, then you can create and start the container with `sudo ./mythic-cli start python_services`.
+
+Again, all of this happens automatically as part the normal installation process when you use `sudo ./mythic-cli install`. We're doing this step-by-step though so you can see what happens.
+
+#### 1.2.4 Check the Mythic UI
+
+At this point, your new example agent should be visible within Mythic. If it's not, we can check logs to see what the issue might be with `sudo ./mythic-cli logs python-services` (this is a wrapper around `sudo docker logs python-services` and truncates to the latest 500 lines).&#x20;
 
 ## Payload Type Docker Information
 

@@ -6,7 +6,7 @@ Another option would be to allow follow-on input within your current task withou
 
 If your command specifies a `supported_ui_feature` of `task_response:interactive`, then Mythic will display a slightly different interface for that task's output.&#x20;
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
 
 Notice here that as part of the task response, there's a whole new set of controls and input fields. The controls allow you to send things like CtrlC, CtrlZ, CtrlD through the browser down to your agent. Additionally, on the right-hand side there's a control for what kind of line endings to set when you hit enter - None, LF, CR, or CRLF. The `None` option is particularly useful you want to send something along like "q" or " " to the other side without sending "q\n" or " \n".&#x20;
 
