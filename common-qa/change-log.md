@@ -45,7 +45,7 @@ What's new for 2.3?
 
 * [x] "translation container" support for agent's that want their own custom c2 message spec and support for arbitrary other encryption outside of the default Mythic supported ones
 * [x] OPSEC scripting checks, logging, bypasses for tasking
-* [x] Solidified P2P spec - [Delegates](../customizing/c2-related-development/agent-side-coding/delegates.md) and [P2P Connections](../customizing/hooking-features/linking-agents/action-p2p\_info.md)
+* [x] Solidified P2P spec - [Delegates](../customizing/payload-type-development/create\_tasking/agent-side-coding/delegates.md) and [P2P Connections](../customizing/hooking-features/linking-agents/action-p2p\_info.md)
 * [x] Alpha version of new back-end/UI updates for nginx reverse proxy, hasura graphql, and react
 * [x] All Payload Types moved out of main Mythic repo and into Mythic Agents organization
 * [x] Track sleep information in UI in easy-to-see form (new UI only)

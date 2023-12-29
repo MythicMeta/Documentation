@@ -28,7 +28,7 @@ The agent message to Mythic has the following form:
 }
 ```
 
-Just like other [post\_response](../../c2-related-development/agent-side-coding/action-post\_response.md) messages, this message has the same UUID and encryption requirements found in [Agent Message Format](../../c2-related-development/agent-side-coding/agent-message-format.md). Some things to note about the fields:
+Just like other [post\_response](../../payload-type-development/create\_tasking/agent-side-coding/action-post\_response.md) messages, this message has the same UUID and encryption requirements found in [Agent Message Format](../../payload-type-development/create\_tasking/agent-side-coding/agent-message-format.md). Some things to note about the fields:
 
 * `edges` is an array of JSON objects describing the state of the connections that the agent is adding/removing. Each edge in this array has the following fields:
   * `source` this is one end of the p2p connection (more often than not, this is the agent that's reporting this information)

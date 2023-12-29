@@ -1,6 +1,6 @@
 # 14. Reverse PortFwd
 
-See the [C2 Related Development section](../c2-related-development/agent-side-coding/rpfwd.md) for more RPFWD specific message details.
+See the [C2 Related Development section](create\_tasking/agent-side-coding/rpfwd.md) for more RPFWD specific message details.
 
 To start / stop RPFWD (or any interactive based protocol), use the `SendMythicRPCProxyStart` and `SendMythicRPCProxyStop` RPC calls within your Payload Type's tasking functions.
 

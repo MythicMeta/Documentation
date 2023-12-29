@@ -47,7 +47,7 @@ There are a couple of components to note here in what's called an `agentMessage`
     * get\_tasking
     * post\_response
     * translation\_staging (you're doing your own staging)
-  * `...` - This section varies based on the action that's being performed. The different variations here can be found in [Hooking Features](../../hooking-features/) , [Initial Checkin](initial-checkin.md), and [Agent Responses](action\_get\_tasking.md)
+  * `...` - This section varies based on the action that's being performed. The different variations here can be found in [Hooking Features](../../../hooking-features/) , [Initial Checkin](initial-checkin.md), and [Agent Responses](action\_get\_tasking.md)
   * `delegates` - This section contains messages from other agents that are being passed along. This is how messages from nested peer-to-peer agents can be forwarded out through and egress callback. If your agent isn't forwarding messages on from others (such as in a p2p mesh or as an egress point), then you don't need this section. More info can be found here: [Delegates (p2p)](delegates.md)
 * `+` - when you see something like `UUID + EncBlob`, that's referring to byte concatenation of the two values. You don't need to do any specific processing or whatnot, just right after the first elements bytes put the second elements bytes
 

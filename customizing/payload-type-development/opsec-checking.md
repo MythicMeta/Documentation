@@ -1,4 +1,4 @@
-# OPSEC Checking
+# 9. OPSEC Checking
 
 ## What is OPSEC Checking
 
@@ -65,4 +65,4 @@ As the name of the functions imply, the `opsec_pre` check happens before `create
 
 ## OPSEC Scripting
 
-From the `opsec_pre` and `opsec_post` functions, you have access to the entire task/callback information like you do in [Create\_Tasking](create\_tasking.md#available-context). Additionally, you have access to the entire RPC suite just like in [Create\_Tasking](create\_tasking.md#rpc-functionality).
+From the `opsec_pre` and `opsec_post` functions, you have access to the entire task/callback information like you do in [Create\_Tasking](create\_tasking/#available-context). Additionally, you have access to the entire RPC suite just like in [Create\_Tasking](create\_tasking/#rpc-functionality).

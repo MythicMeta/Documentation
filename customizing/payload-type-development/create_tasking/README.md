@@ -39,12 +39,12 @@ TaskFunctionCreateTasking: func(taskData *agentstructs.PTTaskMessageAllData) age
 {% endtab %}
 {% endtabs %}
 
-When an operator types a command in the UI, whatever the operator types (or whatever is populated based on the popup modal) gets sent to this function after the input is parsed and validated by the TaskArguments and CommandParameters functions mentioned in [Commands](adding-commands/commands.md).
+When an operator types a command in the UI, whatever the operator types (or whatever is populated based on the popup modal) gets sent to this function after the input is parsed and validated by the TaskArguments and CommandParameters functions mentioned in [Commands](../adding-commands/commands.md).
 
 It's here that the operator has full control of the task before it gets sent down to an agent. The task is currently in the "preprocessing" stage when this function is executed and allows you to do many things via Remote Procedure Calls (RPC) back to the Mythic server.
 
 {% hint style="info" %}
-A graphical flow of what goes on is here: [tasking flow](../../message-flow/operator-submits-tasking.md).
+A graphical flow of what goes on is here: [tasking flow](../../../message-flow/operator-submits-tasking.md).
 {% endhint %}
 
 ### Available Context

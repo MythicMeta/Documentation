@@ -226,7 +226,7 @@ From here on, the agent messages use the new UUID instead of the payload UUID or
 
 ### Your Own Custom EKE
 
-This section requires you to have a [#translation-containers](../../payload-type-development/translation-containers.md#translation-containers "mention") associated with your payload type. The agent sends your own custom message to Mythic:
+This section requires you to have a [#translation-containers](../../translation-containers.md#translation-containers "mention") associated with your payload type. The agent sends your own custom message to Mythic:
 
 ```
 Base64( payloadUUID + customMessage )

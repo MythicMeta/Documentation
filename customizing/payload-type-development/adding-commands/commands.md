@@ -4,7 +4,7 @@
 
 Command information is tracked in your Payload Type's container. Each command has its own Python class or GoLang struct. In Python, you leverage `CommandBase` and `TaskArguments` to define information about the command and information about the command's arguments.
 
-**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_go_tasking` ([Create\_Tasking](../create\_tasking.md)) and `process_response` ([Process Response](../process-response.md)) functions.
+**CommandBase** defines the metadata about the command as well as any pre-processing functionality that takes place before the final command is ready for the agent to process. This class includes the `create_go_tasking` ([Create\_Tasking](../create\_tasking/)) and `process_response` ([Process Response](../process-response.md)) functions.
 
 \*\*\*\*[**TaskArguments**](commands.md#taskarguments) does two things:
 
@@ -80,9 +80,9 @@ Creating your own command requires extending this CommandBase class (i.e. `class
     * `filter_by_build_parameter` is a dictionary of `parameter_name:value` for what's required of the agent's build parameters. This is useful for when some commands are only available depending on certain values when building your agent (such as agent version).
     * You can also add in any other values you want for your own processing. These are simply `key=value` pairs of data that are stored. Some people use this to identify if a command has a dependency on another command. This data can be fetched via RPC calls for things like a `load` command to see what additional commands might need to be included.
   * This ties into the CommandParameter fields `choice_filter_by_command_attributes`, `choices_are_all_commands`, and `choices_are_loaded_commands`.
-* The `create_go_tasking` function is very broad and covered in [Create\_Tasking](../create\_tasking.md#create\_tasking)
+* The `create_go_tasking` function is very broad and covered in [Create\_Tasking](../create\_tasking/#create\_tasking)
 * The `process_response` is similar, but allows you to specify that data shouldn't automatically be processed by Mythic when an agent checks in, but instead should be passed to this function for further processing and to use Mythic's RPC functionality to register the results into the system. The data passed here comes from the `post_response` message ([Process Response](../process-response.md)).
-* The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](../sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](../create\_tasking.md) scenario (complete with subtasks and full RPC functionality) and then go into a completed state.
+* The `script_only` flag indicates if this Command will be use strictly for things like issuing [subtasking](../sub-tasking-task-callbacks.md), but will NOT be compiled into the agent. The nice thing here is that you can now generate commands that don't need to be compiled into the agent for you to execute. These tasks never enter the "submitted" stage for an agent to pick up - instead they simply go into the [create\_tasking](../create\_tasking/) scenario (complete with subtasks and full RPC functionality) and then go into a completed state.
 
 ## TaskArguments
 
