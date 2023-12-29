@@ -1,6 +1,6 @@
 # P2P Messages
 
-More information on P2P message communication can be found [here](../customizing/c2-related-development/c2-profile-code/agent-side-coding/delegates.md).
+More information on P2P message communication can be found [here](../customizing/c2-related-development/agent-side-coding/delegates.md).
 
 ```mermaid
 sequenceDiagram

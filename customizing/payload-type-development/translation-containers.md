@@ -1,4 +1,4 @@
-# Translation Containers
+# 10. Translation Containers
 
 ### Translation Containers
 
@@ -173,9 +173,7 @@ MythicContainer.StartAndRunForever([]MythicContainer.MythicServices{
 
 ### Examples:
 
-These examples can be found at the MythicMeta organization on GitHub:
-
-{% embed url="https://github.com/MythicMeta/ExampleContainers/tree/main/Payload_Type" %}
+These examples can be found at the MythicMeta organization on GitHub: [https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type](https://github.com/MythicMeta/ExampleContainers/tree/main/Payload\_Type)
 
 {% hint style="warning" %}
 Docker doesn't allow you to have capital letters in your image names, and when Mythic builds these containers, it uses the container's name as part of the image name. So, you can't have capital letters in your agent/translation container names. That's why you'll see things like `service_wrapper` instead of `serviceWrapper`

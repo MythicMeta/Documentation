@@ -17,7 +17,7 @@ or even
 
 ### Reserved Keywords
 
-When we talk about `Hooking Features` in the [Action: post\_response](../c2-related-development/c2-profile-code/agent-side-coding/action-post\_response.md) message of an agent, we're really talking about a specific set of Dictionary key value pairs that have special meaning. All responses from the agent to the Mythic server already have to be in a structured format. Each of the following sections goes into what their reserved keywords mean, but some simpler ones are:
+When we talk about `Hooking Features` in the [Action: post\_response](../c2-related-development/agent-side-coding/action-post\_response.md) message of an agent, we're really talking about a specific set of Dictionary key value pairs that have special meaning. All responses from the agent to the Mythic server already have to be in a structured format. Each of the following sections goes into what their reserved keywords mean, but some simpler ones are:
 
 * task\_id - string - UUID associated with tasks
 * user\_output - string - used with any command to display information back to the user

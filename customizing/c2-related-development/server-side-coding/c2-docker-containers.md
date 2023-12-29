@@ -1,4 +1,4 @@
-# C2 Docker Containers
+# 1. Docker Containers
 
 All C2 profiles are backed by a Docker container or intermediary layer of some sort.
 
@@ -12,7 +12,7 @@ C2 Profile Contianers, like Payload Type and Translation Containers, all use the
 
 ## Container Components
 
-There are a few things needed to make a C2 container. For reference on general code structure options, check out [payload-type-development](../../../payload-type-development/ "mention"). The general structure is the same for Payload Types, C2 Profiles, and Translation containers.
+There are a few things needed to make a C2 container. For reference on general code structure options, check out [payload-type-development](../../payload-type-development/ "mention"). The general structure is the same for Payload Types, C2 Profiles, and Translation containers.
 
 Instead of declaring a new class of Payload Type though, you declare a new class of type C2Profile. For example, in Python you can do:
 
@@ -140,9 +140,9 @@ C2ProfileParameter(
 
 This is saying that we have a Dictionary called "headers" with a few pre-set options.
 
-<figure><img src="../../../../.gitbook/assets/Screenshot 2023-04-14 at 4.52.12 PM.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Screenshot 2023-04-14 at 4.52.12 PM.png" alt=""><figcaption></figcaption></figure>
 
 
 
-<figure><img src="../../../../.gitbook/assets/Screenshot 2023-04-14 at 4.52.38 PM.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/Screenshot 2023-04-14 at 4.52.38 PM.png" alt=""><figcaption></figcaption></figure>
 

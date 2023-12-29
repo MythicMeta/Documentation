@@ -55,7 +55,7 @@ This will take a little bit of time to get used to, but it will be easier for ma
 
 ## C2 Profile Updates
 
-C2 profiles gained a new function, `opsec`, where they can take in all of the parameters an operator supplies when creating a payload and determine if they're safe or not. This is an optional function with more detail on the [OPSEC](../../customizing/c2-related-development/c2-profile-code/server-side-coding/opsec-checks-for-c2-profiles.md) page for C2 Profiles and general [overview](../../operational-pieces/c2-profiles/opsec-checks.md).
+C2 profiles gained a new function, `opsec`, where they can take in all of the parameters an operator supplies when creating a payload and determine if they're safe or not. This is an optional function with more detail on the [OPSEC](../../customizing/c2-related-development/server-side-coding/opsec-checks-for-c2-profiles.md) page for C2 Profiles and general [overview](../../operational-pieces/c2-profiles/opsec-checks.md).
 
 ## Payload Updates
 

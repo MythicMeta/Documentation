@@ -6,7 +6,7 @@ Command and Control (C2) profiles are a little different in Mythic than you migh
 
 By defining a C2 protocol specification, other payload types can register that they speak that C2 protocol as well and easily hook in without having to do back-end changes. By having C2 protocols divorced from the main Mythic server, you can create entirely new C2 protocols more easily and you can do them in whatever language you want. If you want to do all your work in GoLang, C#, or some other language for the C2 protocol, go for it. It's all encapsulated in the C2's Docker container with whatever environment you desire.
 
-Since there's so much variability possible within a C2 Docker container, there's some required structure and python files similar to how Payload Types are structured. This is covered in [C2 Profile Code](c2-profile-code/).
+Since there's so much variability possible within a C2 Docker container, there's some required structure and python files similar to how Payload Types are structured. This is covered in [C2 Profile Code](broken-reference).
 
 ## How does a C2 Profile work in Mythic?
 

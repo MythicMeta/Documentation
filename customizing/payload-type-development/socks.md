@@ -1,6 +1,6 @@
-# SOCKS
+# 13. SOCKS
 
-See the [C2 Related Development section](../c2-related-development/c2-profile-code/agent-side-coding/socks.md) for more SOCKS specific message details.
+See the [C2 Related Development section](../c2-related-development/agent-side-coding/socks.md) for more SOCKS specific message details.
 
 To start / stop SOCKS (or any interactive based protocol), use the `SendMythicRPCProxyStart` and `SendMythicRPCProxyStop` RPC calls within your Payload Type's tasking functions.
 

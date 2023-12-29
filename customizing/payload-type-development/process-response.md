@@ -1,8 +1,8 @@
-# Process Response
+# 11. Process Response
 
 ## What is Process Response?
 
-Within a `Command` class, there are two functions - `create_tasking` and `process_response`. As the names suggest, the first one allows you to create and manipulate a task before an agent pulls it down, and the second one allows you to process the response that comes back. If you've been following along in development, then you know that Mythic supports many different fields in its `post_response` action so that you can automatically create artifacts, register keylogs, manipulate callback information, etc. However, all of that requires that your agent format things in a specific way for Mythic to pick them up and process. That can be tiring.
+Within a `Command` class, there are two functions - `create_go_tasking` and `process_response`. As the names suggest, the first one allows you to create and manipulate a task before an agent pulls it down, and the second one allows you to process the response that comes back. If you've been following along in development, then you know that Mythic supports many different fields in its `post_response` action so that you can automatically create artifacts, register keylogs, manipulate callback information, etc. However, all of that requires that your agent format things in a specific way for Mythic to pick them up and process. That can be tiring.
 
 ### Enter \`process\_response\`
 
