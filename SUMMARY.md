@@ -80,7 +80,7 @@
     * [Turning a VM into a Container](customizing/payload-type-development/payload-type-info/turning-a-vm-into-a-container.md)
   * [3. Adding Commands](customizing/payload-type-development/adding-commands/README.md)
     * [Commands](customizing/payload-type-development/adding-commands/commands.md)
-  * [4. Create Tasking](customizing/payload-type-development/create\_tasking/README.md)
+  * [4. Create Tasking & Comms Format](customizing/payload-type-development/create\_tasking/README.md)
     * [Agent Messages](customizing/payload-type-development/create\_tasking/agent-side-coding/README.md)
       * [1. Agent Message Format](customizing/payload-type-development/create\_tasking/agent-side-coding/agent-message-format.md)
       * [2. Checkin](customizing/payload-type-development/create\_tasking/agent-side-coding/initial-checkin.md)
