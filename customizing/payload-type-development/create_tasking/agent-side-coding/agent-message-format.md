@@ -17,8 +17,9 @@ All messages go to the `/agent_message` endpoint via the associated C2 Profile d
 
 All agent messages have the same general structure, but it's the message inside the structure that varies.
 
-Each message has the following general format:
+Each message has the following general format shown below. The message is a JSON string, which is then typically encrypted (doesn't have to be though), with a UUID prepended, and then the entire thing base64 encoded:
 
+{% code fullWidth="true" %}
 ```python
 base64(
 	UUID + EncBlob( //the following is all encrypted
@@ -35,6 +36,7 @@ base64(
 	)
 )
 ```
+{% endcode %}
 
 There are a couple of components to note here in what's called an `agentMessage`:
 
@@ -50,6 +52,78 @@ There are a couple of components to note here in what's called an `agentMessage`
   * `...` - This section varies based on the action that's being performed. The different variations here can be found in [Hooking Features](../../../hooking-features/) , [Initial Checkin](initial-checkin.md), and [Agent Responses](action\_get\_tasking.md)
   * `delegates` - This section contains messages from other agents that are being passed along. This is how messages from nested peer-to-peer agents can be forwarded out through and egress callback. If your agent isn't forwarding messages on from others (such as in a p2p mesh or as an egress point), then you don't need this section. More info can be found here: [Delegates (p2p)](delegates.md)
 * `+` - when you see something like `UUID + EncBlob`, that's referring to byte concatenation of the two values. You don't need to do any specific processing or whatnot, just right after the first elements bytes put the second elements bytes
+
+Let's look at a few concrete examples without encryption and already base64 decoded:
+
+{% tabs %}
+{% tab title="Checkin" %}
+{% code overflow="wrap" %}
+```json
+a21bab2e-462e-49ab-9800-fbedaf53ad15
+{
+    "action":"checkin",
+    "uuid":"a21bab2e-462e-49ab-9800-fbedaf53ad15",
+    "user":"bob",
+    "domain":"domain.com",
+    "pid":123,
+}
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Get Tasks" %}
+```json
+a21bab2e-462e-49ab-9800-fbedaf53ad15
+{
+    "action":"get_tasking",
+    "tasking_size": -1
+}
+```
+{% endtab %}
+
+{% tab title="Get Tasking with P2P" %}
+```json
+a21bab2e-462e-49ab-9800-fbedaf53ad15
+{
+    "action":"get_tasking",
+    "tasking_size": -1,
+    "delegates": [
+	{"message": agentMessage, "c2_profile": "tcp", "uuid": "uuid here"},
+	{"message": agentMessage, "c2_profile": "smb", "uuid": "uuid here"}
+	]
+}
+```
+{% endtab %}
+
+{% tab title="Posting Response" %}
+```json
+a21bab2e-462e-49ab-9800-fbedaf53ad15
+{
+    "action":"post_response",
+    "responses": [
+        {
+            "task_id": "c34bab2e-462e-49ab-9800-fbedaf53ad15",
+            "completed": true,
+            "user_output": "hello world",
+        },
+        {
+            "task_id": "bab3ab2e-462e-49ab-9800-fbedaf53ad15",
+            "completed": false,
+            "user_output": "downloading file...",
+            "download": {
+                "total_chunks": 12,
+                "chunk_size": 512000,
+                "filename": "test.txt",
+                "full_path": "C:\\Users\\test\\test.txt",
+                "host": "ABC.COM",
+                "is_screenshot": false
+            }
+        },
+    ]
+}
+```
+{% endtab %}
+{% endtabs %}
 
 ## Message Format for Custom Agent Messages
 

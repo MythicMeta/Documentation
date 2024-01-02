@@ -2,13 +2,13 @@
 description: This page describes the format for getting new tasking
 ---
 
-# Action: get\_tasking
+# 3. Get Tasking
 
 ## Message Request
 
 The contents of the JSON message from the agent to Mythic when requesting tasking is as follows:
 
-```
+```json
 Base64( CallbackUUID + JSON(
 {
 	"action": "get_tasking",
@@ -35,7 +35,7 @@ There are two things to note here:
 
 Mythic responds with the following message format for get\_tasking requests:
 
-```
+```json
 Base64( CallbackUUID + JSON(
 {
 	"action": "get_tasking",
@@ -62,3 +62,7 @@ There are a few things to note here:
 * `tasks` - This parameter is always a list, but contains between 0 and `tasking_size` number of entries.
 * `parameters` - this encapsulates the parameters for the task. If a command has parameters like: `{"remote_path": "/users/desktop/test.png", "file_id": "uuid_here"}`, then the `params` field will have that JSON blob as a STRING value (i.e. the command is responsible to parse that out).
 * `delegates` - This parameter contains any responses for the messages that came through in the first message.
+
+{% hint style="info" %}
+This `get_tasking` request **CAN** also include a `responses` field, `socks`, `rpfwd`, `edges`, `alerts`, and `interactive` fields. This means you can technically _only_ do `checkin` and `get_tasking` messages since you can forward responses in this message. The reason for this is you might not want to have to send TWO messages per sleep interval - ex: you don't want to post the response from an output _and_ make a `get_tasking` request back-to-back, but you also don't want to _not_ do `get_tasking` requests while you're periodically sending task responses back.
+{% endhint %}

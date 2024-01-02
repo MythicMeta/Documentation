@@ -30,7 +30,7 @@ If your already existing callback sends a checkin message more than once, Mythic
 
 The plaintext checkin is useful for testing or when creating an agent for the first time. When creating payloads, you can generate encryption keys _per c2 profile_. To do so, the C2 Profile will have a parameter that has an attribute called `crypto_type=True`. This will then signal to Mythic to either generate a new per-payload AES256\_HMAC key or (if your agent is using a translation container) tell your agent's translation container to generate a new key. In the `http` profile for example, this is a `ChooseOne` option between `aes256_hmac` or `none`. If you're doing plaintext comms, then you need to set this value to `none` when creating your payload. Mythic looks at that outer `PayloadUUID` and checks if there's an associated encryption key with it in the database. If there is, Mythic will automatically try to decrypt the rest of the message, which will fail. This checkin has the following format:
 
-```
+```json
 Base64( PayloadUUID + JSON({
     "action": "checkin", // required
     "uuid": "payload uuid", //uuid of the payload - required
@@ -60,7 +60,7 @@ Base64( PayloadUUID + JSON({
 
 The checkin has the following response:
 
-```
+```json
 Base64( PayloadUUID + JSON({
     "action": "checkin",
     "id": "UUID", // new UUID for the agent to use
@@ -77,7 +77,7 @@ This method uses a static AES256 key for all communications. This will be differ
 
 The message sent will be of the form:
 
-```
+```json
 Base64( PayloadUUID + AES256(
     JSON({
         "action": "checkin", // required
@@ -103,7 +103,7 @@ Base64( PayloadUUID + AES256(
 
 The message response will be of the form:
 
-```
+```json
 Base64( PayloadUUID + AES256(
     JSON({
         "action": "checkin",
@@ -140,7 +140,7 @@ There are two currently supported options for doing an encrypted key exchange in
 
 The agent starts running and generates a new 4096 bit Pub/Priv RSA key pair in memory. The agent then sends the following message to Mythic:
 
-```
+```json
 Base64( PayloadUUID + AES256(
     JSON({
         "action": "staging_rsa",
@@ -155,7 +155,7 @@ where the AES key initially used is defined as the initial encryption value when
 
 This message causes the following response:
 
-```
+```json
 Base64( PayloadUUID + AES256(
     JSON({
         "action": "staging_rsa",
@@ -171,7 +171,7 @@ The response is encrypted with the same initial AESPSK value as before. However,
 
 The next message from the agent to Mythic is as follows:
 
-```
+```json
 Base64( tempUUID + AES256(
     JSON({
         "action": "checkin", // required
@@ -197,7 +197,7 @@ Base64( tempUUID + AES256(
 
 This checkin data is the same as all the other methods of checking in, the key things here are that the tempUUID is the temp UUID specified in the other message, the inner uuid is the payload UUID, and the AES key used is the negotiated one. It's with this information that Mythic is able to track the new messages as belonging to the same staging sequence and confirm that all of the information was transmitted properly. The final response is as follows:
 
-```
+```json
 Base64( tempUUID + AES256(
     JSON({
         "action": "checkin",
@@ -234,7 +234,7 @@ Base64( payloadUUID + customMessage )
 
 Mythic looks up the information for the payloadUUID and calls your translation container's `translate_from_c2_format` function. That function gets a dictionary of information like the following:
 
-```
+```json
 {
     "enc_key": None or base64 of key if Mythic knows of one,
     "dec_key": None or base64 of key if Mythic knows of one,
@@ -254,7 +254,7 @@ Normally, when the `translate_to_c2_format` function is called, you just transla
 
 Mythic is able to do staging and EKE because it can save temporary pieces of information between agent messages. Mythic allows you to do this too if you generate a response like the following:
 
-```
+```json
 {
     "action": "staging_translation",
     "session_id": "some string session id you want to save",
