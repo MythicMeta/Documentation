@@ -290,3 +290,27 @@ func main() {
 ### 3.5 Agent Definition
 
 Check out the [Payload Type](payload-type-info/) page for information on what the various components in the agent definition means and how to start customizing how your agent looks within Mythic.
+
+## 4.0 Making your agent Installable
+
+To make your agent installable via `mythic-cli`, the repo/folder needs to be in a common format. This format just makes it easier for `mythic-cli` to add things to the right places. This is based on the External Agent format here ([https://github.com/MythicMeta/Mythic\_External\_Agent](https://github.com/MythicMeta/Mythic\_External\_Agent)). If you're creating a new payload type, then add your entire folder into the `Payload_Type` folder. Similarly, when you get around to making documentation for your agent, you can add it to the documentation folder. If there's things you don't want to include, then in the `config.json` file you can mark specific sections to exclude.
+
+
+
+### 4.1 Mythic's Overview
+
+If you want your new C2 profile or Agent to show up on the overview page ([https://mythicmeta.github.io/overview/](https://mythicmeta.github.io/overview/)) then you need to reach out to `@its_a_feature_` on twitter or `@its_a_feature_` in the Bloodhound slack to get your agent added to the agents list here ([https://github.com/MythicMeta/overview/blob/main/agent\_repos.txt](https://github.com/MythicMeta/overview/blob/main/agent\_repos.txt)). You could also make a PR to that file if you wanted too.&#x20;
+
+Having your agent hosted on the `https://github.com/MythicAgents` organization means that it's easier for people to find your agent and we can collect stats on its popularity. For an example of what this means, check out the overview page and see the biweekly clone stats as well as the green chart icon for a historic list of view/clones of the repo.
+
+If you don't want to have your agent hosted on the MythicAgents organization, but still want to make it available on that site, that's fine too. Just let me know or update the PR for that file appropriately.
+
+
+
+### 4.2. Agent Capabilities
+
+In addition to simply hosting the agent/c2 profile, there's now a sub-page that shows off all of the agent's capabilities so it's easier to compare and see which ones meet your needs. That page is here ([https://mythicmeta.github.io/overview/agent\_matrix.html](https://mythicmeta.github.io/overview/agent\_matrix.html)) and is populated based on a `agent_capabilities.json` file in the root of your repository. This is just a `json` file that gets ingested at midnight every day and used to update that matrix. The format is as follows:
+
+{% @github-files/github-code-block url="https://github.com/MythicAgents/poseidon/blob/master/agent_capabilities.json" %}
+
+The `os` key provides all the operating systems your agent supports. These are the things that would be available after installing your agent for the user to select when building a payload. The `languages` key identifies what languages your agent supports (typically only one, but could be multiple). The `features` section identifies which features your agent supports. For the `mythic` sub-key, the options are at the bottom of the matrix page, along with their descriptions and links to documentation for if you want to implement that feature in your agent. The `custom` sub-key is just additional features that your agent supports that you want to call out. The `payload_output` key identifies which output formats your agent supports as well as the `architectures` key identifying which architectures your agent can be built for. The `c2` key identifies which C2 Profiles your agent supports and the `supported_wrappers` key identifies which `wrapper` payloads your agent supports. As you might expect, the `mythic_version` is which Mythic version your agent supports and the `agent_version` is the current agent version in use.

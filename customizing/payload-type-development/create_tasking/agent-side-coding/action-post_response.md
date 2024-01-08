@@ -39,6 +39,10 @@ There are two things to note here:
     * To continue adding to that JSON response, you can indicate that a command is finished by adding `"completed": true` or indicate that there was an error with `"status": "error"`.
 * `delegates` - This parameter is not required, but allows for an agent to forward on messages from other callbacks. This is the peer-to-peer scenario where inner messages are passed externally by the egress point. Each of these messages is a self-contained "[Agent Message](agent-message-format.md)".
 
+{% hint style="info" %}
+Anything you put in `user_output` will go directly to the user to see. There's no additional processing that happens. If you want to perform additional processing on the response, then instead of `user_output` use the `process_response` key. This will allow you to perform additional processing on whatever is passed through the `process_response` key - from here, if you want to register something for the user to see, you'll need to use MythicRPCCreateResponse (you can use any MythicRPC at this point to register files, create credentials, etc).
+{% endhint %}
+
 ## Message Response
 
 Mythic responds with the following message format for post\_response requests:
