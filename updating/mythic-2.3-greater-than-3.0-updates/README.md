@@ -136,6 +136,6 @@ Clicking on that will open up a new dialog box where you can select which comman
 
 <figure><img src="../../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 The same flow is available for Callbacks - click the blue down arrow next to an active callback and select the "View Metadata" entry, then scroll down to the loaded commands.

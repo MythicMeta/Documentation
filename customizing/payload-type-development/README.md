@@ -12,7 +12,7 @@ You want to create a new agent that fully integrates with Mythic. Since everythi
 
 What does Mythic's setup look like? We'll use the diagram below - don't worry though, it looks complicated but isn't too bad really:
 
-<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Mythic itself is a `docker-compose` file that stands up a bunch of microservices. These services expose various pieces of functionality like a database (`PostgreSQL`), the web UI (`React Web UI`), internal documentation (`Hugo Documentation`), and a way for the various services to communicate with each other (`RabbitMQ`). Don't worry though, you don't worry about 99% of this.
 
