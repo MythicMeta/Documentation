@@ -594,7 +594,7 @@ Finally, when building a payload, it can often be helpful to have both stdout an
 {% endtab %}
 
 {% tab title="Golang" %}
-{% @github-files/github-code-block %}
+{% @github-files/github-code-block url="https://github.com/MythicAgents/poseidon/blob/master/Payload_Type/poseidon/poseidon/agentfunctions/builder.go#L108" %}
 {% endtab %}
 {% endtabs %}
 
@@ -629,3 +629,67 @@ So, what's the actual, end-to-end execution flow that goes on? A diagram can be 
    1. and for each c2 selected, provides any c2 required parameters
 7. Mythic takes all of this information and sends it to the payload type container
 8. The container sends the `BuildResponse` message back to the Mythic server.
+
+## 4.0 On New Callback
+
+Starting with Mythic v3.2.12, PyPi version 0.4.1, and MythicContainer version 1.3.1, there's a new function you can define as part of your Payload Type definition. In addition to defining a `build` process, you can also define a `on_new_callback` (or `onNewCallbackFunction`) function that will get executed whenever there's a new callback based on this payload type.&#x20;
+
+Below are examples in Python and in Golang for how to define and leverage this new functionality. One of the great things about this is that you can use this to automatically issue tasking for new callbacks. The below examples will automatically issue a `shell` command with parameters of `whoami`.
+
+These function calls get almost all the same data that you'll see in your [Create Tasking](../create\_tasking/#create-tasking) calls, except they're missing information about a `Task`. That's simply because there's no task yet, this is the moment that a new callback is created.
+
+{% hint style="warning" %}
+Mythic tracks an operator for all issued tasking. Since there's no operator directly typing out and issuing these tasks, Mythic associates the operator that built the payload with any tasks automatically created in this function.
+{% endhint %}
+
+{% tabs %}
+{% tab title="Python" %}
+```python
+class Apfell(PayloadType):
+    name = "apfell"
+    ...
+    async def build ...
+    
+    async def on_new_callback(self, newCallback: PTOnNewCallbackAllData) -> PTOnNewCallbackResponse:
+            new_task_resp = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(
+                AgentCallbackUUID=newCallback.Callback.AgentCallbackID,
+                CommandName="shell",
+                Params="whoami",
+            ))
+            if new_task_resp.Success:
+                return PTOnNewCallbackResponse(AgentCallbackUUID=newCallback.Callback.AgentCallbackID, Success=True)
+            return PTOnNewCallbackResponse(AgentCallbackUUID=newCallback.Callback.AgentCallbackID, Success=False,
+                                           Error=new_task_resp.Error)
+```
+{% endtab %}
+
+{% tab title="Golang" %}
+<pre class="language-go"><code class="lang-go"><strong>func onNewBuild(data agentstructs.PTOnNewCallbackAllData) agentstructs.PTOnNewCallbackResponse {
+</strong>	newTasking, err := mythicrpc.SendMythicRPCTaskCreate(mythicrpc.MythicRPCTaskCreateMessage{
+		AgentCallbackID: data.Callback.AgentCallbackID,
+		CommandName:     "shell",
+		Params:          "whoami",
+	})
+	if err != nil {
+		logging.LogError(err, "failed to create new task")
+	}
+	if newTasking.Success {
+		logging.LogInfo("created new task")
+	} else {
+		logging.LogError(err, "failed to create new tasking")
+	}
+	return agentstructs.PTOnNewCallbackResponse{
+		AgentCallbackID: data.Callback.AgentCallbackID,
+		Success:         true,
+		Error:           "",
+	}
+}
+func Initialize() {
+	agentstructs.AllPayloadData.Get("poseidon").AddPayloadDefinition(payloadDefinition)
+	agentstructs.AllPayloadData.Get("poseidon").AddBuildFunction(build)
+	agentstructs.AllPayloadData.Get("poseidon").AddOnNewCallbackFunction(onNewBuild)
+	agentstructs.AllPayloadData.Get("poseidon").AddIcon(filepath.Join(".", "poseidon", "agentfunctions", "poseidon.svg"))
+}
+</code></pre>
+{% endtab %}
+{% endtabs %}
