@@ -89,7 +89,7 @@ These callback functions are called in the _parent_ task that spawned the subtas
 
 Here we have the flow for a command, `shell`, that issues a subtask called `run` and registers two completion handlers - one for when `run` completes and another for when `shell` completes. Notice how execution of `shell`'s create tasking function continues even after it issues the subtask `run`. That's because this is all asynchronous - the result you get back from issuing a subtask is only an indicator of if Mythic successfully registered the task to not, not the final execution of the task.
 
-```mermaid
+```mermaid fullWidth="true"
 sequenceDiagram
     participant O as Operator
     participant M as Mythic
@@ -101,7 +101,10 @@ sequenceDiagram
     M ->> M: Registers new Task
     M -->>- O: Indicate that task exists
     M ->>+ PT: Shell's Create Tasking
-    PT -->> M: Create subtask of Run with Completion Function W
+    PT -->>+ M: Create subtask of Run with Completion Function W
+    M -->> M: Looks up all Task data
+    M -->> M: Registers new Task
+    M -->>- PT: Successfully Created new Task
     PT -->> PT: Register Task Completion Function X
     PT ->>- M: Finish Shell's Create Tasking
     Note over M: Mark Shell as "Delegating"
@@ -115,7 +118,6 @@ sequenceDiagram
     Note over M: Agent completes shell
     M ->>+ PT: Calling Shell's Completion Function X
     PT -->>- M: Finish X execution
-    
 ```
 
 ## What are task callbacks?
