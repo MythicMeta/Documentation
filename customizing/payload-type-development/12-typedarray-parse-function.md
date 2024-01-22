@@ -46,6 +46,7 @@ This function gets called in a few different scenarios:
 * The user types out `my_bof -bof_args int:5 char*:testing` on the command line and hits enter
   * If the modal is used then this function is _not_ called because we already can create the proper array of arrays from the UI
 * The user uses Mythic scripting or browser scripts to submit the task
+* The user types out `my_bof -bof_args int:5 char*:testing` on the command line and hits SHIFT+enter to open up a modal dialog box. This will call your parsing function to turn that array into an array of arrays so that the modal dialog can display what the user has typed out so far.
 
 ### What do I do for parse\_arguments or parse\_dictionary functions then?
 
