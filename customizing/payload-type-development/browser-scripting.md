@@ -1,4 +1,4 @@
-# Browser Scripting
+# 6. Browser Scripting
 
 ## What is Browser Scripting?
 
@@ -603,3 +603,26 @@ Notice how we have the exact same information for the `task` and `dictionary` bu
 ![](<../../.gitbook/assets/Screen Shot 2021-11-04 at 3.03.58 PM.png>)
 
 These menu items also support the `startIcon` , `startIconColor` , and `hoverText`, properties.
+
+### Media
+
+If you have certain kinds of media you'd like to display right inline with your tasking, you can do that. All you need is the `agent_file_id` (the UUID value you get back when registering a file with Mythic) and the `filename` of whatever media it is you're trying to show.
+
+```javascript
+return { "media": [{
+    "filename": `${task.display_params}`,
+    "agent_file_id": data["file_id"],
+}]};
+```
+
+Above is an example using the `media` key that sets the `filename` to be the display parameters for the task (in this case it was a download command so the display parameters are the path to the file to download) and the `agent_file_id` is set to the `file_id` that was returned as part of the agent's tasking. In this case, the raw agent `user_output` was:
+
+```
+{"file_id": "ff41f25d-fcaa-4d5b-a573-061d40238e33", "total_chunks": "1"}
+File Transfer Update: 100% complete
+Finished Downloading
+```
+
+If you don't want to have media auto-render for you as part of this browser script, you can either disable the browser script or go to your user settings and there's a new toggle for if you want to auto-render media. If you set that to off and save it, then the next time a browser script (or anything else) tries to auto-render media, it'll first give you a button to click to authorize it before showing.
+
+This also applies to the new `media` button on the file downloads page.
