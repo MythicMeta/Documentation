@@ -85,6 +85,10 @@ Note: If you want to modify the information about your current task, some fields
 
 These callback functions are called in the _parent_ task that spawned the subtask in the first place.&#x20;
 
+{% hint style="warning" %}
+If you're creating subtasks and you want tokens associated with them (such as matching the token supplied for the parent task), then you **must** manually supply it as part of creating your subtask (ex: `Token=taskData.Task.TokenID`). Mythic doesn't assume subtasks also need the token applied.
+{% endhint %}
+
 ### What does the flow look like?
 
 Here we have the flow for a command, `shell`, that issues a subtask called `run` and registers two completion handlers - one for when `run` completes and another for when `shell` completes. Notice how execution of `shell`'s create tasking function continues even after it issues the subtask `run`. That's because this is all asynchronous - the result you get back from issuing a subtask is only an indicator of if Mythic successfully registered the task to not, not the final execution of the task.
