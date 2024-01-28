@@ -42,20 +42,27 @@ If you need to run `mythic-cli` as root for Docker and you set your environment 
 ```python
 ALLOWED_IP_BLOCKS="0.0.0.0/0,::/0"
 COMPOSE_PROJECT_NAME="mythic"
-DEBUG_LEVEL="warning"
+DEBUG_LEVEL="debug"
 DEFAULT_OPERATION_NAME="Operation Chimera"
 DEFAULT_OPERATION_WEBHOOK_CHANNEL=
 DEFAULT_OPERATION_WEBHOOK_URL=
 DOCUMENTATION_BIND_LOCALHOST_ONLY="true"
 DOCUMENTATION_HOST="mythic_documentation"
 DOCUMENTATION_PORT="8090"
+DOCUMENTATION_USE_BUILD_CONTEXT="false"
+DOCUMENTATION_USE_VOLUME="true"
+GLOBAL_DOCKER_LATEST="v0.0.3"
+GLOBAL_MANAGER="docker"
+GLOBAL_SERVER_NAME="mythic"
 HASURA_BIND_LOCALHOST_ONLY="true"
 HASURA_CPUS="2"
 HASURA_EXPERIMENTAL_FEATURES="streaming_subscriptions"
 HASURA_HOST="mythic_graphql"
 HASURA_MEM_LIMIT="2gb"
 HASURA_PORT="8080"
-HASURA_SECRET="random_password"
+HASURA_SECRET="random password"
+HASURA_USE_BUILD_CONTEXT="false"
+HASURA_USE_VOLUME="true"
 INSTALLED_SERVICE_CPUS="1"
 INSTALLED_SERVICE_MEM_LIMIT=
 JUPYTER_BIND_LOCALHOST_ONLY="true"
@@ -64,8 +71,10 @@ JUPYTER_HOST="mythic_jupyter"
 JUPYTER_MEM_LIMIT=
 JUPYTER_PORT="8888"
 JUPYTER_TOKEN="mythic"
-JWT_SECRET="random_password"
-MYTHIC_ADMIN_PASSWORD="random_password"
+JUPYTER_USE_BUILD_CONTEXT="false"
+JUPYTER_USE_VOLUME="true"
+JWT_SECRET="random password"
+MYTHIC_ADMIN_PASSWORD="random password"
 MYTHIC_ADMIN_USER="mythic_admin"
 MYTHIC_API_KEY=
 MYTHIC_DEBUG_AGENT_MESSAGE="false"
@@ -73,48 +82,57 @@ MYTHIC_REACT_BIND_LOCALHOST_ONLY="true"
 MYTHIC_REACT_DEBUG="false"
 MYTHIC_REACT_HOST="mythic_react"
 MYTHIC_REACT_PORT="3000"
-MYTHIC_SERVER_BIND_LOCALHOST_ONLY="false"
+MYTHIC_REACT_USE_BUILD_CONTEXT="false"
+MYTHIC_REACT_USE_VOLUME="true"
+MYTHIC_SERVER_BIND_LOCALHOST_ONLY="true"
 MYTHIC_SERVER_COMMAND=
 MYTHIC_SERVER_CPUS="2"
-MYTHIC_SERVER_DYNAMIC_PORTS="7000-7010"
+MYTHIC_SERVER_DYNAMIC_PORTS="7000-7010,1080"
 MYTHIC_SERVER_DYNAMIC_PORTS_BIND_LOCALHOST_ONLY="false"
 MYTHIC_SERVER_GRPC_PORT="17444"
 MYTHIC_SERVER_HOST="mythic_server"
 MYTHIC_SERVER_MEM_LIMIT=
 MYTHIC_SERVER_PORT="17443"
+MYTHIC_SERVER_USE_BUILD_CONTEXT="false"
+MYTHIC_SERVER_USE_VOLUME="true"
 MYTHIC_SYNC_CPUS="2"
 MYTHIC_SYNC_MEM_LIMIT=
 NGINX_BIND_LOCALHOST_ONLY="false"
 NGINX_HOST="mythic_nginx"
 NGINX_PORT="7443"
+NGINX_USE_BUILD_CONTEXT="false"
 NGINX_USE_IPV4="true"
-NGINX_USE_IPV6="true"
+NGINX_USE_IPV6="false"
 NGINX_USE_SSL="true"
+NGINX_USE_VOLUME="true"
 POSTGRES_BIND_LOCALHOST_ONLY="false"
 POSTGRES_CPUS="2"
 POSTGRES_DB="mythic_db"
 POSTGRES_DEBUG="false"
 POSTGRES_HOST="mythic_postgres"
 POSTGRES_MEM_LIMIT=
-POSTGRES_PASSWORD="random_password"
+POSTGRES_PASSWORD="random password"
 POSTGRES_PORT="5432"
+POSTGRES_USE_BUILD_CONTEXT="false"
+POSTGRES_USE_VOLUME="true"
 POSTGRES_USER="mythic_user"
-RABBITMQ_BIND_LOCALHOST_ONLY="false"
+RABBITMQ_BIND_LOCALHOST_ONLY="true"
 RABBITMQ_CPUS="2"
 RABBITMQ_HOST="mythic_rabbitmq"
 RABBITMQ_MEM_LIMIT=
-RABBITMQ_PASSWORD="random_password"
+RABBITMQ_PASSWORD="random password"
 RABBITMQ_PORT="5672"
+RABBITMQ_USE_BUILD_CONTEXT="false"
+RABBITMQ_USE_VOLUME="true"
 RABBITMQ_USER="mythic_user"
 RABBITMQ_VHOST="mythic_vhost"
-REBUILD_ON_START="false"
+REBUILD_ON_START="true"
 WEBHOOK_DEFAULT_ALERT_CHANNEL=
 WEBHOOK_DEFAULT_CALLBACK_CHANNEL=
 WEBHOOK_DEFAULT_CUSTOM_CHANNEL=
 WEBHOOK_DEFAULT_FEEDBACK_CHANNEL=
 WEBHOOK_DEFAULT_STARTUP_CHANNEL=
 WEBHOOK_DEFAULT_URL=
-
 ```
 
 A few important notes here:
@@ -264,68 +282,41 @@ service_wrapper		running		Up 42 seconds
   * First open up the developer tools for your browser and see if there are any errors that might indicate what's wrong. If there's no error though, check the network tab to see if there are any 404 errors.
   * If that's not the case, make sure you've selected a current operation (more on this in the Quick Usage section). Mythic uses websockets that pull information about your current operation to provide data. If you're not currently in an active operation (indicated at the top of your screen in big letters), then Mythic cannot provide you any data.
 
-## Container Sizes
+## Mythic Pre-built containers
 
-Mythic starts every service (web server, database, each payload type, each C2 profile, rabbitmq, documentation) in its own Docker container. As much as possible, these containers leverage common image bases to reduce size, but due to the nature of so many components, there's going to be a decent footprint. For consideration, here's the Docker footprint for a fresh install of Mythic:
+Starting with Mythic 3.2.16, Mythic pre-builds its main service containers and hosts them on GitHub. You'll see `ghcr.io/itsafeature` in the FROM line in your Dockerfiles instead of the `itsafeaturemythic/` line which is hosted on DockerHub. When Mythic gets a new `tag`, these images are pre-built, mythic-cli is updated, and the associated `push` on GitHub is updated with the new tag version.&#x20;
 
-```
-its-a-feature@ubuntu:$ sudo docker system df
-TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
-Images          9         9         9.62GB    6.263GB (65%)
-Containers      9         9         399.6kB   0B (0%)
-Local Volumes   17        0         2.964MB   2.964MB (100%)
-Build Cache     0         0         0B        0B
+When you use the new `mythic-cli` to start Mythic, the `.env` variable `GLOBAL_DOCKER_LATEST` is used to determine which version of the Docker images to use. This variable is written out and saved as part of `mythic-cli` itself, so make sure when you do a `git pull` that you always run `sudo make` to get the latest `mythic-cli` as well.
 
-its-a-feature@ubuntu:$ sudo docker system df -v
-Images space usage:
+As part of this, there are two new variables for each container:
 
-REPOSITORY             TAG       IMAGE ID       CREATED         SIZE      SHARED SIZE   UNIQUE SIZE   CONTAINERS
-mythic_server          latest    b11659fb912a   4 minutes ago   6.889GB   6.256GB       632.5MB       1
-no_translator          latest    b9e63f1a0097   14 hours ago    6.58GB    6.256GB       323.5MB       1
-service_wrapper        latest    7c508916bc3e   14 hours ago    6.581GB   6.256GB       324.5MB       1
-mythic_jupyter         latest    96255e6737c4   18 hours ago    996.6MB   0B            996.6MB       1
-mythic_postgres        latest    9a351f9bc9ef   18 hours ago    243.1MB   7.05MB        236.1MB       1
-mythic_documentation   latest    ed947afb8c27   18 hours ago    54.36MB   0B            54.36MB       1
-mythic_graphql         latest    820890c9b0ad   2 weeks ago     621.8MB   0B            621.8MB       1
-mythic_nginx           latest    da7a4011c460   3 weeks ago     40.72MB   7.05MB        33.67MB       1
-mythic_rabbitmq        latest    07d9eda5cc97   19 months ago   133.3MB   0B            133.3MB       1
+* `*_USE_BUILD_CONTEXT` - This variable changes the `docker-compose` file to either set a `build-context` to read the local Dockerfile when building or to _not_ use the local build context and just set the image to use to be the one hosted on GitHub. In most cases, you're fine to leave this as `false` and just use the image hosted on GitHub. If you wanted to use another image version or if you wanted add stuff to the image that gets generated for a container, you can set this to `true` and modify the Dockerfile associated with the service.
+* `*_USE_VOLUME` - This variable identifies if the local file system is mounted into the image at run-time or if a custom volume is created and mounted instead. When this is set to `true`, then a custom volume is created and mounted into the container at run time so that your local filesystem isn't used. When this is `false`, then your local filesystem is mounted like normal. One reason to mount the local file system instead of using a volume is if you wanted to make changes to something on disk and have it reflected in the container. Similarly, you can set this to `false` so that your database and downloaded files are all contained within the `Mythic` folder. Setting this to `true` will mean that volumes are used, so your saved files and database are in Docker's volume directory and not locally within the Mythic folder. It's just something to consider when it comes time to save things off or if you wanted to pull the files from disk.
 
-Containers space usage:
+## Agent Pre-built containers
 
-CONTAINER ID   IMAGE                  COMMAND                  LOCAL VOLUMES   SIZE      CREATED         STATUS                   NAMES
-08e5869c4b8a   mythic_postgres        "docker-entrypoint.s…"   0               63B       4 minutes ago   Up 3 minutes (healthy)   mythic_postgres
-1bc0306aa920   mythic_graphql         "docker-entrypoint.s…"   0               378kB     4 minutes ago   Up 3 minutes (healthy)   mythic_graphql
-41e982d38a14   mythic_nginx           "/docker-entrypoint.…"   0               2B        4 minutes ago   Up 3 minutes (healthy)   mythic_nginx
-a0f1df25e66b   mythic_documentation   "hugo server -p 8090"    0               0B        4 minutes ago   Up 3 minutes (healthy)   mythic_documentation
-a98ba7b3aa64   mythic_jupyter         "tini -g -- start.sh…"   0               21.2kB    4 minutes ago   Up 4 minutes (healthy)   mythic_jupyter
-9d92d8397a87   mythic_rabbitmq        "docker-entrypoint.s…"   0               756B      4 minutes ago   Up 3 minutes (healthy)   mythic_rabbitmq
-871405214da0   service_wrapper        "/bin/sh -c 'make ru…"   0               0B        4 minutes ago   Up 4 minutes             service_wrapper
-3f7a4f72a82d   no_translator          "/bin/sh -c 'make ru…"   0               0B        4 minutes ago   Up 4 minutes             no_translator
-79295b4bc031   mythic_server          "/bin/bash -c 'cp /m…"   0               0B        4 minutes ago   Up 3 minutes (healthy)   mythic_server
+Mythic is pre-building its containers so that it's faster and easier to get going while still keeping all of the flexibility of Dockerimages. This cuts down on the install/build time of the containers and reduces the general size of the images due to multi-stage Docker builds.
 
-Local Volumes space usage:
+Agents on GitHub can also do this for free. It's pretty simple (all things considered) and provides a lot of flexibility to how you build your containers. You don't need to configure any special GitHub secrets - you just need to create the necessary yaml file as part of a certain directory of your repository so that things are kicked off on push and on tag. One of these changes is an automatic update to your `config.json` so that Mythic can also track the version associated with your agent.&#x20;
 
-VOLUME NAME                                                        LINKS     SIZE
-1bdf5e715217e03b9e10e33b7c7e55e1ddb8898c9da53da5fc42b72c77e05ea3   0         0B
-473660a24b907ce4194806b0584c236964d2b0fe0e8690057d470eaee8fcbe97   0         0B
-jupyter                                                            0         2.911MB
-12f257df33085912785808aa5b1e4c29910ae4ddcad498b933763668263f770d   0         93B
-780ee9b1d726ac35d5ef0d2ff19f155d0e2bff437f522d6fbe984499a27c6202   0         0B
-9de90d6f8308c2cc9c19043373b4f9f45d000b7ecea8b3682df224e8f9a79ada   0         0B
-d0776a4a8e535a9d35f444413be020d51f0cdfd473c773c5127b5d31d95bdb61   0         0B
-dbcfcf81791e768acb83c811de9d3e57172c727f83f92f8b4d7f6de4a39e84d1   0         52.77kB
-documentation-docker                                               0         166B
-0cd941f7e6b4b25ab1e13f1d575f2f1caaacb4664eaa9d6c404ad2347554a7fb   0         0B
-cefb153314333ecb272945798c1225a5545159ae41aa92aeaa912fe017882ba8   0         93B
-9c870d0f01bcbc303eb6fbf4a5a1e1bdd2c70854c02c737bb0542c5f56c0c040   0         0B
-cfaacc90b7b34bdce1ed35481cab48540e6f58fd948b4bc59c5a18ecd87e00c9   0         0B
-fd69883c79fe52f5108558f84b8989943b47406ac96de68c555ac7cbebb1a66b   0         0B
-fe82f2f0c818cbe678db9015aebaae811fcb88e55c5039d3b8d8e82034c1b18a   0         93B
-mythic                                                             0         88B
-1c181b8dbadf04787e4e3faeab9b7a863d3c78a462068e9165ce4da258c31564   0         0B
+Specifically, you need to create the `.github/workflows/[name].yml` file so that GitHub will be able to handle your actions. An example from the `service_wrapper` payload is shown below:
 
-Build cache usage: 0B
+{% @github-files/github-code-block url="https://github.com/MythicAgents/service_wrapper/blob/master/.github/workflows/docker.yml" %}
 
-```
+&#x20;99% of this example should work for all agents and c2 profiles. Things to change:
 
-If you want to save space or if you know you're not going to be using a specific container, you can remove that container from docker-compose with `sudo ./mythic-cli remove [container name]`
+* `RELEASE_BRANCH` - This might need to change depending on if your branch name is `master` or `main`. (line 39)
+* Updating the `remote_images.service_wrapper` (line 112) to `remote_images.[your name]` so that your `config.json` is updated appropriately. If you have multiple installs (ex: a payload in the payload\_type folder and a c2 profile in the c2\_profiles folder), then you should include this action multiple times to add each entry to your `remote_images` dictionary.
+* Updating the files to update (line 121) - after building and pushing your container image, you'll need to update the corresponding files with the new version. Once they're updated, you need to make sure those changes actually get saved and pushed with your tag updated to that new pushed version. This line points to which files to add to the new commit.
+* There are a few places in this example that use a `working_directory` that points to where the Dockerfiles are to use for building and saving changes. Make sure those paths reflect your agent/c2 profiles paths. You can find them in this example if you search for `service_wrapper`.
+
+In addition to this GitHub Actions file, you'll need two Dockerfiles - one that's used to pre-build your images, and one that's updated with a `FROM ghcr.io/` to point to your newly created image. The common convention used here is to create a `.docker` folder with your agent/c2 profile and the full Dockerfile in there (along with any necessary resources). Below is the example build Dockerfile in the `.docker/Dockerfile` for the `service_wrapper` payload type:
+
+{% @github-files/github-code-block url="https://github.com/MythicAgents/service_wrapper/blob/master/Payload_Type/service_wrapper/.docker/Dockerfile" %}
+
+There's a few things to note here:
+
+* we're using one of the Mythic DockerHub images as a `builder` and using a different, smaller stage (`python3.11-slim-bullseye` in this case) that we copy things over to. The main thing that's going to make the images smaller is to build what's needed ahead of time and then move to a smaller image and copy things over. This is easier for C2 Profiles since you can really limit what gets moved to that second stage. This is harder for Agents though because you might still need a lot of toolchains and SDKs installed to build your agent on-demand. The best thing you can do here is to pre-pull any necessary requirements (like nuget packages or golang packages) so that at build-time for a payload you don't have to fetch them and can just build.
+* Because the `service_wrapper` uses the Python `mythic-container` PyPi library instead of the Golang library, we need to make sure we have Python 3.11+ and the right PyPi packages installed. On lines 3-4 we're copying in the requirements into our `builder` container and generating `wheels` from them so that in the second stage, lines 18-19, we copy over those wheels and install those.&#x20;
+
+Always make sure to test out your docker images to confirm you still have everything needed to build your agent. Some good reference points are any of the `.docker/Dockerfile` references in the `Mythic` repo, or the `apfell`, `service_wrapper`, `websocket`, or `http` versions.
