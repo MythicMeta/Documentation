@@ -67,7 +67,8 @@ An agent pulling down a file to the target is similar to downloading a file from
 Base64( CallbackUUID + JSON(
 {
 	"action": "post_response",
-	"responses": [{
+	"responses": [
+	{
 		"upload": {
 			"chunk_size": 512000, //bytes of file per chunk
 			"file_id": UUID, //the file specified to pull down to the target
@@ -75,6 +76,8 @@ Base64( CallbackUUID + JSON(
 			"full_path": "full path to uploaded file on target" //optional
 		},
 		"task_id": task_id // the associated task that caused the agent to pull down this file
+	}]
+		
 }
 ))
 ```
