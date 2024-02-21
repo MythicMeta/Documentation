@@ -82,6 +82,10 @@ Base64( CallbackUUID + JSON(
 ))
 ```
 
+{% hint style="warning" %}
+The `chunk_num` field is 1-based. So, the first chunk you request is `"chunk_num": 1`.
+{% endhint %}
+
 The `full_path` parameter is helpful for accurate tracking. This allows an operator to be in the `/Temp` directory and simply call the upload function to the current directory, but allows Mythic to track the full path for easier reporting and deconfliction.
 
 {% hint style="info" %}
