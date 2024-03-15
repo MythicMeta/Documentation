@@ -2,7 +2,7 @@
 description: Unified process listing across multiple callbacks for a single host
 ---
 
-# Process\_List
+# Process Browser
 
 ### Command Component
 
@@ -22,10 +22,21 @@ Naturally, this has a special format for us to make it the most useful. Like alm
  {"action": "post_response", "responses": [
    {"processes": [
        {
-        "process_id": pid, 
+        "process_id": 12345, 
+        "name": "evil.exe"
         "host": "a.b.com", //optional
-        "parent_process_id": ppid, //optional
+        "parent_process_id": 1234, //optional
+        "architecture": "x64", // optional
+        "bin_path": "C:\\Users\\bob\\Desktop\\evil.exe", // optional
+        "user": "bob", // optional
+        "command_line": "C:\\Users\\bob\\Desktop\\evil.exe -f test.txt -thread 12", // optional
+        "integrity_level": 3, // optional 
         "start_time": unix epoch time in milliseconds, //optional
+        "description": "not malware", // optional
+        "signer": "Bob's software co", // optional
+        "protected_process_level": 0, // optional
+        "update_deleted": false, // optional - setting this to true tells Mythic to mark any process not returned in this process array as deleted
+        ** // any other fields you want, they all end up in the metadata field within the database
         } 
     ]
   }

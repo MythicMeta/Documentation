@@ -455,7 +455,7 @@ If we're displaying anything other than a button for a column, then we need to i
 In addition to just specifying the `plaintext` value that is going to be displayed, there are a few other properties we can specify:
 
 * `startIcon` - specify the name of an icon to use at the beginning of the `plaintext` value. The available `startIcon` values are:
-  * folder/openFolder, closedFolder, archive/zip, diskimage, executable, word, excel, powerpoint, pdf/adobe, database, key, code/source, download, upload, png/jpg/image, kill, inject, camera, list, delete
+  * _**folder/openFolder, closedFolder, archive/zip, diskimage, executable, word, excel, powerpoint, pdf/adobe, database, key, code/source, download, upload, png/jpg/image, kill, inject, camera, list, delete**_
   * ^ the above values also apply to the `endIcon` attribute
 * `startIconHoverText` - this is text you want to appear when the user hovers over the icon
 * `endIcon` this is the same as the `startIcon` except it's at the end of the text
@@ -626,3 +626,32 @@ Finished Downloading
 If you don't want to have media auto-render for you as part of this browser script, you can either disable the browser script or go to your user settings and there's a new toggle for if you want to auto-render media. If you set that to off and save it, then the next time a browser script (or anything else) tries to auto-render media, it'll first give you a button to click to authorize it before showing.
 
 This also applies to the new `media` button on the file downloads page.
+
+### Graphs
+
+If you want to render your data in a graph view rather than a table, then you can do that now too! This uses the same graphing engine that the active callback's graph view uses. There are three main pieces for returning graph data: `nodes`, `edges`, and a `group_by` string where you can optionally group your nodes via certain properties.
+
+#### Nodes
+
+Each node has a few properties:
+
+* `id` - this is a unique way to identify this node compared to others. This is also how you'll identify the node when it comes to creating edges.
+* `img` - if you want to display an image for your node, you give the name of the image here. Because this is React, we need to identify these all ahead of time. For now, the available images are as follows: _**group, computer, user, lan, language, list, container, help, diamond, skull**_. We can always add more though - if you find a free icon on [Font Awesome](https://fontawesome.com/v6/search?o=r\&m=free) or [Material UI](https://mui.com/material-ui/material-icons/) then let me know and I can get that added.&#x20;
+* `style` - this is where you can provide React styles that you want applied to your image. These are the same as CSS styles, except that `-` are removed and camel casing is used instead. For example, instead of an attribute of `background-color` like normal CSS, you'd define it as `backgroundColor`.
+* `overlay_img` - this is the same as `img` except that you can define a SECOND image to have overlayed on the top right of your original one.
+* `overlay_style` - this is the same as `style` except that it applied to `overlay_image` instead of `img`.
+* `data` - this is where any information about your actual node lives
+  * there should be a `label` value in here that's used to display the text under your node
+* `buttons` - this is an array of button actions you'd like to add to the context menu of your node. This is the same as the normal buttons from Tables, except there's no need for a `menu` button.
+
+#### Edges
+
+Each edge has a few properties:
+
+* `source` - all of the data (as a dictionary) about the source node. Mythic will try to do things like `source.id` to get the ID for the source node.
+* `destination` - all of the data (as a dictionary) about the destination/target node.&#x20;
+* `label` - the text to display as a label on the edge
+* `data` - dictionary of information about your edge
+* `animate` - boolean true/false if you want the edge the be animated or a solid color
+* `color` - the color you want the edge to be
+* `buttons` - this is an array of button actions you'd like to add to the context menu of your edge.
