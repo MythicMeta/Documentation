@@ -68,6 +68,10 @@ Base64( CallbackUUID + JSON(
 )
 ```
 
+{% hint style="warning" %}
+If your initial `responses` array to Mythic has something improperly formatted and Mythic can't deserialize it into GoLang structs, then Mythic will simply set the `responses` array going back as empty. So, you can't _always_ check for a matching response array entry for each response you send to Mythic. In this case, Mythic can't respond back with `task_id` in this response array because it failed to deserialize it completely.
+{% endhint %}
+
 There are two things to note here:
 
 * `responses` - This parameter is always a list and contains a success or error + error message for each task that was responded to.
