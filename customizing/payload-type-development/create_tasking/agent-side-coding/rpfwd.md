@@ -2,7 +2,7 @@
 description: How does Reverse Port Forward work within Mythic
 ---
 
-# RPFWD
+# 6. Reverse Port Forward
 
 ## What is Reverse Port Forward?
 
@@ -86,6 +86,10 @@ or in the `post_response` messages:
 ```
 
 Notice that they're at the same level of "action" in these dictionaries - that's because they're not tied to any specific task, the same goes for delegate messages.
+
+{% hint style="info" %}
+This means that if you send a `get_tasking` request OR a `post_response` request, you could get back `rpfwd` data. The same goes for `socks`, `interactive`, and `delegates`.&#x20;
+{% endhint %}
 
 ## How does an agent handle RPFWD?
 

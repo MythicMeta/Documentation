@@ -2,7 +2,7 @@
 description: How does SOCKS work within Mythic
 ---
 
-# SOCKS
+# 5. SOCKS
 
 ## What is SOCKS?
 
@@ -84,6 +84,10 @@ or in the `post_response` messages:
 ```
 
 Notice that they're at the same level of "action" in these dictionaries - that's because they're not tied to any specific task, the same goes for delegate messages.
+
+{% hint style="info" %}
+This means that if you send a `get_tasking` request OR a `post_response` request, you could get back `socks` data. The same goes for `rpfwd`, `interactive`, and `delegates`.&#x20;
+{% endhint %}
 
 ## How does an agent handle SOCKS?
 

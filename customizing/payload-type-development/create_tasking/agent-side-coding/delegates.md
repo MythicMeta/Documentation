@@ -60,6 +60,10 @@ The `new_uuid` field indicates that the `uuid` field the agent sent doesn't matc
 
 Why do you care and why is this important? This allows an agent to randomly generate its own UUID for tracking connections with other agents and provides a mechanism for Mythic to reveal the right UUID for the callback on the other end. This implicitly gives the agent the right UUID to use if it needs to announce that it lost the route to the callback on the other end. If Mythic didn't correct the agent's use of UUID, then when the agent loses connection to the P2P agent, it wouldn't be able to properly indicate it to Mythic.
 
+{% hint style="info" %}
+This means that if you send a `get_tasking` request OR a `post_response` request, you could get back `delegates` data. The same goes for `rpfwd`, `interactive`, and `socks`.&#x20;
+{% endhint %}
+
 ## Example walkthrough
 
 Ok, so let's walk through an example:
