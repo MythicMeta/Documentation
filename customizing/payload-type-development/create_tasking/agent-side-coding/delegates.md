@@ -115,3 +115,11 @@ If this wasn't part of some task, then there would be no task\_id to use. In thi
    ]
 }
 ```
+
+### Agent Expectations
+
+How is an agent supposed to work with a Peer-to-peer (P2P) profile? It's pretty simple and largely the same as working with a Push C2 egress connection:
+
+* If a payload is executed (it's not a callback yet), then make a connection to your designated P2P method (named pipes, tcp ports, etc). Once a connection is established, start your normal encrypted key exchange or checkin process.
+* If an existing callback loses connection for some reason, then make a connection to your designated P2P method (named pipes, tcp ports, etc). Once a connection is established, send your checkin message again to inform Mythic of your existence
+* At this point, just wait for messages to come to you (no need to do a get\_tasking poll) and as you get any data (socks, edges, alerts, responses, etc) just send them out through your p2p connection.
