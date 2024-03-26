@@ -20,7 +20,9 @@ Naturally, this has a special format for us to make it the most useful. Like alm
 
 ```python
  {"action": "post_response", "responses": [
-   {"processes": [
+   {
+   "task_id": "uuid",
+   "processes": [
        {
         "process_id": 12345, 
         "name": "evil.exe"
