@@ -6,7 +6,7 @@ description: This section describes new Payload Types
 
 ## Creating a new Mythic agent
 
-You want to create a new agent that fully integrates with Mythic. Since everything in Mythic revolves around Docker containers, you will need to ultimately create one for your payload type. This can be done with docker containers on the same host as the Mythic server or with an [external VM/host machine](./#turning-a-vm-into-an-apfell-container).
+You want to create a new agent that fully integrates with Mythic. Since everything in Mythic revolves around Docker containers, you will need to ultimately create one for your payload type. This can be done with docker containers on the same host as the Mythic server or with an external [VM/host machine](payload-type-info/turning-a-vm-into-a-container.md).
 
 ## 1.0 - What are we creating and how does it fit in?
 
