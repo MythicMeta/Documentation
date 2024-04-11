@@ -50,3 +50,13 @@ All that's needed is an array of all the processes with the above information in
 Any field that ends with `_time` expects the value to be an int64 of unix epoch time in milliseconds. You're welcome to supply any additional field you want about a process - it all gets aggregated together and provided as part of the "metadata" for the process that you can view in the UI in a nice table listing.
 
 For example, a macOS agent might report back signing flags and entitlements and a windows agent might report back integrity level and user session id.
+
+## Additional Process Browser UI Buttons
+
+All additional buttons through the Process Browser UI (such as task inject, task kill, etc) have their own supported ui features: `process_browser:inject`, `process_browser:kill`, `process_browser:list_tokens`, `process_browser:steal_token`. All of these will get three parameters passed to them for tasking:
+
+* host
+* process\_id
+* architecture
+
+For example, `{"host": "ABC.COM", "process_id": 1234, "architecture": "x64"}`. Your commands that support these features will need to expect and process these arguments.
