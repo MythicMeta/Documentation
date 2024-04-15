@@ -187,6 +187,11 @@ Base64( PayloadUUID + AES256(
 
 where the AES key initially used is defined as the initial encryption value when generating the payload. When creating payloads, you can generate encryption keys _per c2 profile_. To do so, the C2 Profile will have a parameter that has an attribute called `crypto_type=True`. This will then signal to Mythic to either generate a new per-payload AES256\_HMAC key or (if your agent is using a translation container) tell your agent's translation container to generate a new key. In the `http` profile for example, this is a `ChooseOne` option between `aes256_hmac` or `none`.
 
+When it says "base64 of public RSA key" you can do one of two things:
+
+* Base64 encode the entire PEM exported key (including the ---BEGIN and ---END blocks)
+* Use the already base64 encoded data that's inbetween the ---BEGIN and ---END blocks
+
 Here is an example of the first message using encryption key `hfN9Nk29S8LsjrE9ffbT9KONue4uozk+/TVMyrxDvvM=`:&#x20;
 
 {% code overflow="wrap" %}
