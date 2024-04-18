@@ -26,6 +26,10 @@ However, when your payload first executes, it doesn't have a callbackUUID, it's 
 If your already existing callback sends a checkin message more than once, Mythic simply uses that information to _update_ information about the callback rather than trying to register a new callback.
 {% endhint %}
 
+{% hint style="info" %}
+In egress agent messages, you can opt for a 16 Byte big endian format for the UUID. If Mythic gets a message from an agent with this format of UUID, then it will respond with the same format for the UUID. However, currently for P2P messages Mythic doesn't track the format for the UUID of the agent, so these will get the standard 36 character long UUID String.&#x20;
+{% endhint %}
+
 ## Plaintext Checkin
 
 The plaintext checkin is useful for testing or when creating an agent for the first time. When creating payloads, you can generate encryption keys _per c2 profile_. To do so, the C2 Profile will have a parameter that has an attribute called `crypto_type=True`. This will then signal to Mythic to either generate a new per-payload AES256\_HMAC key or (if your agent is using a translation container) tell your agent's translation container to generate a new key. In the `http` profile for example, this is a `ChooseOne` option between `aes256_hmac` or `none`. If you're doing plaintext comms, then you need to set this value to `none` when creating your payload. Mythic looks at that outer `PayloadUUID` and checks if there's an associated encryption key with it in the database. If there is, Mythic will automatically try to decrypt the rest of the message, which will fail. This checkin has the following format:
