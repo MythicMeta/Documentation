@@ -503,7 +503,7 @@ If the data you want to display to the user isn't structured (not a dictionary, 
 }
 ```
 
-Just like with the other button types, we can use `startIcon`, `startIconColor`, and `hoverText` for this button as well.
+Just like with the other button types, we can use `disabled`, `startIcon`, `startIconColor`, and `hoverText` for this button as well.
 
 #### task button
 
