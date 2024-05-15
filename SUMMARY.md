@@ -52,6 +52,7 @@
 * [Scripting](scripting.md)
 * [Presentations / Webinars](presentations-webinars.md)
 * [Common Errors](common-errors.md)
+* [MythicTips](mythictips.md)
 
 ## Customizing
 
