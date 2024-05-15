@@ -282,6 +282,17 @@ service_wrapper		running		Up 42 seconds
   * First open up the developer tools for your browser and see if there are any errors that might indicate what's wrong. If there's no error though, check the network tab to see if there are any 404 errors.
   * If that's not the case, make sure you've selected a current operation (more on this in the Quick Usage section). Mythic uses websockets that pull information about your current operation to provide data. If you're not currently in an active operation (indicated at the top of your screen in big letters), then Mythic cannot provide you any data.
 
+#### mythic\_nginx restarting
+
+If you run into an issue where `mythic_nginx` is failing to start, you can look at its logs with `sudo ./mythic-cli logs mythic_nginx`.  If you see `Address family not supported by protocol`, then it likely means that the nginx container is trying to use IPv4 and IPv6, but your host doesn't support one of them. To fix this, you can edit the .env file to adjust the following as necessary:
+
+```
+NGINX_USE_IPV4="true"
+NGINX_USE_IPV6="false"
+```
+
+Then restart the container with `sudo ./mythic-cli build mythic_nginx` and it should come up.
+
 ## Mythic Pre-built containers
 
 Starting with Mythic 3.2.16, Mythic pre-builds its main service containers and hosts them on GitHub. You'll see `ghcr.io/itsafeature` in the FROM line in your Dockerfiles instead of the `itsafeaturemythic/` line which is hosted on DockerHub. When Mythic gets a new `tag`, these images are pre-built, mythic-cli is updated, and the associated `push` on GitHub is updated with the new tag version.&#x20;
