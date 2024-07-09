@@ -5,7 +5,7 @@
 Pull the code from the official GitHub repository:
 
 ```bash
-$ git clone https://github.com/its-a-feature/Mythic
+$ git clone https://github.com/its-a-feature/Mythic --depth 1
 ```
 
 {% hint style="info" %}
@@ -27,14 +27,14 @@ It's recommended to run Mythic on a VM with at least 2CPU and 4GB Ram.
 
 ### Make the mythic-cli
 
-All configuration is done via the `mythic-cli` binary. However, to help with GitHub sizes, the `mythic-cli` binary is no longer distributed with the main Mythic repository. Instead, you will need to make the binary via `sudo make` from the main Mythic folder. This will create the build container for the mythic-cli, build the binary, and copy it into your main Mythic folder automatically. From there on, you can use the `mythic-cli` binary like normal.
+All configuration is done via the `mythic-cli` binary. However, to help with GitHub sizes, the `mythic-cli` binary is no longer distributed with the main Mythic repository. Instead, you will need to make the binary via `sudo make` **from the main Mythic folder**. This will create the build container for the mythic-cli, build the binary, and copy it into your main Mythic folder automatically. From there on, you can use the `mythic-cli` binary like normal. Make sure you use the `mythic-cli` binary **from the main Mythic folder**.&#x20;
 
 ### Configure your installation
 
 Mythic configuration is all done via `Mythic/.env`, which means for your configuration you can either add/edit values there or add them to your environment.
 
 {% hint style="info" %}
-Mythic/.env doesn't exist by default. You can either let Mythic create it for you when you run `sudo ./mythic-cli start` for the first time or you can create it ahead of time with just the variables you want to configure.
+Mythic/.env doesn't exist by default. You can either let Mythic create it for you when you run `sudo ./mythic-cli start` for the first time or you can create it ahead of time with just the variables you want to configure. `mythic-cli status` is an easy way to pre-generate the `.env` file so you can modify it without it being used by any containers yet.
 {% endhint %}
 
 If you need to run `mythic-cli` as root for Docker and you set your environment variables as a user, be sure to run `sudo -E ./mythic-cli` so that your environment variables are carried over into your sudo call. The following are the default values that Mythic will generate on first execution of `sudo ./mythic-cli start` unless overridden:
@@ -138,11 +138,11 @@ WEBHOOK_DEFAULT_URL=
 A few important notes here:
 
 * `MYTHIC_SERVER_PORT` will be the port opened on the server where you're running Mythic. The `NGINX_PORT` is the one that's opened by Nginx and acts as a reverse proxy to all other services. The `NGINX_PORT` is the one you'll connect to for your web user interface and should be the only port you need to expose externally (unless you prefer to SSH port forward your web UI port).
-* The `allowed_ip_blocks` allow you to restrict access to the `login` page of Mythic. This should be set as a series of netblocks with **NO** host bits set - i.e. `127.0.0.0/16,192.168.10.0/24,10.0.0.0/8`
+* The `allowed_ip_blocks` allow you to restrict access to everything within Mythic. This should be set as a series of netblocks with **NO** host bits set - i.e. `127.0.0.0/16,192.168.10.0/24,10.0.0.0/8`
 * `*_BIND_LOCALHOST_ONLY` - these settings determine if the associated container binds the port to `127.0.0.1:port` or `0.0.0.0:port`. These are all set to true (except for the nginx container) by default so that you're not exposing these services externally.
 
 {% hint style="warning" %}
-If you want to have a services (agent, c2 profile, etc) on a host _other_ than where the Mythic server is running, then you need to make sure that RABBITMQ\_BIND\_LOCALHOST\_ONLY and MYTHIC\_SERVER\_BIND\_LOCALHOST\_ONLY are both set to `false` so that your remote services can access Mythic.
+If you want to have a services (agent, c2 profile, etc) on a host _other_ than where the Mythic server is running, then you need to make sure that RABBITMQ\_BIND\_LOCALHOST\_ONLY and MYTHIC\_SERVER\_BIND\_LOCALHOST\_ONLY are both set to `false` so that your remote services can access Mythic. If you change these, you will need to run `sudo ./mythic-cli start` to make sure these changes are leveraged by Docker.
 {% endhint %}
 
 {% hint style="warning" %}
@@ -156,35 +156,47 @@ When the `mythic_server` container starts for the first time, it goes through an
 The `mythic-cli` binary is used to start/stop/configure/install components of Mythic. You can see the help menu at any time with `mythic-cli -h`, `mythic-cli --help` or `mythic-cli help`.
 
 ```
-Mythic CLI is a command line interface for managing the Mythic
-application and associated containers and services. Commands are grouped by their use.
+Mythic CLI is a command line interface for managing the Mythic application and associated containers and services.
+Commands are grouped by their use and all support '-h' for help.
+For a list of available services to install, check out: https://mythicmeta.github.io/overview/
 
 Usage:
   mythic-cli [command]
 
 Available Commands:
-  add         Add local service folder to docker compose
-  build       Build/rebuild a specific container
-  config      Display or adjust the configuration
-  database    interact with the database
-  help        Help about any command
-  install     install services from GitHub or local folders
-  logs        Get docker logs from a running service
-  mythic_sync work to mythic_sync install/uninstall
-  rabbitmq    interact with the rabbitmq
-  remove      Remove local service folder from docker compose
-  restart     Start all of Mythic
-  start       Start Mythic containers
-  status      Get current Mythic container status
-  stop        Stop all of Mythic
-  test        test mythic service connections
-  uninstall   uninstall services locally and remove them from disk
+  add              Add local service folder to docker compose
+  backup           Backup various volumes/data to a custom location on disk
+  build            Build/rebuild a specific container
+  build_ui         Build/rebuild the React UI
+  completion       Generate the autocompletion script for the specified shell
+  config           Display or adjust the configuration
+  database         Interact with the database
+  health           Check health status of containers
+  help             Help about any command
+  install          Install services via git or local folders
+  load             Load tar versions of Mythic images from ./saved_images/mythic_save.tar
+  logs             Get docker logs from a running service
+  mythic_sync      Install/Uninstall mythic_sync
+  rabbitmq         Interact with the rabbitmq service
+  remove           Remove local service folder from docker compose
+  remove_container Remove running or exited containers
+  restart          Start all of Mythic
+  restore          Restore various volumes/data from a custom location on disk
+  save             Save tar versions of the specified container's images
+  services         List out installed services
+  start            Start Mythic containers
+  status           Get current Mythic container status
+  stop             Stop all of Mythic
+  test             Test mythic service connections
+  uninstall        uninstall services locally and remove them from disk
+  update           Check for Mythic updates
+  version          Print information about the mythic-cli and Mythic versions
+  volume           Interact with the mythic volumes
 
 Flags:
   -h, --help   help for mythic-cli
 
 Use "mythic-cli [command] --help" for more information about a command.
-
 ```
 
 ### Installing Agents / C2 Profiles

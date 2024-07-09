@@ -1,4 +1,4 @@
-# C2 Configuration Files
+# 2. Configuration Files
 
 ## Config.json
 

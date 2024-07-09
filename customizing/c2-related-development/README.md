@@ -1,4 +1,4 @@
-# C2 Related Development
+# 2. C2 Development
 
 ## What are C2 Profiles
 

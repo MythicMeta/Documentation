@@ -6,8 +6,6 @@ description: >-
 
 # Mythic
 
-
-
 ## What is Mythic?
 
 Mythic is a multiplayer, command and control platform for red teaming operations. It is designed to facilitate a plug-n-play architecture where new agents, communication channels, and modifications can happen on the fly. Some of the Mythic project's main goals are to provide quality of life improvements to operators, improve maintainability of agents, enable customizations, and provide more robust data analytic capabilities to operations.
@@ -38,5 +36,5 @@ Mythic also incorporates [MITRE ATT\&CK](https://attack.mitre.org) mappings into
 ## Resources and Contributing
 
 * Check out the code on GitHub: [https://github.com/its-a-feature/Mythic](https://github.com/its-a-feature/Mythic)
-* Join the #Mythic channel in the BloodHound public slack [https://bloodhoundgang.herokuapp.com/](https://bloodhoundgang.herokuapp.com)
+* Join the #Mythic channel in the [BloodHound public slack](message-flow/building-payloads.md)&#x20;
 * Reach out on Twitter: [@its\_a\_feature\_](https://twitter.com/its\_a\_feature\_)

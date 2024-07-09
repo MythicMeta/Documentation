@@ -4,7 +4,7 @@ description: >-
   callback
 ---
 
-# Commands
+# Add / Remove Commands
 
 ## Example Agent Response
 

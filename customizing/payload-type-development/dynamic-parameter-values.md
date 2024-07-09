@@ -1,4 +1,4 @@
-# Dynamic Parameter Values
+# 7. Dynamic Parameter Values
 
 ## What are dynamic parameters?
 

@@ -130,12 +130,12 @@ This does NOT actually adjust anything within the payload itself, nor does it ad
 
 For payloads, you can select the blue "info" icon next to your payload and scroll down to the "commands" area. You'll see a new button called "Add/Remove Commands":
 
-<figure><img src="../../.gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
 Clicking on that will open up a new dialog box where you can select which commands to add and remove:
 
-<figure><img src="../../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
 The same flow is available for Callbacks - click the blue down arrow next to an active callback and select the "View Metadata" entry, then scroll down to the loaded commands.

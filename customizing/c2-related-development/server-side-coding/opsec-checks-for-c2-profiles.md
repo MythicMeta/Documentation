@@ -1,4 +1,4 @@
-# OPSEC Checks For C2 Profiles
+# 3. OPSEC Checks
 
 ## OPSEC scripting
 

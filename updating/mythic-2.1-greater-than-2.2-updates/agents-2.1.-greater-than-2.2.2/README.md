@@ -4,11 +4,11 @@
 
 The first big update for the payload type containers is to make things easier to update. To do this, many of the files within `agentName/mythic` are now in a PyPi package (`mythic-payloadtype-container`) hosted at ([https://github.com/MythicMeta/Mythic\_PayloadType\_Container](https://github.com/MythicMeta/Mythic\_PayloadType\_Container)). Specifically, your `agentName/mythic` folder will now look like:
 
-* agent\_functions/ &#x20;
-* browser\_scripts/ &#x20;
-* mythic\_service.py &#x20;
-* payload\_service.sh &#x20;
-* rabbitmq\_config.json &#x20;
+* agent\_functions/
+* browser\_scripts/
+* mythic\_service.py
+* payload\_service.sh
+* rabbitmq\_config.json
 
 All of those other files can be deleted.
 
@@ -61,7 +61,7 @@ The `mythic-payloadtype-container` version of `0.0.45` corresponds to container 
 This is a super awesome addition that allows you to configure your PayloadType container with the `rabbitmq_config.json` file _OR_ via environment variables of the same names, but prefixed with `MYTHIC_`. So, if your rabbitmq instance isn't on the same host as your payload type container (or VM), you could either:
 
 * Set the `host` key to the ip of your rabbitmq instance
-* Set a `MYTHIC_HOST` environment variable  to the ip of your rabbitmq instance
+* Set a `MYTHIC_HOST` environment variable to the ip of your rabbitmq instance
 
 Either one of those will be pulled in (the environment configuration supersedes the json configuration).
 
@@ -181,8 +181,8 @@ Here we're checking if the value is an instance of `dict` which means we're look
 
 The last piece that's updated about building is that you can now be more explicit about what's going on. Rather than only being able to report back success/failure and a single message (which can get really messy with debug output), you can now set the following in your `BuildResponse` object:
 
-* build\_message - this is a simple standard message you display to the user when things build correctly (either `myBuildResp.build_message = "congrats, new agent created"` or `myBuildResp.set_build_message("congrats, new agent created")`.&#x20;
-* build\_stderr - this is error information if something goes wrong (either `myBuildResp.build_stderr = "compile error here"` or `myBuildResp.set_build_stderr("compile error here")`.&#x20;
+* build\_message - this is a simple standard message you display to the user when things build correctly (either `myBuildResp.build_message = "congrats, new agent created"` or `myBuildResp.set_build_message("congrats, new agent created")`.
+* build\_stderr - this is error information if something goes wrong (either `myBuildResp.build_stderr = "compile error here"` or `myBuildResp.set_build_stderr("compile error here")`.
 * build\_stdout - this is helpful stdout information that you might not want to present to the user on success, but would be helpful to look at later on (either `myBuildResp.build_stdout = "additional debugging info here"` or `myBuildResp.set_build_stdout("additional debugging info here")`. )
 
 {% hint style="warning" %}
@@ -409,15 +409,15 @@ This function also has access to all of the same RPC functionality that the `cre
 
 ### Dynamic Parameter Values
 
-[Dynamic Parameter Values](../../../customizing/payload-type-development/dynamic-parameter-values.md)&#x20;
+[Dynamic Parameter Values](../../../customizing/payload-type-development/dynamic-parameter-values.md)
 
 ### Sub-Tasking / Task Callbacks
 
-[Sub-tasking](../../../customizing/payload-type-development/sub-tasking-task-callbacks.md)&#x20;
+[Sub-tasking](../../../customizing/payload-type-development/sub-tasking-task-callbacks.md)
 
 ### Tags
 
-[Tags](../../../operational-pieces/tags.md)&#x20;
+[Tags](../../../operational-pieces/tags.md)
 
 ### Script\_Only Commands
 

@@ -56,6 +56,7 @@
 
 ## Customizing
 
+* [Customizing Public Agent](customizing/customizing-public-agent.md)
 * [Hooking Features](customizing/hooking-features/README.md)
   * [Actions](customizing/hooking-features/actions.md)
   * [Linking Agents](customizing/hooking-features/linking-agents/README.md)
@@ -113,13 +114,22 @@
     * [7. Redirect Rules](customizing/c2-related-development/server-side-coding/redirect-rules.md)
     * [8. Get IOC](customizing/c2-related-development/server-side-coding/8.-get-ioc.md)
     * [9. Push C2](customizing/c2-related-development/server-side-coding/9.-push-c2.md)
+* [3. Consuming Containers](customizing/3.-consuming-containers/README.md)
+  * [Webhooks](customizing/3.-consuming-containers/webhooks.md)
+  * [Logging](customizing/3.-consuming-containers/logging.md)
+  * [Eventing](customizing/3.-consuming-containers/eventing/README.md)
+    * [Operator Context (run\_as)](customizing/3.-consuming-containers/eventing/operator-context-run\_as.md)
+    * [Workflow Triggers](customizing/3.-consuming-containers/eventing/workflow-triggers.md)
+    * [Steps](customizing/3.-consuming-containers/eventing/steps.md)
+  * [Auth](customizing/3.-consuming-containers/auth.md)
+* [4. Extending Agent Commands](customizing/4.-extending-agent-commands.md)
 * [Mythic UI Development](customizing/mythic-ui-development.md)
 
-## Common Questions and Answers <a href="#common-qa" id="common-qa"></a>
+## Common Questions and Answers
 
-* [FAQ / Troubleshooting Tips](common-qa/faq-troubleshooting-tips.md)
-* [Change Log](common-qa/change-log.md)
-* [Tip of the Week](common-qa/tip-of-the-week.md)
+* [FAQ / Troubleshooting Tips](common-questions-and-answers/faq-troubleshooting-tips.md)
+* [Change Log](common-questions-and-answers/change-log.md)
+* [Tip of the Week](common-questions-and-answers/tip-of-the-week.md)
 
 ## Updating
 
@@ -130,3 +140,4 @@
   * [Agents 2.2 -> 2.3](updating/mythic-2.2-greater-than-2.3-updates/agents-2.2-greater-than-2.3.md)
 * [Mythic 2.3 -> 3.0 Updates](updating/mythic-2.3-greater-than-3.0-updates/README.md)
   * [Agents 2.3 -> 3.0](updating/mythic-2.3-greater-than-3.0-updates/agents-2.3-greater-than-3.0.md)
+* [Mythic 3.2->3.3 Updates](updating/mythic-3.2-greater-than-3.3-updates.md)

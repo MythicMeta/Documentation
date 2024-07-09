@@ -28,8 +28,8 @@ Since the Mythic Scripting simply uses this GraphQL interface as well, anything 
 
 If you want to have even more fun exploring how the GraphQL interface manipulates the database schema, you can check out the built-in Jupyter Notebook and test out your modifications there as well. As shown in the two screenshots below, you can create scripts to interact with the GraphQL endpoints to return only the data you want.
 
-<figure><img src=".gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src=".gitbook/assets/image (1) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 This scripting, combined with the Hasura GraphQL console allows operators to very easily get direct access and real-time updates to the database without having to know any specific SQL syntax or worry about accidentally making a schema change.

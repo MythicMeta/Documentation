@@ -154,7 +154,7 @@ To access the payload that you're going to wrap, use the `self.wrapped_payload` 
 {% endtab %}
 
 {% tab title="Golang" %}
-To access the payload that you're going to wrap, use the `payloadBuildMsg.WrappedPayload` attribute during your `build` execution. This will be the raw bytes of the payload you're going to wrap.
+To access the payload that you're going to wrap, use the `payloadBuildMsg.WrappedPayload` attribute during your `build` execution. This will be the raw bytes of the payload you're going to wrap. If you want to fetch more details about the payload that's wrapped, you can use the `payloadBuildMsg.WrappedPayloadUUID` and Mythic Scripting/MythicRPC
 {% endtab %}
 {% endtabs %}
 
@@ -218,6 +218,7 @@ const (
    BUILD_PARAMETER_TYPE_STRING          BuildParameterType = "String"
    BUILD_PARAMETER_TYPE_BOOLEAN                            = "Boolean"
    BUILD_PARAMETER_TYPE_CHOOSE_ONE                         = "ChooseOne"
+   BUILD_PARAMETER_TYPE_CHOOSE_ONE_CUSTOM                  = "ChooseOneCustom"
    BUILD_PARAMETER_TYPE_CHOOSE_MULTIPLE                    = "ChooseMultiple"
    BUILD_PARAMETER_TYPE_DATE                               = "Date"
    BUILD_PARAMETER_TYPE_DICTIONARY                         = "Dictionary"
@@ -267,6 +268,8 @@ type BuildStep struct {
   * `BuildParameterType.String`
     * During build, this is a string
   * `BuildParameterType.ChooseOne`
+    * During build, this is a string
+  * `BuildParameterType.ChooseOneCustom`
     * During build, this is a string
   * `BuildParameterType.ChooseMultiple`
     * During build, this is an array of strings

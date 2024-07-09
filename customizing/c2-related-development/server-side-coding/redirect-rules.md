@@ -1,4 +1,4 @@
-# Redirect Rules
+# 7. Redirect Rules
 
 ## What is it?
 

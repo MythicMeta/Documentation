@@ -2,7 +2,7 @@
 description: Check Agent's Configuration Before Generation
 ---
 
-# Configuration Checks
+# 4. Configuration Checks
 
 ## What is this?
 
