@@ -28,3 +28,7 @@ From the operator settings page, there's an option to view invite links that hav
 <figure><img src=".gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
 
 ## Bots
+
+Bot accounts are unique accounts that cannot log in directly to Mythic, but can have APITokens and perform actions. Bot accounts are automatically created for each operation when a new operation is created, but can also be created by admin accounts.&#x20;
+
+Bot accounts can be assigned to operations and given different roles/blocks lists just like other operators in an operation.
