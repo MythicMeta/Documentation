@@ -157,7 +157,7 @@ After going through to find the values for the various `inputs` fields, the corr
       * `command_name` - the name of the command you want to issue
       * `payload_type` - if you're leveraging a command\_augment container and the command name isn't unique, then specify which payload\_type you are referring to here.
       * `params` - if you just have a string of parameters to supply, you can provide that here
-      * `param_dictionary` - if your command optionally supports providing structured data, provide a dictionary here of your parameter names -> values
+      * `params_dictionary` - if your command optionally supports providing structured data, provide a dictionary here of your parameter names -> values
       * `parameter_group_name` - if you are using parameter groups and want to explicitly say which one to use, put that here
       * `token` - if you're using a token associated with the callback, specify that here. If you don't put the token id then you won't use a token at all
       * `parent_task_id` - if you're wanting to issue a task as a subtask of another task, specify the ID of the parent task here
