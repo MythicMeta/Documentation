@@ -35,8 +35,16 @@ There are two things to note here:
   * For each element in the responses array, we have a dictionary of information about the response. We also have a `task_id` field to indicate which task this response is for. After that though, comes the actual response output from the task.
     * If you don't want to hook a certain feature (like sending keystrokes, downloading files, creating artifacts, etc), but just want to return output to the user, the response section can be as simple as:\
       `{"task_id": "uuid of task", "user_output": "output of task here"}`
-  * Each response style is described in [Hooking Features](../../../hooking-features/). The format described in each of the Hooking features sections replaces the `... response message` piece above
-    * To continue adding to that JSON response, you can indicate that a command is finished by adding `"completed": true` or indicate that there was an error with `"status": "error"`.
+    * You can find many fields to send in the hooking features section, but outside of that you can set:
+      * `completed` - boolean field to indicate that the task is done or not
+      * `status` - string field to indicate the current status of the task. If the task completes successfully, you can set this to `success`, otherwise you can use it to indicate a generic error mesage to the user. If you start the status with `error:` then in the Mythic UI that status message will turn red to help indicate an error. Any other status you set will appear as blue text.
+
+{% hint style="info" %}
+If you want to return a more verbose error message, then you can set `completed: true`, `status: "error: auth failed`, and then `user_output: "some more complex output that displays in the body of the UI under the task where you can have much more room`.
+{% endhint %}
+
+* Each response style is described in [Hooking Features](../../../hooking-features/). The format described in each of the Hooking features sections replaces the `... response message` piece above
+  * To continue adding to that JSON response, you can indicate that a command is finished by adding `"completed": true` or indicate that there was an error with `"status": "error"`.
 * `delegates` - This parameter is not required, but allows for an agent to forward on messages from other callbacks. This is the peer-to-peer scenario where inner messages are passed externally by the egress point. Each of these messages is a self-contained "[Agent Message](agent-message-format.md)".
 
 {% hint style="info" %}
