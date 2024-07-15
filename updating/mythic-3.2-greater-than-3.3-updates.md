@@ -8,6 +8,9 @@ description: Updates and needed agent changes between versions
 
 * All Webhook / Logging containers must be updated to the new PyPi/Go packages and provide two new fields: name and description.
 * All C2 Profiles must update to the new PyPi/Go packages so that they can properly handle messages for getting/updating files (including editing the local config). No other change required outside of just updating the packages.
+* All Payload Types just need to update to the new PyPi and MythicContainer packages so that they can accept the new file\* RPC calls from the web UI.
+  * MythicContainer @ v1.4.0 for Golang
+  * mythic-container == 0.5.0 for Python
 
 ## Agent Messages to Mythic
 
