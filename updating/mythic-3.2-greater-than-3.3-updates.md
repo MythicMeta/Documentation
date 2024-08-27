@@ -10,7 +10,7 @@ description: Updates and needed agent changes between versions
 * All C2 Profiles must update to the new PyPi/Go packages so that they can properly handle messages for getting/updating files (including editing the local config). No other change required outside of just updating the packages.
 * All Payload Types just need to update to the new PyPi and MythicContainer packages so that they can accept the new file\* RPC calls from the web UI.
   * MythicContainer @ v1.4.0 for Golang
-  * mythic-container == 0.5.5 for Python
+  * mythic-container == 0.5.7 for Python
 
 ## Agent Messages to Mythic
 

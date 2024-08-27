@@ -6,7 +6,7 @@ Eventing is a way to automatically perform actions based on some "event" within 
 
 ### Components
 
-There are a few components that make up an eventing workflow. Let's see what happens when you click the "New Event Groups" butt on on the left hand side and select a file/multiple files to upload:
+There are a few components that make up an eventing workflow. Let's see what happens when you click the "New Event Groups" but on on the left hand side and select a file/multiple files to upload:
 
 1. The original eventing workflow file. This is a YAML, JSON, or TOML file that contains information about the entire workflow. In Mythic's GraphQL API, each `eventgroup` has a file\_id that points to this file so that the contents can always be fetched later. Clicking the image folder icon under "actions" will display this file in the UI.
 2. After loading the workflow file and creating an `eventgroup`, each step is analyzed and parsed into an `eventstep` associated with that event group.
