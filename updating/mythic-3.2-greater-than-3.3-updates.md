@@ -11,6 +11,7 @@ description: Updates and needed agent changes between versions
 * All Payload Types just need to update to the new PyPi and MythicContainer packages so that they can accept the new file\* RPC calls from the web UI.
   * MythicContainer @ v1.4.1 for Golang
   * mythic-container == 0.5.9 for Python
+* Wrapper payloads get their `wrapped_payload` as raw bytes now, not as a base64 blob! **This is a breaking change**
 
 ## Agent Messages to Mythic
 
