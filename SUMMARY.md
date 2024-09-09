@@ -76,6 +76,7 @@
   * [RPFWD](customizing/hooking-features/rpfwd.md)
   * [Interactive Tasking](customizing/hooking-features/interactive-tasking.md)
   * [Task Status](customizing/hooking-features/task-status.md)
+  * [OnContainerStart](customizing/hooking-features/oncontainerstart.md)
 * [1. Payload Type Development](customizing/payload-type-development/README.md)
   * [2. Payload Type Definition](customizing/payload-type-development/payload-type-info/README.md)
     * [Container Syncing](customizing/payload-type-development/payload-type-info/container-syncing.md)
