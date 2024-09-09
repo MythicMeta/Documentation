@@ -696,3 +696,129 @@ func Initialize() {
 </code></pre>
 {% endtab %}
 {% endtabs %}
+
+## 5.0 CustomRPCFunctions
+
+Payload types have an optional field that can be defined:
+
+{% tabs %}
+{% tab title="Python" %}
+```python
+class PTOtherServiceRPCMessage:
+    """Request to call an RPC function of another C2 Profile or Payload Type
+
+    Attributes:
+        ServiceName (str): Name of the C2 Profile or Payload Type
+        ServiceRPCFunction (str): Name of the function to call
+        ServiceRPCFunctionArguments (dict): Arguments to that function
+
+    Functions:
+        to_json(self): return dictionary form of class
+    """
+
+    def __init__(self,
+                 ServiceName: str = None,
+                 service_name: str = None,
+                 ServiceRPCFunction: str = None,
+                 service_function: str = None,
+                 ServiceRPCFunctionArguments: dict = None,
+                 service_arguments: dict = None,
+                 **kwargs):
+        self.ServiceName = ServiceName
+        if self.ServiceName is None:
+            self.ServiceName = service_name
+        self.ServiceRPCFunction = ServiceRPCFunction
+        if self.ServiceRPCFunction is None:
+            self.ServiceRPCFunction = service_function
+        self.ServiceRPCFunctionArguments = ServiceRPCFunctionArguments
+        if self.ServiceRPCFunctionArguments is None:
+            self.ServiceRPCFunctionArguments = service_arguments
+        for k, v in kwargs.items():
+            logger.error(f"unknown kwarg {k} {v}")
+
+    def to_json(self):
+        return {
+            "service_name": self.ServiceName,
+            "service_function": self.ServiceRPCFunction,
+            "service_arguments": self.ServiceRPCFunctionArguments
+        }
+
+    def __str__(self):
+        return json.dumps(self.to_json(), sort_keys=True, indent=2)
+
+
+class PTOtherServiceRPCMessageResponse:
+    """Result of running an RPC call from another service
+
+    Attributes:
+        Success (bool): Did the RPC succeed or fail
+        Error (str): Error message if the RPC check failed
+        Result (dict): Result from the RPC
+
+    Functions:
+        to_json(self): return dictionary form of class
+    """
+
+    def __init__(self,
+                 success: bool = None,
+                 error: str = None,
+                 result: dict = None,
+                 Success: bool = None,
+                 Error: str = None,
+                 Result: dict = None,
+                 **kwargs):
+        self.Success = Success
+        if self.Success is None:
+            self.Success = success
+        self.Error = Error
+        if self.Error is None:
+            self.Error = error
+        self.Result = Result
+        if self.Result is None:
+            self.Result = result
+        for k, v in kwargs.items():
+            logger.error(f"unknown kwarg {k} {v}")
+
+    def to_json(self):
+        return {
+            "success": self.Success,
+            "error": self.Error,
+            "result": self.Result
+        }
+
+    def __str__(self):
+        return json.dumps(self.to_json(), sort_keys=True, indent=2)
+custom_rpc_functions: dict[
+        str, Callable[[PTOtherServiceRPCMessage], Awaitable[PTOtherServiceRPCMessageResponse]]] = {}
+```
+{% endtab %}
+
+{% tab title="Go" %}
+```go
+// PTRPCOtherServiceRPCMessage - A message to call RPC functionality exposed by another Payload Type or C2 Profile
+type PTRPCOtherServiceRPCMessage struct {
+	// Name - The name of the remote Payload type or C2 Profile
+	Name string `json:"service_name"` //required
+	// RPCFunction - The name of the function to call for that remote service
+	RPCFunction string `json:"service_function"`
+	// RPCFunctionArguments - A map of arguments to supply to that remote function
+	RPCFunctionArguments map[string]interface{} `json:"service_arguments"`
+}
+
+// PTRPCOtherServiceRPCMessageResponse - The result of calling RPC functionality exposed by another Payload Type or C2 Profile
+type PTRPCOtherServiceRPCMessageResponse struct {
+	// Success - An indicator if the call was successful or not
+	Success bool `json:"success"`
+	// Error - If the call was unsuccessful, this is an error message about what happened
+	Error string `json:"error"`
+	// Result - The result returned by the remote service
+	Result map[string]interface{} `json:"result"`
+}
+CustomRPCFunctions map[string]func(message PTRPCOtherServiceRPCMessage) PTRPCOtherServiceRPCMessageResponse `json:"-"`
+```
+{% endtab %}
+{% endtabs %}
+
+This dictionary of functions is a way for a Payload Type/C2 Profile to define custom RPC functions that are callable from other containers. This can be particularly handy if you have a Payload Build function that needs to ask a C2 Profile to configure something in a specific way on its behalf. The same thing also applies to C2 Profiles - C2 Profiles can ask Payload Type containers to do things.&#x20;
+
+The definitions are particularly vague in the arguments needed (ex: a generic dictionary/map) because it's up to the function to define what is needed.
