@@ -241,6 +241,7 @@ class CommandParameter:
   * ChooseOne - gets a string value
   * ChooseMultiple
     * An Array of string values
+  * ChooseOneCustom - gets a string value from a list of `choices` OR a user spplied value
   * Credential\_JSON
     * Select a specific credential that's registered in the Mythic credential store. In your create tasking, get a JSON representation of all data for that credential
   * Number&#x20;
