@@ -1,3 +1,8 @@
+# Notice
+
+This is old and no longer used anymore since the docs have moved from GitBook to Mintlify. Use https://github.com/MythicMeta/Mintlify_Documentation as the reference for the documentation on `https://docs.mythic-c2.net` instead.
+
+
 ---
 description: >-
   A cross-platform, post-exploit, red teaming framework designed to provide a
